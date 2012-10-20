@@ -6,7 +6,7 @@
   "main": "./index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Gottox/node-pdf2svg.git"
+    "url": "https://github.com/Gottox/node-pdfutils.git"
   },
   "keywords": [
     "pdf",
