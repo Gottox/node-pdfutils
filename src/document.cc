@@ -160,7 +160,6 @@ void Document::addJob(PageJob *job) {
 		uv_async_init(loop, &this->message_finished, Document::WorkerFinished);
 		uv_async_init(loop, &this->message_data, Document::WorkerChunk);
 		uv_queue_work(loop, &this->worker, Document::Worker, Document::WorkerClean);
-		printf("Strong\n");
 		this->handle_.ClearWeak();
 	}
 }
@@ -241,7 +240,6 @@ void Document::WorkerClean(uv_work_t *handle) {
 	uv_sem_post(&self->jobSem);
 
 	self->MakeWeak();
-	printf("Weak\n");
 	while(!V8::IdleNotification()) {};
 }
 
@@ -258,7 +256,6 @@ Handle<Value> Document::GetProperty(Local< String > property, const AccessorInfo
 	Local<Value> val = Local<Value>::New(Null());
 	const char *cValue = NULL;
 	int iValue;
-	//printf("%s %i\n", key, spec->value_type);
 	switch(spec->value_type) {
 	case G_TYPE_BOOLEAN:
 		val = Local<Value>::New(Boolean::New(g_value_get_boolean(&gvalue)));
