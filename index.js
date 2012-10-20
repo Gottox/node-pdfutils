@@ -1,1 +1,1 @@
-module.exports = require('./lib/pdfconv');
+module.exports = require('./lib/pdfutils');

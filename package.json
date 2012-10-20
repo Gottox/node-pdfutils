@@ -1,5 +1,5 @@
 {
-  "name": "pdfconv",
+  "name": "pdfutils",
   "version": "0.0.1",
   "author": "Enno Boland <eb@s01.de>",
   "description": "Converts PDF documents to SVG or PNG.",
@@ -9,6 +9,9 @@
     "url": "https://github.com/Gottox/node-pdf2svg.git"
   },
   "keywords": [
+    "pdf",
+    "document",
+    "util"
   ],
   "dependencies" : {
   },

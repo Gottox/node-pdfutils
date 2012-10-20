@@ -22,9 +22,11 @@ Page::Page(Document &document, int index) {
 	this->index = index;
 	this->pg = poppler_document_get_page(this->document->doc, this->index);
 	poppler_page_get_size (this->pg, &this->w, &this->h);
+	this->label = poppler_page_get_label(this->pg);
 }
 
 Page::~Page() {
+	g_free(this->label);
 };
 
 
@@ -57,6 +59,8 @@ Local<Object> Page::createObject() {
 	instance->Set(String::New("width"), Local<Number>::New(Number::New(this->w)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	instance->Set(String::New("height"), Local<Number>::New(Number::New(this->h)), 
+			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
+	instance->Set(String::New("label"), Local<String>::New(String::New(this->label)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	instance->Set(String::New("document"), Local<Object>::New(this->document->handle_), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 

@@ -1,7 +1,7 @@
 {
   'targets': [
     {
-      'target_name': 'pdfconv',
+      'target_name': 'pdfutils',
       "sources": [ "src/document.cc", "src/page.cc", "src/page_job.cc", "src/init.cc", "src/util.cc", "src/formats.cc" ],
       'libraries': [
          '-lpoppler',

@@ -16,6 +16,7 @@ class Page : public node::ObjectWrap {
 		int index;
 		double w;
 		double h;
+		char *label;
 		Page(Document &document, int index);
 		v8::Local<v8::Object> createObject();
 

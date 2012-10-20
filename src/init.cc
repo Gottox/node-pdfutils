@@ -12,4 +12,4 @@ void InitAll(Handle<Object> target) {
 	PageJob::Init(target);
 }
 
-NODE_MODULE(pdfconv, InitAll)
+NODE_MODULE(pdfutils, InitAll)
