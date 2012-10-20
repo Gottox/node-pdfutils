@@ -16,6 +16,9 @@ class Document : public node::ObjectWrap {
 		PopplerDocument *doc;
 		std::vector<Page*> *pages;
 		std::queue<PageJob*> jobs;
+		uv_mutex_t jobMutex;
+		uv_async_t bgMessage;
+		uv_async_t v8Message;
 
 	private:
 		int buflen;
@@ -24,9 +27,6 @@ class Document : public node::ObjectWrap {
 		char *title;
 		char *author;
 		uv_thread_t worker;
-		uv_mutex_t jobMutex;
-		uv_async_t v8Message;
-		uv_async_t bgMessage;
 		uv_loop_t *bgLoop;
 
 		std::queue<PageJob*> finishedJobs;
@@ -36,8 +36,7 @@ class Document : public node::ObjectWrap {
 		void loaded();
 		
 		static v8::Handle<v8::Value> New(const v8::Arguments& args);
-		static v8::Handle<v8::Value> Count(const v8::Arguments& args);
-		static v8::Handle<v8::Value> ConvertPage(const v8::Arguments& args);
+		static v8::Handle<v8::Value> GetProperty(v8::Local< v8::String > property, const v8::AccessorInfo &info);
 
 		static void WorkerInit(void *arg);
 		static void Worker(uv_async_s *handle, int status);

@@ -2,7 +2,8 @@
 #define FORMATS_H
 enum Format {
 	FORMAT_SVG,
-	FORMAT_PNG
+	FORMAT_PNG,
+	FORMAT_UNKNOWN
 };
 
 extern const char *formatFunctions[] = {

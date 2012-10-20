@@ -14,6 +14,42 @@
 using namespace v8;
 using namespace node;
 
+const static char *properties[] = {
+	"author",
+	"creation-date",
+	"creator",
+	"format",
+	"keywords",
+	"linearized",
+	"metadata",
+	"mod-date",
+	"page-layout",
+	"page-mode",
+	"permissions",
+	"producer",
+	"subject",
+	"title",
+};
+
+const static char *pageLayouts[] = {
+	[POPPLER_PAGE_LAYOUT_UNSET] = NULL,
+	[POPPLER_PAGE_LAYOUT_SINGLE_PAGE] = "singlePage",
+	[POPPLER_PAGE_LAYOUT_ONE_COLUMN] = "oneColumn",
+	[POPPLER_PAGE_LAYOUT_TWO_COLUMN_LEFT] = "twoColumnLeft",
+	[POPPLER_PAGE_LAYOUT_TWO_COLUMN_RIGHT] = "twoColumnRight",
+	[POPPLER_PAGE_LAYOUT_TWO_PAGE_LEFT] = "twoPageLeft",
+	[POPPLER_PAGE_LAYOUT_TWO_PAGE_RIGHT] ="twoPageRight"
+};
+const static char *pageModes[] = {
+	[POPPLER_PAGE_MODE_UNSET] = NULL,
+	[POPPLER_PAGE_MODE_NONE] = "none",
+	[POPPLER_PAGE_MODE_USE_OUTLINES] = "useOutlines",
+	[POPPLER_PAGE_MODE_USE_THUMBS] = "useThumbs",
+	[POPPLER_PAGE_MODE_FULL_SCREEN] = "fullscreen",
+	[POPPLER_PAGE_MODE_USE_OC] = "useOc",
+	[POPPLER_PAGE_MODE_USE_ATTACHMENTS] =  "useAttachments"
+};
+
 Document::Document(char *buffer, const int buflen, Persistent<Function>& loadCb) {
 	this->buffer = buffer;
 	this->buflen = buflen;
@@ -22,7 +58,14 @@ Document::Document(char *buffer, const int buflen, Persistent<Function>& loadCb)
 
 Document::~Document() {
 	uv_close((uv_handle_t*) &this->v8Message, NULL);
-	uv_close((uv_handle_t*) &this->bgMessage, NULL);
+	uv_mutex_lock(&this->jobMutex);
+	while(this->finishedJobs.size())
+		this->finishedJobs.pop();
+	while(this->jobs.size())
+		this->jobs.pop();
+	uv_mutex_unlock(&this->jobMutex);
+
+	uv_async_send(&this->bgMessage);
 	uv_thread_join(&this->worker);
 };
 
@@ -50,7 +93,7 @@ void  Document::WorkerInit(void *arg) {
 	self->title = poppler_document_get_title(self->doc);
 	uv_async_send(&self->v8Message);
 
-	//uv_run(self->bgLoop);
+	uv_run(self->bgLoop);
 }
 
 Handle<Value> Document::New(const Arguments& args) {
@@ -80,7 +123,25 @@ Handle<Value> Document::New(const Arguments& args) {
 }
 
 void Document::Worker(uv_async_s *handle, int status) {
-	//Document *self = (Document *)(handle->data);
+	Document *self = (Document *)(handle->data);
+	uv_mutex_lock(&self->jobMutex);
+	if(self->jobs.size() != 0) {
+		puts("foo");
+		PageJob *pj = self->jobs.front();
+		uv_mutex_unlock(&self->jobMutex);
+		pj->run();
+
+		uv_mutex_lock(&self->jobMutex);
+		self->jobs.pop();
+		self->finishedJobs.push(pj);
+		uv_mutex_unlock(&self->jobMutex);
+
+		uv_async_send(&self->v8Message);
+	}
+	else {
+		uv_mutex_unlock(&self->jobMutex);
+		uv_close((uv_handle_t*) &self->bgMessage, NULL);
+	}
 }
 
 void Document::Receiver(uv_async_t *handle, int status) {
@@ -123,6 +184,7 @@ void Document::Receiver(uv_async_t *handle, int status) {
 		uv_mutex_unlock(&self->jobMutex);
 		self->loaded();
 	}
+	while(!V8::IdleNotification()) {};
 }
 
 void Document::loaded() {
@@ -139,12 +201,13 @@ void Document::loaded() {
 	}
 	this->handle_->Set(String::New("length"), Local<Number>::New(Number::New(pages)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
-	this->handle_->Set(String::New("author"), Local<Value>::New(this->author ? String::New(this->author) : Null()), 
-			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
-	this->handle_->Set(String::New("title"), Local<Value>::New(this->title ? String::New(this->title) : Null()), 
-			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
-	this->handle_->Set(String::New("subject"), Local<Value>::New(this->subject ? String::New(this->subject) : Null()), 
-			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
+
+	for(i = 0; i < LENGTH(properties); i++) {
+		this->handle_->SetAccessor(String::New(properties[i]), GetProperty, 0 /* setter */, Handle<Value>(), 
+				static_cast<v8::AccessControl>(v8::DEFAULT), 
+				static_cast<v8::PropertyAttribute>(v8::ReadOnly)
+				);
+	}
 
 	Local<Value> argv[] = {
 		this->doc == NULL
@@ -158,4 +221,60 @@ void Document::loaded() {
 		FatalException(try_catch);
 	}
 	this->loadCb.Dispose();
+}
+
+Handle<Value> Document::GetProperty(Local< String > property, const AccessorInfo &info) {
+	HandleScope scope;
+	Document* self = ObjectWrap::Unwrap<Document>(info.This());
+	char *key = str2chr(property);
+	GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(self->doc), key);
+	GValue gvalue = { 0 };
+	g_value_init(&gvalue, spec->value_type);
+	g_object_get_property (G_OBJECT (self->doc), key, &gvalue);
+
+	Local<Value> val = Local<Value>::New(Null());
+	const char *cValue = NULL;
+	int iValue;
+	//printf("%s %i\n", key, spec->value_type);
+	switch(spec->value_type) {
+	case G_TYPE_BOOLEAN:
+		val = Local<Value>::New(Boolean::New(g_value_get_boolean(&gvalue)));
+		break;
+	case G_TYPE_STRING:
+		cValue = g_value_get_string (&gvalue);;
+		val = Local<Value>::New(cValue
+			? String::New(cValue)
+			: Null());
+		break;
+	case G_TYPE_INT:
+		iValue = g_value_get_int(&gvalue);
+		val = Local<Value>::New(iValue >= 0
+			? Number::New(iValue)
+			: Null());
+		break;
+	default:
+		iValue = g_value_get_int(&gvalue);
+		if(spec->value_type == POPPLER_TYPE_PERMISSIONS) {
+			Local<Object> o = Object::New();
+			o->Set(String::NewSymbol("print"), Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_PRINT)));
+			o->Set(String::NewSymbol("modify"), Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_MODIFY)));
+			o->Set(String::NewSymbol("copy"), Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_COPY)));
+			o->Set(String::NewSymbol("notes"), Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_ADD_NOTES)));
+			o->Set(String::NewSymbol("fillForm"), Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_FILL_FORM)));
+			val = o;
+		}
+		else {
+			if(spec->value_type == POPPLER_TYPE_PAGE_LAYOUT) {
+				cValue = pageLayouts[iValue];
+			}
+			else if(spec->value_type == POPPLER_TYPE_PAGE_MODE) {
+				cValue = pageModes[iValue];
+			}
+			val = Local<Value>::New(cValue
+				? String::New(cValue)
+				: Null());
+		}
+	}
+	g_value_unset(&gvalue);
+	return scope.Close(Local<Value>::New(val));
 }

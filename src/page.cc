@@ -55,11 +55,13 @@ Local<Object> Page::createObject() {
 		this->document->handle_
 	};
 	Local<Object> instance = (*constructor)->NewInstance(argc, argv);
-	this->Wrap(instance);
 	instance->Set(String::New("width"), Local<Number>::New(Number::New(this->w)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	instance->Set(String::New("height"), Local<Number>::New(Number::New(this->h)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
+	instance->Set(String::New("document"), Local<Object>::New(this->document->handle_), 
+			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
+	this->Wrap(instance);
 
 	return instance;
 
@@ -67,17 +69,26 @@ Local<Object> Page::createObject() {
 
 Handle<Value> Page::ConvertTo(const Arguments& args) {
 	HandleScope scope;
+	int i;
 
 	Page* self = ObjectWrap::Unwrap<Page>(args.This());
 
-	if(args.Length() < 1 || !args[2]->IsFunction())
-		return ThrowException(Exception::Error(String::New("first parameter must be a Function")));
+	char *name = str2chr(args.Callee()->GetName());
+	Format format = FORMAT_UNKOWN;
+	for(i = 0; formatFunctions[i] != NULL && format == FORMAT_UNKOWN; i++) {
+		if(strcmp(name, formatFunctions[i]) == 0)
+			format = (Format)i;
+	}
+	if(format == FORMAT_UNKOWN)
+		return ThrowException(Exception::Error(String::New("unkown format to convert to")));
 
-	uv_work_t *req = new uv_work_t;
-	req->data = self;
+	PageJob *pj = new PageJob(*self, format);
+	uv_mutex_lock(&self->document->jobMutex);
+	self->document->jobs.push(pj);
+	uv_mutex_unlock(&self->document->jobMutex);
+	uv_async_send(&self->document->bgMessage);
 
-
-	return Undefined();
+	return pj->handle_;
 }
 
 Handle<Value> Page::GetWidth(Local< String > property, const AccessorInfo &info) {

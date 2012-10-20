@@ -3,6 +3,7 @@
 
 #include <node.h>
 #include <poppler.h>
+#include <cairo.h>
 #include <queue>
 #include "formats.h"
 
@@ -21,16 +22,14 @@ class PageJob : public node::ObjectWrap {
 		Page *page;
 		Format format;
 		std::queue<Chunk> data;
-
-	private:
+		uv_mutex_t dataMutex;
 		PageJob(Page &page, Format format);
 		~PageJob();
 
-		static void BackgroundConvert(uv_work_t *req);
+		void run();
 
-		static cairo_status_t BackgroundConverting(void *closure, const unsigned char *data, unsigned int length);
-
-		static void BackgroundConverted(uv_work_t *req);
+	private:
+		static cairo_status_t ProcChunk(void *closure, const unsigned char *data, unsigned int length);
 };
 
 #endif
