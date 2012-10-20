@@ -8,10 +8,6 @@
 #include "formats.h"
 
 class Document;
-struct Chunk {
-	char *value;
-	int length;
-};
 
 class PageJob : public node::ObjectWrap {
 	public:
@@ -21,8 +17,6 @@ class PageJob : public node::ObjectWrap {
 		v8::Persistent<v8::Function> cb;
 		Page *page;
 		Format format;
-		std::queue<Chunk> data;
-		uv_mutex_t dataMutex;
 		PageJob(Page &page, Format format);
 		~PageJob();
 

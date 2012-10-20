@@ -17,7 +17,6 @@ Persistent<Function> PageJob::constructor;
 PageJob::PageJob(Page &page, Format format) {
 	this->page = &page;
 	this->format = format;
-	uv_mutex_init(&this->dataMutex);
 
 	const unsigned argc = 1;
 	Handle<Value> argv[argc] = {
@@ -69,15 +68,7 @@ void PageJob::run() {
 cairo_status_t PageJob::ProcChunk(void *closure, const unsigned char *data, unsigned int length) {
 	PageJob *self = (PageJob *)closure;
 
-	uv_mutex_lock(&self->dataMutex);
-	Chunk chunk;
-
-	chunk.value = new char[length];
-	memcpy(chunk.value, data, length);
-	chunk.length = length;
-	self->data.push(chunk);
-	uv_mutex_unlock(&self->dataMutex);
-	uv_async_send(&self->page->document->v8Message);
+	self->page->document->addChunk(self, data, length);
 
 	return CAIRO_STATUS_SUCCESS;
 }

@@ -62,8 +62,6 @@ Local<Object> Page::createObject() {
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	instance->Set(String::New("label"), Local<String>::New(String::New(this->label)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
-	instance->Set(String::New("document"), Local<Object>::New(this->document->handle_), 
-			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	this->Wrap(instance);
 
 	return instance;
@@ -86,10 +84,7 @@ Handle<Value> Page::ConvertTo(const Arguments& args) {
 		return ThrowException(Exception::Error(String::New("unkown format to convert to")));
 
 	PageJob *pj = new PageJob(*self, format);
-	uv_mutex_lock(&self->document->jobMutex);
-	self->document->jobs.push(pj);
-	uv_mutex_unlock(&self->document->jobMutex);
-	uv_async_send(&self->document->bgMessage);
+	self->document->addJob(pj);
 
 	return pj->handle_;
 }

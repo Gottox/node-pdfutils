@@ -13,7 +13,6 @@
 
 using namespace v8;
 using namespace node;
-
 const static char *properties[] = {
 	"author",
 	"creation-date",
@@ -54,20 +53,17 @@ Document::Document(char *buffer, const int buflen, Persistent<Function>& loadCb)
 	this->buffer = buffer;
 	this->buflen = buflen;
 	this->loadCb = loadCb;
-	this->bgInitiated = false;
 }
 
 Document::~Document() {
-	uv_close((uv_handle_t*) &this->v8Message, NULL);
-	uv_mutex_lock(&this->jobMutex);
+	uv_sem_wait(&this->jobSem);
 	while(this->finishedJobs.size())
 		this->finishedJobs.pop();
 	while(this->jobs.size())
 		this->jobs.pop();
-	uv_mutex_unlock(&this->jobMutex);
-
-	uv_async_send(&this->bgMessage);
-	uv_thread_join(&this->worker);
+	uv_sem_post(&this->jobSem);
+	uv_sem_destroy(&this->jobSem);
+	uv_mutex_destroy(&this->chunkMutex);
 };
 
 void Document::Init(Handle<Object> target) {
@@ -77,22 +73,6 @@ void Document::Init(Handle<Object> target) {
 
 	Persistent<Function> constructor = Persistent<Function>::New(tpl->GetFunction());
 	target->Set(String::NewSymbol("Document"), constructor);
-}
-
-void  Document::WorkerInit(void *arg) {
-	Document *self = (Document *)(arg);
-	int i = 0;
-	self->doc = poppler_document_new_from_data(self->buffer, self->buflen, NULL, NULL);
-	int pages = poppler_document_get_n_pages(self->doc);
-
-	self->pages = new std::vector<Page*>();
-	for(i = 0; i < pages; i++) {
-		self->pages->push_back(new Page(*self, i));
-	}
-
-	uv_async_send(&self->v8Message);
-
-	uv_run(self->bgLoop);
 }
 
 Handle<Value> Document::New(const Arguments& args) {
@@ -108,130 +88,163 @@ Handle<Value> Document::New(const Arguments& args) {
 	else
 		return ThrowException(Exception::Error(String::New("first argument must be a Buffer")));
 
-	self->bgLoop = uv_loop_new();
-	self->v8Message.data = self->bgMessage.data = self;
-	uv_thread_create(&self->worker, WorkerInit, self);
-	uv_mutex_init(&self->jobMutex);
-	uv_async_init(uv_default_loop(), &self->v8Message, Receiver);
-	uv_async_init(self->bgLoop, &self->bgMessage, Worker);
+	self->worker.data = self->message_finished.data = self->message_data.data = self;
+	uv_sem_init(&self->jobSem, 1);
+	uv_mutex_init(&self->chunkMutex);
+
+
+	uv_queue_work(uv_default_loop(), &self->worker, Document::BackgroundLoad, Document::BackgroundLoaded);
 
 	self->Wrap(args.This());
-	self->MakeWeak();
 
 	return args.This();
 }
 
-void Document::Worker(uv_async_s *handle, int status) {
+void  Document::BackgroundLoad(uv_work_t* handle) {
 	Document *self = (Document *)(handle->data);
-	uv_mutex_lock(&self->jobMutex);
-	if(self->bgInitiated == false) {
-		self->bgInitiated = true;
-		PageJob *pj = self->jobs.front();
-		uv_mutex_unlock(&self->jobMutex);
+	int i = 0;
+	self->doc = poppler_document_new_from_data(self->buffer, self->buflen, NULL, NULL);
+	int pages = poppler_document_get_n_pages(self->doc);
 
-		pj->run();
-
-		uv_mutex_lock(&self->jobMutex);
-		self->jobs.pop();
-		self->finishedJobs.push(pj);
-		uv_mutex_unlock(&self->jobMutex);
-
-		uv_async_send(&self->v8Message);
-	}
-	else {
-		uv_mutex_unlock(&self->jobMutex);
-		uv_close((uv_handle_t*) &self->bgMessage, NULL);
+	self->pages = new std::vector<Page*>();
+	for(i = 0; i < pages; i++) {
+		self->pages->push_back(new Page(*self, i));
 	}
 }
 
-void Document::Receiver(uv_async_t *handle, int status) {
-	HandleScope scope;
+void Document::BackgroundLoaded(uv_work_t* handle) {
 	Document *self = (Document *)(handle->data);
-	uv_mutex_lock(&self->jobMutex);
-	int jobsLen = self->jobs.size();
-	int finishedJobsLen = self->finishedJobs.size();
-	if(jobsLen != 0) {
-		PageJob *pj = self->jobs.front();
-		Chunk data = pj->data.front();
-		pj->data.pop();
-		uv_mutex_unlock(&self->jobMutex);
-
-		Local<Value> argv[] = {
-			Local<String>::New(String::New("data")),
-			Local<Object>::New(Buffer::New(data.value, data.length)->handle_)
-		};
-		TryCatch try_catch;
-		Local<Function> emit = Function::Cast(*pj->handle_->Get(String::NewSymbol("emit")));
-		emit->Call(pj->handle_, 2, argv);
-		if (try_catch.HasCaught()) {
-			FatalException(try_catch);
-		}
-	}
-	else if(finishedJobsLen != 0) {
-		finishedJobsLen--;
-		PageJob *pj = self->finishedJobs.front();
-		self->finishedJobs.pop();
-		uv_mutex_unlock(&self->jobMutex);
-
-		Local<Value> argv[] = {
-			Local<String>::New(String::New("end"))
-		};
-		TryCatch try_catch;
-		Local<Function> emit = Function::Cast(*pj->handle_->Get(String::NewSymbol("emit")));
-		emit->Call(pj->handle_, 1, argv);
-		if (try_catch.HasCaught()) {
-			FatalException(try_catch);
-		}
-	}
-	else {
-		uv_mutex_unlock(&self->jobMutex);
-		self->loaded();
-		return;
-	}
-	if(finishedJobsLen == 0 && jobsLen == 0) {
-		self->MakeWeak();
-		while(!V8::IdleNotification()) {};
-	}
-	else {
-		self->handle_.ClearWeak();
-	}
-}
-
-void Document::loaded() {
 	unsigned int i;
 	HandleScope scope;
 
-	unsigned int pages = this->pages->size();
+	unsigned int pages = self->pages->size();
 	for(i = 0; i < pages; i++) {
 		std::stringstream istr;
 		istr << i;
-		this->handle_->Set(String::New(istr.str().c_str()),
-				(*this->pages)[i]->createObject(),
+		self->handle_->Set(String::New(istr.str().c_str()),
+				(*self->pages)[i]->createObject(),
 				static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	}
-	this->handle_->Set(String::New("length"), Local<Number>::New(Number::New(pages)), 
+	self->handle_->Set(String::New("length"), Local<Number>::New(Number::New(pages)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 
 	for(i = 0; i < LENGTH(properties); i++) {
-		this->handle_->SetAccessor(String::New(properties[i]), GetProperty, 0 /* setter */, Handle<Value>(), 
+		self->handle_->SetAccessor(String::New(properties[i]), GetProperty, 0 /* setter */, Handle<Value>(), 
 				static_cast<v8::AccessControl>(v8::DEFAULT), 
 				static_cast<v8::PropertyAttribute>(v8::ReadOnly)
 				);
 	}
 
 	Local<Value> argv[] = {
-		this->doc == NULL
+		self->doc == NULL
 			? (Local<Value>)String::New("Error loading PDF")
 			: Local<Value>::New(Null()),
-		Local<Object>::New(this->handle_)
+		Local<Object>::New(self->handle_)
 	};
 	TryCatch try_catch;
-	(*this->loadCb)->Call(Context::GetCurrent()->Global(), 2, argv);
+	(*self->loadCb)->Call(Context::GetCurrent()->Global(), 2, argv);
 	if (try_catch.HasCaught()) {
 		FatalException(try_catch);
 	}
-	this->loadCb.Dispose();
+	self->loadCb.Dispose();
 }
+
+void Document::addJob(PageJob *job) {
+	uv_sem_wait(&this->jobSem);
+	this->jobs.push(job);
+	if(this->jobs.size() != 1) {
+		uv_sem_post(&this->jobSem);
+	}
+	else {
+		uv_loop_t *loop = uv_default_loop();
+		uv_async_init(loop, &this->message_finished, Document::WorkerFinished);
+		uv_async_init(loop, &this->message_data, Document::WorkerChunk);
+		uv_queue_work(loop, &this->worker, Document::Worker, Document::WorkerClean);
+		printf("Strong\n");
+		this->handle_.ClearWeak();
+	}
+}
+
+void Document::Worker(uv_work_t *handle) {
+	Document *self = (Document *)(handle->data);
+
+	while(self->jobs.size()) {
+		PageJob *pj = self->jobs.front();
+		uv_sem_post(&self->jobSem);
+
+		pj->run();
+
+		uv_sem_wait(&self->jobSem);
+		self->jobs.pop();
+		self->finishedJobs.push(pj);
+		uv_async_send(&self->message_finished);
+	}
+}
+
+void Document::WorkerFinished(uv_async_t *handle, int status /*UNUSED*/) {
+	Document *self = (Document *)(handle->data);
+
+	PageJob *pj = self->finishedJobs.front();
+	self->finishedJobs.pop();
+	uv_sem_post(&self->jobSem);
+
+	Local<Value> argv[] = {
+		Local<String>::New(String::New("end"))
+	};
+	TryCatch try_catch;
+	Local<Function> emit = Function::Cast(*pj->handle_->Get(String::NewSymbol("emit")));
+	emit->Call(pj->handle_, 1, argv);
+	if (try_catch.HasCaught()) {
+		FatalException(try_catch);
+	}
+}
+
+void Document::addChunk(PageJob *job, const unsigned char* data, unsigned int length) {
+	Chunk chunk;
+
+	chunk.value = new char[length];
+	memcpy(chunk.value, data, length);
+	chunk.length = length;
+	uv_mutex_lock(&this->chunkMutex);
+	this->chunks.push(&chunk);
+	uv_mutex_unlock(&this->chunkMutex);
+	uv_async_send(&this->message_data);
+}
+
+void Document::WorkerChunk(uv_async_t *handle, int status /*UNUSED*/) {
+	Document *self = (Document *)(handle->data);
+
+	uv_mutex_lock(&self->chunkMutex);
+	PageJob *pj = self->jobs.front();
+	Chunk *chunk = self->chunks.front();
+	self->chunks.pop();
+	uv_mutex_unlock(&self->chunkMutex);
+
+	Local<Value> argv[] = {
+		Local<String>::New(String::New("data")),
+		Local<Object>::New(Buffer::New(chunk->value, chunk->length)->handle_)
+	};
+	TryCatch try_catch;
+	Local<Function> emit = Function::Cast(*pj->handle_->Get(String::NewSymbol("emit")));
+	emit->Call(pj->handle_, 2, argv);
+
+	if (try_catch.HasCaught()) {
+		FatalException(try_catch);
+	}
+}
+
+void Document::WorkerClean(uv_work_t *handle) {
+	Document *self = (Document *)(handle->data);
+	HandleScope scope;
+	uv_close((uv_handle_t*) &self->message_data, NULL);
+	uv_close((uv_handle_t*) &self->message_finished, NULL);
+	uv_sem_post(&self->jobSem);
+
+	self->MakeWeak();
+	printf("Weak\n");
+	while(!V8::IdleNotification()) {};
+}
+
 
 Handle<Value> Document::GetProperty(Local< String > property, const AccessorInfo &info) {
 	HandleScope scope;
