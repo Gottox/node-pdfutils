@@ -4,4 +4,4 @@ PDF Utils for node
 ==================
 
 This Node.js library supports reading PDF files using [poppler](http://poppler.freedesktop.org).
-It's in an early development state, which means that documentation is currently none-exitent
+It's in an early development state, which means that documentation is currently none-existent
