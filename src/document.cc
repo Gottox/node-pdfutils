@@ -54,6 +54,7 @@ Document::Document(char *buffer, const int buflen, Persistent<Function>& loadCb)
 	this->buffer = buffer;
 	this->buflen = buflen;
 	this->loadCb = loadCb;
+	this->bgInitiated = false;
 }
 
 Document::~Document() {
@@ -88,9 +89,7 @@ void  Document::WorkerInit(void *arg) {
 	for(i = 0; i < pages; i++) {
 		self->pages->push_back(new Page(*self, i));
 	}
-	self->author = poppler_document_get_author(self->doc);
-	self->subject = poppler_document_get_subject(self->doc);
-	self->title = poppler_document_get_title(self->doc);
+
 	uv_async_send(&self->v8Message);
 
 	uv_run(self->bgLoop);
@@ -125,10 +124,11 @@ Handle<Value> Document::New(const Arguments& args) {
 void Document::Worker(uv_async_s *handle, int status) {
 	Document *self = (Document *)(handle->data);
 	uv_mutex_lock(&self->jobMutex);
-	if(self->jobs.size() != 0) {
-		puts("foo");
+	if(self->bgInitiated == false) {
+		self->bgInitiated = true;
 		PageJob *pj = self->jobs.front();
 		uv_mutex_unlock(&self->jobMutex);
+
 		pj->run();
 
 		uv_mutex_lock(&self->jobMutex);
@@ -148,7 +148,9 @@ void Document::Receiver(uv_async_t *handle, int status) {
 	HandleScope scope;
 	Document *self = (Document *)(handle->data);
 	uv_mutex_lock(&self->jobMutex);
-	if(self->jobs.size() != 0) {
+	int jobsLen = self->jobs.size();
+	int finishedJobsLen = self->finishedJobs.size();
+	if(jobsLen != 0) {
 		PageJob *pj = self->jobs.front();
 		Chunk data = pj->data.front();
 		pj->data.pop();
@@ -160,12 +162,13 @@ void Document::Receiver(uv_async_t *handle, int status) {
 		};
 		TryCatch try_catch;
 		Local<Function> emit = Function::Cast(*pj->handle_->Get(String::NewSymbol("emit")));
-		emit->Call(pj->handle_, 1, argv);
+		emit->Call(pj->handle_, 2, argv);
 		if (try_catch.HasCaught()) {
 			FatalException(try_catch);
 		}
 	}
-	else if(self->finishedJobs.size() != 0) {
+	else if(finishedJobsLen != 0) {
+		finishedJobsLen--;
 		PageJob *pj = self->finishedJobs.front();
 		self->finishedJobs.pop();
 		uv_mutex_unlock(&self->jobMutex);
@@ -183,8 +186,15 @@ void Document::Receiver(uv_async_t *handle, int status) {
 	else {
 		uv_mutex_unlock(&self->jobMutex);
 		self->loaded();
+		return;
 	}
-	while(!V8::IdleNotification()) {};
+	if(finishedJobsLen == 0 && jobsLen == 0) {
+		self->MakeWeak();
+		while(!V8::IdleNotification()) {};
+	}
+	else {
+		self->handle_.ClearWeak();
+	}
 }
 
 void Document::loaded() {
@@ -253,8 +263,9 @@ Handle<Value> Document::GetProperty(Local< String > property, const AccessorInfo
 			: Null());
 		break;
 	default:
-		iValue = g_value_get_int(&gvalue);
 		if(spec->value_type == POPPLER_TYPE_PERMISSIONS) {
+			iValue = g_value_get_flags(&gvalue);
+
 			Local<Object> o = Object::New();
 			o->Set(String::NewSymbol("print"), Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_PRINT)));
 			o->Set(String::NewSymbol("modify"), Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_MODIFY)));
@@ -264,6 +275,8 @@ Handle<Value> Document::GetProperty(Local< String > property, const AccessorInfo
 			val = o;
 		}
 		else {
+			iValue = g_value_get_enum(&gvalue);
+
 			if(spec->value_type == POPPLER_TYPE_PAGE_LAYOUT) {
 				cValue = pageLayouts[iValue];
 			}

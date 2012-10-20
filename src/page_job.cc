@@ -27,7 +27,8 @@ PageJob::PageJob(Page &page, Format format) {
 	this->Wrap(instance);
 }
 
-PageJob::~PageJob() {};
+PageJob::~PageJob() {
+};
 
 void PageJob::Init(Handle<Object> target) {
 	Local<FunctionTemplate> tpl = FunctionTemplate::New();
@@ -60,7 +61,6 @@ void PageJob::run() {
 	cairo_show_page(cr);
 	cairo_destroy(cr);
 	cairo_surface_destroy(surface);
-	g_object_unref(this->page);
 	if(cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS) {
 		// TODO ERROR
 	}
@@ -77,6 +77,7 @@ cairo_status_t PageJob::ProcChunk(void *closure, const unsigned char *data, unsi
 	chunk.length = length;
 	self->data.push(chunk);
 	uv_mutex_unlock(&self->dataMutex);
+	uv_async_send(&self->page->document->v8Message);
 
 	return CAIRO_STATUS_SUCCESS;
 }

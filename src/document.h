@@ -21,11 +21,9 @@ class Document : public node::ObjectWrap {
 		uv_async_t v8Message;
 
 	private:
+		bool bgInitiated;
 		int buflen;
 		char *buffer;
-		char *subject;
-		char *title;
-		char *author;
 		uv_thread_t worker;
 		uv_loop_t *bgLoop;
 

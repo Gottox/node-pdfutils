@@ -25,7 +25,6 @@ Page::Page(Document &document, int index) {
 }
 
 Page::~Page() {
-	
 };
 
 
