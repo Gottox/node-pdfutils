@@ -1,0 +1,22 @@
+{
+  "name": "pdfconv",
+  "version": "0.0.1",
+  "author": "Enno Boland <eb@s01.de>",
+  "description": "Converts PDF documents to SVG or PNG.",
+  "main": "./index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Gottox/node-pdf2svg.git"
+  },
+  "keywords": [
+  ],
+  "dependencies" : {
+  },
+  "devDependencies": {
+  },
+  "scripts" : { "test" : "make test" },
+  "license": "GPL",
+  "engine": {
+    "node": ">=0.6"
+  }
+}
