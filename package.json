@@ -2,7 +2,7 @@
   "name": "pdfutils",
   "version": "0.0.1",
   "author": "Enno Boland <eb@s01.de>",
-  "description": "Converts PDF documents to SVG or PNG.",
+  "description": "tool for analyzing and converting PDF documents.",
   "main": "./index",
   "repository": {
     "type": "git",
