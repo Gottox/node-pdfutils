@@ -59,10 +59,10 @@ void PageJob::run() {
 		cairo_surface_write_to_png_stream(surface, PageJob::ProcChunk, this);
 	cairo_show_page(cr);
 	cairo_destroy(cr);
-	cairo_surface_destroy(surface);
 	if(cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS) {
 		// TODO ERROR
 	}
+	cairo_surface_destroy(surface);
 }
 
 cairo_status_t PageJob::ProcChunk(void *closure, const unsigned char *data, unsigned int length) {
