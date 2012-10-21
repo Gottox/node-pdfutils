@@ -11,6 +11,16 @@
 #include "page.h"
 #include "util.h"
 
+#define LOCK_JOB(x) puts("Job lock");uv_mutex_lock(&x->jobMutex);puts("Job got")
+#define UNLOCK_JOB(x) puts("Job unlock");uv_mutex_unlock(&x->jobMutex)
+
+#define LOCK_CHUNK(x) uv_mutex_lock(&x->chunkMutex)
+#define UNLOCK_CHUNK(x) uv_mutex_unlock(&x->chunkMutex)
+
+#define TRY_MESSAGE(x) (uv_sem_trywait(&x->messageSem) == 0)
+#define LOCK_MESSAGE(x) uv_sem_wait(&x->messageSem)
+#define UNLOCK_MESSAGE(x) uv_sem_post(&x->messageSem)
+
 using namespace v8;
 using namespace node;
 const static char *properties[] = {
@@ -56,15 +66,20 @@ Document::Document(char *buffer, const int buflen, Persistent<Function>& loadCb)
 }
 
 Document::~Document() {
-	uv_sem_wait(&this->jobSem);
+	LOCK_JOB(this);
 	while(this->finishedJobs.size())
 		this->finishedJobs.pop();
 	while(this->jobs.size())
 		this->jobs.pop();
-	uv_sem_post(&this->jobSem);
-	uv_sem_destroy(&this->jobSem);
+	UNLOCK_JOB(this);
+
+	uv_mutex_destroy(&this->jobMutex);
+
 	uv_mutex_destroy(&this->chunkMutex);
-};
+
+	uv_sem_destroy(&this->messageSem);
+
+}
 
 void Document::Init(Handle<Object> target) {
 	Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
@@ -89,7 +104,8 @@ Handle<Value> Document::New(const Arguments& args) {
 		return ThrowException(Exception::Error(String::New("first argument must be a Buffer")));
 
 	self->worker.data = self->message_finished.data = self->message_data.data = self;
-	uv_sem_init(&self->jobSem, 1);
+	uv_sem_init(&self->messageSem, 1);
+	uv_mutex_init(&self->jobMutex);
 	uv_mutex_init(&self->chunkMutex);
 
 
@@ -150,42 +166,55 @@ void Document::BackgroundLoaded(uv_work_t* handle) {
 }
 
 void Document::addJob(PageJob *job) {
-	uv_sem_wait(&this->jobSem);
+	LOCK_JOB(this);
 	this->jobs.push(job);
 	if(this->jobs.size() != 1) {
-		uv_sem_post(&this->jobSem);
+		UNLOCK_JOB(this);
 	}
 	else {
-		uv_loop_t *loop = uv_default_loop();
-		uv_async_init(loop, &this->message_finished, Document::WorkerFinished);
-		uv_async_init(loop, &this->message_data, Document::WorkerChunk);
-		uv_queue_work(loop, &this->worker, Document::Worker, Document::WorkerClean);
 		this->handle_.ClearWeak();
+		uv_loop_t *loop = uv_default_loop();
+		if(TRY_MESSAGE(this)) {
+			uv_async_init(loop, &this->message_finished, Document::WorkerFinished);
+			uv_async_init(loop, &this->message_data, Document::WorkerChunk);
+			UNLOCK_MESSAGE(this);
+		}
+		else {
+			this->needMessage = true;
+		}
+		UNLOCK_JOB(this);
+		uv_queue_work(loop, &this->worker, Document::Worker, Document::WorkerClean);
 	}
 }
 
 void Document::Worker(uv_work_t *handle) {
 	Document *self = (Document *)(handle->data);
 
+	LOCK_JOB(self);
 	while(self->jobs.size()) {
 		PageJob *pj = self->jobs.front();
-		uv_sem_post(&self->jobSem);
+		UNLOCK_JOB(self);
 
 		pj->run();
 
-		uv_sem_wait(&self->jobSem);
+		LOCK_JOB(self);
 		self->jobs.pop();
 		self->finishedJobs.push(pj);
 		uv_async_send(&self->message_finished);
 	}
+	LOCK_MESSAGE(self);
+	self->needMessage = false;
+	UNLOCK_JOB(self);
 }
 
 void Document::WorkerFinished(uv_async_t *handle, int status /*UNUSED*/) {
 	Document *self = (Document *)(handle->data);
+	HandleScope scope;
 
+	LOCK_JOB(self);
 	PageJob *pj = self->finishedJobs.front();
 	self->finishedJobs.pop();
-	uv_sem_post(&self->jobSem);
+	UNLOCK_JOB(self);
 
 	Local<Value> argv[] = {
 		Local<String>::New(String::New("end"))
@@ -199,25 +228,27 @@ void Document::WorkerFinished(uv_async_t *handle, int status /*UNUSED*/) {
 }
 
 void Document::addChunk(PageJob *job, const unsigned char* data, unsigned int length) {
-	Chunk chunk;
+	Chunk *chunk = new Chunk;
+	chunk->value = new char[length];
+	memcpy(chunk->value, data, length);
+	chunk->length = length;
+	chunk->pj = job;
 
-	chunk.value = new char[length];
-	memcpy(chunk.value, data, length);
-	chunk.length = length;
-	uv_mutex_lock(&this->chunkMutex);
-	this->chunks.push(&chunk);
-	uv_mutex_unlock(&this->chunkMutex);
+	LOCK_CHUNK(this);
+	this->chunks.push(chunk);
+	UNLOCK_CHUNK(this);
 	uv_async_send(&this->message_data);
 }
 
 void Document::WorkerChunk(uv_async_t *handle, int status /*UNUSED*/) {
 	Document *self = (Document *)(handle->data);
+	HandleScope scope;
 
-	uv_mutex_lock(&self->chunkMutex);
-	PageJob *pj = self->jobs.front();
+	LOCK_CHUNK(self);
 	Chunk *chunk = self->chunks.front();
 	self->chunks.pop();
-	uv_mutex_unlock(&self->chunkMutex);
+	UNLOCK_CHUNK(self);
+	PageJob *pj = chunk->pj;
 
 	Local<Value> argv[] = {
 		Local<String>::New(String::New("data")),
@@ -235,12 +266,15 @@ void Document::WorkerChunk(uv_async_t *handle, int status /*UNUSED*/) {
 void Document::WorkerClean(uv_work_t *handle) {
 	Document *self = (Document *)(handle->data);
 	HandleScope scope;
-	uv_close((uv_handle_t*) &self->message_data, NULL);
-	uv_close((uv_handle_t*) &self->message_finished, NULL);
-	uv_sem_post(&self->jobSem);
+	UNLOCK_MESSAGE(self);
 
-	self->MakeWeak();
 	while(!V8::IdleNotification()) {};
+
+	if(self->needMessage == false) {
+		uv_close((uv_handle_t*) &self->message_data, NULL);
+		uv_close((uv_handle_t*) &self->message_finished, NULL);
+		self->MakeWeak();
+	}
 }
 
 

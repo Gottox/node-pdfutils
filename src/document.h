@@ -9,7 +9,7 @@
 #include "page_job.h"
 
 struct Chunk {
-	PageJob *job;
+	PageJob *pj;
 	char *value;
 	int length;
 };
@@ -21,7 +21,9 @@ class Document : public node::ObjectWrap {
 		PopplerDocument *doc;
 		std::vector<Page*> *pages;
 		std::queue<PageJob*> jobs;
-		uv_sem_t jobSem;
+		uv_mutex_t jobMutex;
+		bool needMessage;
+		uv_sem_t messageSem;
 		std::queue<Chunk*> chunks;
 		uv_mutex_t chunkMutex;
 		uv_work_t worker;
