@@ -21,6 +21,7 @@ class PageJob : public node::ObjectWrap {
 		~PageJob();
 
 		void run();
+		void done();
 
 	private:
 		static cairo_status_t ProcChunk(void *closure, const unsigned char *data, unsigned int length);

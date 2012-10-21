@@ -11,8 +11,10 @@
 #include "page.h"
 #include "util.h"
 
-#define LOCK_JOB(x) puts("Job lock");uv_mutex_lock(&x->jobMutex);puts("Job got")
-#define UNLOCK_JOB(x) puts("Job unlock");uv_mutex_unlock(&x->jobMutex)
+#define LOCK_JOB(x) uv_mutex_lock(&x->jobMutex)
+#define UNLOCK_JOB(x) uv_mutex_unlock(&x->jobMutex)
+//#define LOCK_JOB(x) puts("Job lock");uv_mutex_lock(&x->jobMutex);puts("Job got")
+//#define UNLOCK_JOB(x) puts("Job unlock");uv_mutex_unlock(&x->jobMutex)
 
 #define LOCK_CHUNK(x) uv_mutex_lock(&x->chunkMutex)
 #define UNLOCK_CHUNK(x) uv_mutex_unlock(&x->chunkMutex)
@@ -180,7 +182,9 @@ void Document::addJob(PageJob *job) {
 			UNLOCK_MESSAGE(this);
 		}
 		else {
+			LOCK_MESSAGE(this);
 			this->needMessage = true;
+			UNLOCK_JOB(this);
 		}
 		UNLOCK_JOB(this);
 		uv_queue_work(loop, &this->worker, Document::Worker, Document::WorkerClean);
@@ -211,20 +215,26 @@ void Document::WorkerFinished(uv_async_t *handle, int status /*UNUSED*/) {
 	Document *self = (Document *)(handle->data);
 	HandleScope scope;
 
+	Document::WorkerChunk(handle, status);
 	LOCK_JOB(self);
-	PageJob *pj = self->finishedJobs.front();
-	self->finishedJobs.pop();
-	UNLOCK_JOB(self);
+	while(self->finishedJobs.size()) {
+		PageJob *pj = self->finishedJobs.front();
+		self->finishedJobs.pop();
+		UNLOCK_JOB(self);
 
-	Local<Value> argv[] = {
-		Local<String>::New(String::New("end"))
-	};
-	TryCatch try_catch;
-	Local<Function> emit = Function::Cast(*pj->handle_->Get(String::NewSymbol("emit")));
-	emit->Call(pj->handle_, 1, argv);
-	if (try_catch.HasCaught()) {
-		FatalException(try_catch);
+		pj->done();
+		Local<Value> argv[] = {
+			Local<String>::New(String::New("end"))
+		};
+		TryCatch try_catch;
+		Local<Function> emit = Function::Cast(*pj->handle_->Get(String::NewSymbol("emit")));
+		emit->Call(pj->handle_, 1, argv);
+		if (try_catch.HasCaught()) {
+			FatalException(try_catch);
+		}
+		LOCK_JOB(self);
 	}
+	UNLOCK_JOB(self);
 }
 
 void Document::addChunk(PageJob *job, const unsigned char* data, unsigned int length) {
@@ -245,28 +255,35 @@ void Document::WorkerChunk(uv_async_t *handle, int status /*UNUSED*/) {
 	HandleScope scope;
 
 	LOCK_CHUNK(self);
-	Chunk *chunk = self->chunks.front();
-	self->chunks.pop();
-	UNLOCK_CHUNK(self);
-	PageJob *pj = chunk->pj;
+	while(self->chunks.size()) {
+		Chunk *chunk = self->chunks.front();
+		self->chunks.pop();
+		UNLOCK_CHUNK(self);
+		PageJob *pj = chunk->pj;
 
-	Local<Value> argv[] = {
-		Local<String>::New(String::New("data")),
-		Local<Object>::New(Buffer::New(chunk->value, chunk->length)->handle_)
-	};
-	TryCatch try_catch;
-	Local<Function> emit = Function::Cast(*pj->handle_->Get(String::NewSymbol("emit")));
-	emit->Call(pj->handle_, 2, argv);
+		Local<Value> argv[] = {
+			Local<String>::New(String::New("data")),
+			Local<Object>::New(Buffer::New(chunk->value, chunk->length)->handle_)
+		};
+		TryCatch try_catch;
+		Local<Function> emit = Function::Cast(*pj->handle_->Get(String::NewSymbol("emit")));
+		emit->Call(pj->handle_, 2, argv);
 
-	if (try_catch.HasCaught()) {
-		FatalException(try_catch);
+		if (try_catch.HasCaught()) {
+			FatalException(try_catch);
+		}
+		LOCK_CHUNK(self);
 	}
+	UNLOCK_CHUNK(self);
 }
 
 void Document::WorkerClean(uv_work_t *handle) {
 	Document *self = (Document *)(handle->data);
 	HandleScope scope;
 	UNLOCK_MESSAGE(self);
+
+	WorkerChunk(&self->message_data, 0);
+	WorkerFinished(&self->message_finished, 0);
 
 	while(!V8::IdleNotification()) {};
 
@@ -283,7 +300,7 @@ Handle<Value> Document::GetProperty(Local< String > property, const AccessorInfo
 	Document* self = ObjectWrap::Unwrap<Document>(info.This());
 	char *key = str2chr(property);
 	GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(self->doc), key);
-	GValue gvalue = { 0 };
+	GValue gvalue;
 	g_value_init(&gvalue, spec->value_type);
 	g_object_get_property (G_OBJECT (self->doc), key, &gvalue);
 

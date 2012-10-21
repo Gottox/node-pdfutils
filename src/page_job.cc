@@ -22,12 +22,12 @@ PageJob::PageJob(Page &page, Format format) {
 	Handle<Value> argv[argc] = {
 		this->page->handle_
 	};
-	Local<Object> instance = (*constructor)->NewInstance(argc, argv);
+	Persistent<Object> instance = Persistent<Object>::New((*constructor)->NewInstance(argc, argv));
 	this->Wrap(instance);
 }
 
 PageJob::~PageJob() {
-};
+}
 
 void PageJob::Init(Handle<Object> target) {
 	Local<FunctionTemplate> tpl = FunctionTemplate::New();
@@ -59,6 +59,7 @@ void PageJob::run() {
 		cairo_surface_write_to_png_stream(surface, PageJob::ProcChunk, this);
 	cairo_show_page(cr);
 	cairo_destroy(cr);
+
 	if(cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS) {
 		// TODO ERROR
 	}
@@ -71,4 +72,8 @@ cairo_status_t PageJob::ProcChunk(void *closure, const unsigned char *data, unsi
 	self->page->document->addChunk(self, data, length);
 
 	return CAIRO_STATUS_SUCCESS;
+}
+
+void PageJob::done() {
+	this->MakeWeak();
 }
