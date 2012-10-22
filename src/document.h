@@ -34,11 +34,12 @@ class Document : public node::ObjectWrap {
 		void addChunk(PageJob *job, const unsigned char* data, unsigned int length);
 
 	private:
-		int buflen;
+		v8::Persistent<v8::Object> jsbuffer;
 		char *buffer;
+		int buflen;
 
 		std::queue<PageJob*> finishedJobs;
-		Document(char *buffer, const int length, v8::Persistent<v8::Function> &loadCb);
+		Document(v8::Persistent<v8::Object> &buffer, v8::Persistent<v8::Function> &loadCb);
 		~Document();
 
 		void loaded();

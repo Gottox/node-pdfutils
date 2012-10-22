@@ -61,9 +61,10 @@ const static char *pageModes[] = {
 	[POPPLER_PAGE_MODE_USE_ATTACHMENTS] =  "useAttachments"
 };
 
-Document::Document(char *buffer, const int buflen, Persistent<Function>& loadCb) {
-	this->buffer = buffer;
-	this->buflen = buflen;
+Document::Document(Persistent<Object> &buffer, Persistent<Function>& loadCb) {
+	this->jsbuffer = buffer;
+	this->buffer = Buffer::Data(buffer);
+	this->buflen = Buffer::Length(buffer);
 	this->loadCb = loadCb;
 }
 
@@ -81,6 +82,9 @@ Document::~Document() {
 
 	uv_sem_destroy(&this->messageSem);
 
+	this->handle_.Dispose();
+	this->jsbuffer.Dispose();
+
 }
 
 void Document::Init(Handle<Object> target) {
@@ -96,14 +100,17 @@ Handle<Value> Document::New(const Arguments& args) {
 	HandleScope scope;
 
 	Document* self;
-	Persistent<Function> cb = Persistent<Function>::New(Local<Function>::Cast(args[1]));
 	
-	if(args.Length() < 2 || !args[1]->IsFunction())
-		return ThrowException(Exception::Error(String::New("second argument must be a Function")));
-	else if(Buffer::HasInstance(args[0]))
-		self = new Document(Buffer::Data(args[0]->ToObject()), Buffer::Length(args[0]->ToObject()), cb);
-	else
+	if(args.Length() < 2)
+		return ThrowException(Exception::Error(String::New("constructor needs two arguments")));
+	else if(!Buffer::HasInstance(args[0]))
 		return ThrowException(Exception::Error(String::New("first argument must be a Buffer")));
+	else if(!args[1]->IsFunction())
+		return ThrowException(Exception::Error(String::New("second argument must be a Function")));
+
+	Persistent<Object> buffer = Persistent<Object>::New(args[0]->ToObject());
+	Persistent<Function> cb = Persistent<Function>::New(Local<Function>::Cast(args[1]));
+	self = new Document(buffer, cb);
 
 	self->worker.data = self->message_finished.data = self->message_data.data = self;
 	uv_sem_init(&self->messageSem, 1);
@@ -113,7 +120,7 @@ Handle<Value> Document::New(const Arguments& args) {
 
 	uv_queue_work(uv_default_loop(), &self->worker, Document::BackgroundLoad, Document::BackgroundLoaded);
 
-	self->Wrap(args.This());
+	self->Wrap(Persistent<Object>::New(args.This()));
 
 	return args.This();
 }
@@ -299,6 +306,7 @@ void Document::WorkerClean(uv_work_t *handle) {
 
 Handle<Value> Document::GetProperty(Local< String > property, const AccessorInfo &info) {
 	HandleScope scope;
+	return scope.Close(Local<Value>::New(Null()));
 	Document* self = ObjectWrap::Unwrap<Document>(info.This());
 	char *key = str2chr(property);
 	GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(self->doc), key);

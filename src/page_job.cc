@@ -29,6 +29,8 @@ PageJob::PageJob(Page &page, Format format) {
 }
 
 PageJob::~PageJob() {
+	puts("clear pagejob");
+	this->handle_.Dispose();
 }
 
 void PageJob::calcDimensions(Local<Object> opt) {

@@ -28,7 +28,10 @@ Page::Page(Document &document, int index) {
 }
 
 Page::~Page() {
+	puts("Page free");
 	g_free(this->label);
+	if(!this->handle_.IsEmpty())
+		this->handle_.Dispose();
 };
 
 
@@ -52,12 +55,11 @@ void Page::Init(Handle<Object> target) {
 	target->Set(String::NewSymbol("Page"), constructor);
 }
 
-Local<Object> Page::createObject() {
-	const unsigned argc = 1;
-	Handle<Value> argv[argc] = {
-		this->document->handle_
+Handle<Object> Page::createObject() {
+	Handle<Value> argv[] = {
+		//this->document->handle_
 	};
-	Local<Object> instance = (*constructor)->NewInstance(argc, argv);
+	Local<Object> instance = (*constructor)->NewInstance(LENGTH(argv), argv);
 	instance->Set(String::New("width"), Local<Number>::New(Number::New(this->w)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	instance->Set(String::New("height"), Local<Number>::New(Number::New(this->h)), 
@@ -66,7 +68,9 @@ Local<Object> Page::createObject() {
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	instance->Set(String::New("label"), Local<String>::New(String::New(this->label)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
-	this->Wrap(instance);
+	this->Wrap(Persistent<Object>::New(instance));
+
+	// TODO make weak if there are no jobs running on this page;
 
 	return instance;
 
