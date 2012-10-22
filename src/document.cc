@@ -224,11 +224,12 @@ void Document::WorkerFinished(uv_async_t *handle, int status /*UNUSED*/) {
 
 		pj->done();
 		Local<Value> argv[] = {
-			Local<String>::New(String::New("end"))
+			Local<String>::New(String::New("end")),
+			Local<Object>::New(pj->page->handle_)
 		};
 		TryCatch try_catch;
 		Local<Function> emit = Function::Cast(*pj->handle_->Get(String::NewSymbol("emit")));
-		emit->Call(pj->handle_, 1, argv);
+		emit->Call(pj->handle_, LENGTH(argv), argv);
 		if (try_catch.HasCaught()) {
 			FatalException(try_catch);
 		}
@@ -263,11 +264,12 @@ void Document::WorkerChunk(uv_async_t *handle, int status /*UNUSED*/) {
 
 		Local<Value> argv[] = {
 			Local<String>::New(String::New("data")),
-			Local<Object>::New(Buffer::New(chunk->value, chunk->length)->handle_)
+			Local<Object>::New(Buffer::New(chunk->value, chunk->length)->handle_),
+			Local<Object>::New(pj->page->handle_)
 		};
 		TryCatch try_catch;
 		Local<Function> emit = Function::Cast(*pj->handle_->Get(String::NewSymbol("emit")));
-		emit->Call(pj->handle_, 2, argv);
+		emit->Call(pj->handle_, LENGTH(argv), argv);
 
 		if (try_catch.HasCaught()) {
 			FatalException(try_catch);

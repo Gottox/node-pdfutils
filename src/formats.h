@@ -3,6 +3,7 @@
 enum Format {
 	FORMAT_SVG,
 	FORMAT_PNG,
+	FORMAT_TEXT,
 	FORMAT_UNKOWN
 };
 

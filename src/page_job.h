@@ -19,12 +19,18 @@ class PageJob : public node::ObjectWrap {
 		Format format;
 		PageJob(Page &page, Format format);
 		~PageJob();
+		void calcDimensions(v8::Local<v8::Object> opt);
 
 		void run();
 		void done();
 
 	private:
+		double w;
+		double h;
 		static cairo_status_t ProcChunk(void *closure, const unsigned char *data, unsigned int length);
+		void toPNG();
+		void toSVG();
+		void toText();
 };
 
 #endif

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <cairo.h>
 #include <cairo-svg.h>
+#include <algorithm>
 #include "page.h"
 #include "page_job.h"
 #include "document.h"
@@ -13,6 +14,7 @@
 
 using namespace v8;
 using namespace node;
+using namespace std;
 
 
 Persistent<Function> Page::constructor;
@@ -60,6 +62,8 @@ Local<Object> Page::createObject() {
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	instance->Set(String::New("height"), Local<Number>::New(Number::New(this->h)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
+	instance->Set(String::New("index"), Local<Number>::New(Number::New(this->index)), 
+			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	instance->Set(String::New("label"), Local<String>::New(String::New(this->label)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	this->Wrap(instance);
@@ -70,9 +74,8 @@ Local<Object> Page::createObject() {
 
 Handle<Value> Page::ConvertTo(const Arguments& args) {
 	HandleScope scope;
-	int i;
-
 	Page* self = ObjectWrap::Unwrap<Page>(args.This());
+	int i;
 
 	char *name = str2chr(args.Callee()->GetName());
 	Format format = FORMAT_UNKOWN;
@@ -83,7 +86,13 @@ Handle<Value> Page::ConvertTo(const Arguments& args) {
 	if(format == FORMAT_UNKOWN)
 		return ThrowException(Exception::Error(String::New("unkown format to convert to")));
 
+
 	PageJob *pj = new PageJob(*self, format);
+	if(args.Length() >= 1) {
+		if(!args[0]->IsObject())
+			return ThrowException(Exception::Error(String::New("first argument must be an Object")));
+		pj->calcDimensions(args[0]->ToObject());
+	}
 	self->document->addJob(pj);
 
 	return pj->handle_;
