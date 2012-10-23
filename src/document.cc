@@ -13,11 +13,13 @@
 
 #define LOCK_JOB(x) uv_mutex_lock(&x->jobMutex)
 #define UNLOCK_JOB(x) uv_mutex_unlock(&x->jobMutex)
-//#define LOCK_JOB(x) puts("Job lock");uv_mutex_lock(&x->jobMutex);puts("Job got")
-//#define UNLOCK_JOB(x) puts("Job unlock");uv_mutex_unlock(&x->jobMutex)
+//#define LOCK_JOB(x) printf("Job lock %i\n", __LINE__);uv_mutex_lock(&x->jobMutex);printf("Job got %i\n", __LINE__)
+//#define UNLOCK_JOB(x) printf("Job unlock %i\n", __LINE__);uv_mutex_unlock(&x->jobMutex)
 
 #define LOCK_CHUNK(x) uv_mutex_lock(&x->chunkMutex)
 #define UNLOCK_CHUNK(x) uv_mutex_unlock(&x->chunkMutex)
+//#define LOCK_CHUNK(x) printf("Chunk lock %i\n", __LINE__);uv_mutex_lock(&x->chunkMutex);printf("Chunk got %i\n", __LINE__);
+//#define UNLOCK_CHUNK(x) printf("Chunk unlock %i\n", __LINE__);uv_mutex_unlock(&x->chunkMutex)
 
 #define TRY_MESSAGE(x) (uv_sem_trywait(&x->messageSem) == 0)
 #define LOCK_MESSAGE(x) uv_sem_wait(&x->messageSem)

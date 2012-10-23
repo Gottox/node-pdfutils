@@ -3,6 +3,8 @@
 #include <node_buffer.h>
 #include <poppler.h>
 #include <stdlib.h>
+#include <limits>
+#include <algorithm>
 #include <cairo.h>
 #include <cairo-svg.h>
 #include "page.h"
@@ -11,6 +13,7 @@
 
 using namespace v8;
 using namespace node;
+using namespace std;
 
 Persistent<Function> PageJob::constructor;
 
@@ -34,40 +37,53 @@ PageJob::~PageJob() {
 }
 
 void PageJob::calcDimensions(Local<Object> opt) {
-	double width = -1;
-	double height = -1;
-	double maxHeight = -1;
-	double maxWidth = -1;
-	double minHeight = -1;
-	double minWidth = -1;
-	double ratio = this->w / this->h;
+	double maxHeight = -1.0;
+	double maxWidth = -1.0;
+	double minHeight = 1.0;
+	double minWidth = 1.0;
+	double aspect = this->w / this->h;
 
 	if(opt->Has(String::NewSymbol("maxWidth")))
-		maxWidth = opt->Get(String::NewSymbol("maxWidth"))->ToNumber()->Value();
+		maxWidth = max(1.0, opt->Get(String::NewSymbol("maxWidth"))->ToNumber()->Value());
 	if(opt->Has(String::NewSymbol("maxHeight")))
-		maxHeight = opt->Get(String::NewSymbol("maxHeight"))->ToNumber()->Value();
+		maxHeight = max(1.0, opt->Get(String::NewSymbol("maxHeight"))->ToNumber()->Value());
 	if(opt->Has(String::NewSymbol("minWidth")))
-		minWidth = opt->Get(String::NewSymbol("minWidth"))->ToNumber()->Value();
+		minWidth = max(1.0, opt->Get(String::NewSymbol("minWidth"))->ToNumber()->Value());
 	if(opt->Has(String::NewSymbol("minHeight")))
-		minHeight = opt->Get(String::NewSymbol("minHeight"))->ToNumber()->Value();
+		minHeight = max(1.0, opt->Get(String::NewSymbol("minHeight"))->ToNumber()->Value());
 	if(opt->Has(String::NewSymbol("width")))
-		width = opt->Get(String::NewSymbol("width"))->ToNumber()->Value();
+		maxWidth = minWidth = max(1.0, opt->Get(String::NewSymbol("width"))->ToNumber()->Value());
 	if(opt->Has(String::NewSymbol("height")))
-		height = opt->Get(String::NewSymbol("height"))->ToNumber()->Value();
+		maxHeight = minHeight = max(1.0, opt->Get(String::NewSymbol("height"))->ToNumber()->Value());
 
-	// TODO max/min
 
-	if(width >= 0 && height >= 0) {
-		this->w = width;
-		this->h = height;
-	}
-	else if(width >= 0) {
-		this->w = width;
-		this->h = width / ratio;
-	}
-	else if(height >= 0) {
-		this->h = height;
-		this->w = width * ratio;
+	double neverReached = minHeight * minWidth * max(1.0, maxHeight) * max(1.0, maxWidth) * this->h * this->w;
+	if(maxHeight <= 0.0)
+		maxHeight = neverReached;
+	if(maxWidth <= 0.0)
+		maxHeight = neverReached;
+
+	for(int i = 0; true; i++) {
+		if (this->w > maxWidth) {
+			this->w = maxWidth;
+			this->h = max(maxWidth / aspect, minHeight);
+		}
+		else if (this->w < minWidth) {
+			this->w = minWidth;
+			this->h = min(minWidth / aspect, maxHeight);
+		}
+
+		if(i)
+			break;
+
+		if (this->h > maxHeight){
+			this->h = maxHeight;
+			this->w = max(maxHeight * aspect, minWidth);
+		}
+		else if (this->h < minHeight){
+			this->h = minHeight;
+			this->w = min(minHeight * aspect, maxWidth);
+		}
 	}
 }
 
