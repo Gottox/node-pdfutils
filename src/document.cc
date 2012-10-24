@@ -91,7 +91,7 @@ Document::~Document() {
 
 void Document::Init(Handle<Object> target) {
 	Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
-	tpl->SetClassName(String::NewSymbol("PDF"));
+	tpl->SetClassName(String::NewSymbol("PDFDocument"));
 	tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
 	Persistent<Function> constructor = Persistent<Function>::New(tpl->GetFunction());
