@@ -44,7 +44,7 @@ class Document : public node::ObjectWrap {
 
 		void loaded();
 		static v8::Handle<v8::Value> New(const v8::Arguments& args);
-		static v8::Handle<v8::Value> GetProperty(v8::Local< v8::String > property, const v8::AccessorInfo &info);
+		v8::Handle<v8::Value> getProperty(const char *key);
 		
 		static void BackgroundLoad(uv_work_t* req);
 		static void BackgroundLoaded(uv_work_t* req);

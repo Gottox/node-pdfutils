@@ -89,7 +89,7 @@ void PageJob::calcDimensions(Local<Object> opt) {
 
 void PageJob::Init(Handle<Object> target) {
 	Local<FunctionTemplate> tpl = FunctionTemplate::New();
-	tpl->SetClassName(String::NewSymbol("PDFJob"));
+	tpl->SetClassName(String::NewSymbol("PDFPageJob"));
 	tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
 	constructor = Persistent<Function>::New(tpl->GetFunction());

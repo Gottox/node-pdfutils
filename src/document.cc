@@ -24,24 +24,27 @@
 #define TRY_MESSAGE(x) (uv_sem_trywait(&x->messageSem) == 0)
 #define LOCK_MESSAGE(x) uv_sem_wait(&x->messageSem)
 #define UNLOCK_MESSAGE(x) uv_sem_post(&x->messageSem)
+//#define TRY_MESSAGE(x) (printf("try message lock %i\n", __LINE__) && uv_sem_trywait(&x->messageSem) == 0)
+//#define LOCK_MESSAGE(x) printf("message lock %i\n", __LINE__); uv_sem_wait(&x->messageSem); printf("message got %i\n", __LINE__);
+//#define UNLOCK_MESSAGE(x) printf("message unlock %i\n", __LINE__); uv_sem_post(&x->messageSem)
 
 using namespace v8;
 using namespace node;
-const static char *properties[] = {
-	"author",
-	"creation-date",
-	"creator",
-	"format",
-	"keywords",
-	"linearized",
-	"metadata",
-	"mod-date",
-	"page-layout",
-	"page-mode",
-	"permissions",
-	"producer",
-	"subject",
-	"title",
+const static char *properties[][2] = {
+	{ "author", "author" },
+	{ "creation-date", "creationDate" },
+	{ "creator", "creator" },
+	{ "format", "format" },
+	{ "keywords", "keywords" },
+	{ "linearized", "linearized" },
+	{ "metadata", "metadata" },
+	{ "mod-date", "modDate" },
+	{ "page-layout", "pageLayout" },
+	{ "page-mode", "pageMode" },
+	{ "permissions", "permissions" },
+	{ "producer", "producer" },
+	{ "subject", "subject" },
+	{ "title", "title" },
 };
 
 const static char *pageLayouts[] = {
@@ -91,7 +94,7 @@ Document::~Document() {
 
 void Document::Init(Handle<Object> target) {
 	Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
-	tpl->SetClassName(String::NewSymbol("PDF"));
+	tpl->SetClassName(String::NewSymbol("PDFDocument"));
 	tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
 	Persistent<Function> constructor = Persistent<Function>::New(tpl->GetFunction());
@@ -156,10 +159,8 @@ void Document::BackgroundLoaded(uv_work_t* handle) {
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 
 	for(i = 0; i < LENGTH(properties); i++) {
-		self->handle_->SetAccessor(String::New(properties[i]), GetProperty, 0 /* setter */, Handle<Value>(), 
-				static_cast<v8::AccessControl>(v8::DEFAULT), 
-				static_cast<v8::PropertyAttribute>(v8::ReadOnly)
-				);
+		self->handle_->Set(String::New(properties[i][1]), self->getProperty(properties[i][0]),
+				static_cast<v8::PropertyAttribute>(v8::ReadOnly));
 	}
 
 	Local<Value> argv[] = {
@@ -291,10 +292,11 @@ void Document::WorkerChunk(uv_async_t *handle, int status /*UNUSED*/) {
 void Document::WorkerClean(uv_work_t *handle) {
 	Document *self = (Document *)(handle->data);
 	HandleScope scope;
-	UNLOCK_MESSAGE(self);
 
 	WorkerChunk(&self->message_data, 0);
 	WorkerFinished(&self->message_finished, 0);
+
+	UNLOCK_MESSAGE(self);
 
 	while(!V8::IdleNotification()) {};
 
@@ -306,15 +308,13 @@ void Document::WorkerClean(uv_work_t *handle) {
 }
 
 
-Handle<Value> Document::GetProperty(Local< String > property, const AccessorInfo &info) {
+Handle<Value> Document::getProperty(const char *key) {
 	HandleScope scope;
-	return scope.Close(Local<Value>::New(Null()));
-	Document* self = ObjectWrap::Unwrap<Document>(info.This());
-	char *key = str2chr(property);
-	GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(self->doc), key);
 	GValue gvalue;
+	bzero(&gvalue, sizeof(GValue));
+	GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(this->doc), key);
 	g_value_init(&gvalue, spec->value_type);
-	g_object_get_property (G_OBJECT (self->doc), key, &gvalue);
+	g_object_get_property (G_OBJECT (this->doc), key, &gvalue);
 
 	Local<Value> val = Local<Value>::New(Null());
 	const char *cValue = NULL;
@@ -340,11 +340,16 @@ Handle<Value> Document::GetProperty(Local< String > property, const AccessorInfo
 			iValue = g_value_get_flags(&gvalue);
 
 			Local<Object> o = Object::New();
-			o->Set(String::NewSymbol("print"), Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_PRINT)));
-			o->Set(String::NewSymbol("modify"), Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_MODIFY)));
-			o->Set(String::NewSymbol("copy"), Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_COPY)));
-			o->Set(String::NewSymbol("notes"), Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_ADD_NOTES)));
-			o->Set(String::NewSymbol("fillForm"), Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_FILL_FORM)));
+			o->Set(String::NewSymbol("print"),
+					Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_PRINT)));
+			o->Set(String::NewSymbol("modify"),
+					Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_MODIFY)));
+			o->Set(String::NewSymbol("copy"),
+					Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_COPY)));
+			o->Set(String::NewSymbol("notes"),
+					Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_ADD_NOTES)));
+			o->Set(String::NewSymbol("fillForm"),
+					Local<Value>::New(Boolean::New(iValue & POPPLER_PERMISSIONS_OK_TO_FILL_FORM)));
 			val = o;
 		}
 		else {
