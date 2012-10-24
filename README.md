@@ -15,6 +15,23 @@ But that's still on the todo.
 The library is currently beta. This means it has incomplete error handling and
 it lacks a testing suite.
 
+Installation
+------------
+
+To install pdfutils you have to install libpoppler-glib first.
+
+Under Debian execute:
+
+	apt-get install libpoppler-glib-dev libpoppler-glib8 libcairo2-dev libcairo2
+
+Under MacOS using Macports use:
+
+	port install poppler
+
+Then install pdfutils
+
+	npm install pdfutils
+
 Usage
 -----
 
