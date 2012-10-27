@@ -23,7 +23,7 @@ function pageHtml(doc, match, res) {
 	res.write('<a href="/">^ Dashboard ^</a>\n');
 	if(match[1] <= doc.length-1)
 		res.write('<a href="'+(parseInt(match[1])+1)+'.html">Next -&gt;</a>\n');
-	res.end("<br><img src='/"+match[1]+".svg'>");
+	res.end("<br><embed width='600' src='"+match[1]+".svg' type='image/svg+xml' />");
 }
 
 function page(doc, match, res) {
@@ -31,7 +31,7 @@ function page(doc, match, res) {
 	match[2] == 'png';
 	if(match[2] == 'svg') {
 		res.writeHead(200, {'Content-Type': 'image/svg+xml'});
-		doc[match[1]].asSVG().pipe(res, {end: true});
+		doc[match[1]].asSVG({minWidth: 600}).pipe(res, {end: true});
 	}
 	else {
 		res.writeHead(200, {'Content-Type': 'image/png'});

@@ -189,13 +189,11 @@ void Document::addJob(PageJob *job) {
 		if(TRY_MESSAGE(this)) {
 			uv_async_init(loop, &this->message_finished, Document::WorkerFinished);
 			uv_async_init(loop, &this->message_data, Document::WorkerChunk);
-			UNLOCK_MESSAGE(this);
 		}
 		else {
-			LOCK_MESSAGE(this);
 			this->needMessage = true;
-			UNLOCK_JOB(this);
 		}
+		UNLOCK_MESSAGE(this);
 		UNLOCK_JOB(this);
 		uv_queue_work(loop, &this->worker, Document::Worker, Document::WorkerClean);
 	}
