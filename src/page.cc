@@ -9,7 +9,6 @@
 #include "page.h"
 #include "page_job.h"
 #include "document.h"
-#include "util.h"
 #include "formats.h"
 
 using namespace v8;
@@ -28,7 +27,6 @@ Page::Page(Document &document, int index) {
 }
 
 Page::~Page() {
-	puts("Page free");
 	g_free(this->label);
 	if(!this->handle_.IsEmpty())
 		this->handle_.Dispose();
@@ -81,10 +79,12 @@ Handle<Value> Page::ConvertTo(const Arguments& args) {
 	Page* self = ObjectWrap::Unwrap<Page>(args.This());
 	int i;
 
-	char *name = str2chr(args.Callee()->GetName());
+	String::AsciiValue callee(args.Callee()->GetName());
+	char *name = *callee;
+	int len = callee.length();
 	Format format = FORMAT_UNKOWN;
 	for(i = 0; formatFunctions[i] != NULL && format == FORMAT_UNKOWN; i++) {
-		if(strcmp(name, formatFunctions[i]) == 0)
+		if(strncmp(name, formatFunctions[i], len) == 0)
 			format = (Format)i;
 	}
 	if(format == FORMAT_UNKOWN)

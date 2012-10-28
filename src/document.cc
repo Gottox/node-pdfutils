@@ -9,7 +9,6 @@
 #include <unistd.h>
 #include "document.h"
 #include "page.h"
-#include "util.h"
 
 #define LOCK_JOB(x) uv_mutex_lock(&x->jobMutex)
 #define UNLOCK_JOB(x) uv_mutex_unlock(&x->jobMutex)
