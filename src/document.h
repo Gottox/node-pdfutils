@@ -8,6 +8,8 @@
 #include "page.h"
 #include "page_job.h"
 
+#define LENGTH(x) (sizeof x / sizeof x[0])
+
 struct Chunk {
 	PageJob *pj;
 	char *value;
