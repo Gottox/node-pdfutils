@@ -116,13 +116,13 @@ members:
  * __label__: label of this page or null if no label was defined.
  * __asSVG(opts)__: returns an instance of PageJob described below, opts is an
    optional argument with an Object with the following optional fields:
-   * _maxWidth_: maximal width of the resulting SVG in pt.
-   * _minWidth_: minimal width of the resulting SVG in pt.
-   * _maxHeight_: maximal height of the resulting SVG in pt.
-   * _minHeight_: minimal height of the resulting SVG in pt.
-   * _width_: the width of the resulting SVG in pt. Overwrites minWidth and
+   * _maxWidth_: maximal width of the resulting SVG in px.
+   * _minWidth_: minimal width of the resulting SVG in px.
+   * _maxHeight_: maximal height of the resulting SVG in px.
+   * _minHeight_: minimal height of the resulting SVG in px.
+   * _width_: the width of the resulting SVG in px. Overwrites minWidth and
      maxWidth.
-   * _height_: the height of the resulting SVG in pt. Overwrites minHeight and
+   * _height_: the height of the resulting SVG in px. Overwrites minHeight and
      maxHeight.
  * __asPNG(opts)__: returns an instance of PageJob described below, opts is an
    optional argument with an Object with the following optional fields:
