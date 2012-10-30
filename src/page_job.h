@@ -6,6 +6,7 @@
 #include <cairo.h>
 #include <queue>
 #include "formats.h"
+#include "svg_size_hack.h"
 
 class Document;
 
@@ -25,6 +26,7 @@ class PageJob : public node::ObjectWrap {
 		void done();
 
 	private:
+		SvgSizeHack *sizeHack;
 		double w;
 		double h;
 		static cairo_status_t ProcChunk(void *closure, const unsigned char *data, unsigned int length);

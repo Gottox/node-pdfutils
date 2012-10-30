@@ -23,6 +23,8 @@ PageJob::PageJob(Page &page, Format format) {
 	this->w = page.w;
 	this->h = page.h;
 
+	this->sizeHack = format == FORMAT_SVG ? new SvgSizeHack() : NULL;
+
 	const unsigned argc = 1;
 	Handle<Value> argv[argc] = {
 		this->page->handle_
@@ -163,6 +165,15 @@ void PageJob::run() {
 
 cairo_status_t PageJob::ProcChunk(void *closure, const unsigned char *data, unsigned int length) {
 	PageJob *self = (PageJob *)closure;
+
+	if(self->sizeHack != NULL) {
+		unsigned char *dt = new unsigned char[length];
+		memcpy(dt, data, length);
+		self->sizeHack->parse(dt, length);
+		data = dt;
+		if(self->sizeHack->finished)
+			self->sizeHack = NULL;
+	}
 
 	self->page->document->addChunk(self, data, length);
 
