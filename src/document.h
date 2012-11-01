@@ -7,13 +7,14 @@
 #include <poppler.h>
 #include "page.h"
 #include "page_job.h"
+#include "util.h"
 
-#define LENGTH(x) (sizeof x / sizeof x[0])
 
-struct Chunk {
-	PageJob *pj;
-	char *value;
-	int length;
+enum WorkerState {
+	WORKER_INACTIVE,
+	WORKER_STARTING,
+	WORKER_PROCESSING,
+	WORKER_STOPPING
 };
 
 class Document : public node::ObjectWrap {
@@ -25,22 +26,17 @@ class Document : public node::ObjectWrap {
 		std::queue<PageJob*> jobs;
 		uv_mutex_t jobMutex;
 		bool needMessage;
-		uv_sem_t messageSem;
-		std::queue<Chunk*> chunks;
-		uv_mutex_t chunkMutex;
+		uv_mutex_t stateMutex;
+		WorkerState state;
 		uv_work_t worker;
-		uv_async_t message_finished;
-		uv_async_t message_data;
 		
 		void addJob(PageJob *job);
-		void addChunk(PageJob *job, const unsigned char* data, unsigned int length);
 
 	private:
 		v8::Persistent<v8::Object> jsbuffer;
 		char *buffer;
 		int buflen;
 
-		std::queue<PageJob*> finishedJobs;
 		Document(v8::Persistent<v8::Object> &buffer, v8::Persistent<v8::Function> &loadCb);
 		~Document();
 
@@ -52,8 +48,6 @@ class Document : public node::ObjectWrap {
 		static void BackgroundLoaded(uv_work_t* req);
 
 		static void Worker(uv_work_t *handle);
-		static void WorkerFinished(uv_async_t *handle, int status /*UNUSED*/);
-		static void WorkerChunk(uv_async_t *handle, int status /*UNUSED*/);
 		static void WorkerClean(uv_work_t *handle);
 };
 

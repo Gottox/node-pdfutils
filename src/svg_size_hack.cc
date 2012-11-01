@@ -17,8 +17,8 @@ SvgSizeHack::SvgSizeHack() {
 SvgSizeHack::~SvgSizeHack() {
 }
 
-void SvgSizeHack::parse(unsigned char *chunk, int length) {
-	unsigned char *p = chunk;
+void SvgSizeHack::parse(char *chunk, int length) {
+	char *p = chunk;
 	for(int i = 0; i < length; i++, p++) {
 		if(this->finished)
 			return;
@@ -63,7 +63,7 @@ void SvgSizeHack::parse(unsigned char *chunk, int length) {
 			state = ATTRIBUTE_VALUE;
 			break;
 		case ATTRIBUTE_VALUE:
-			if(this->attribute != ATTR_UNKNOWN && this->isSVGTag && buffer[bufpos-1] == 'p' && *p == 't') {
+			if(this->attribute != ATTR_UNKNOWN && this->isSVGTag && p[-1] == 'p' && p[0] == 't') {
 				*p = 'x';
 				this->widthDone |= this->attribute == ATTR_WIDTH;
 				this->heightDone |= this->attribute == ATTR_HEIGHT;
@@ -77,14 +77,8 @@ void SvgSizeHack::parse(unsigned char *chunk, int length) {
 		case ATTRIBUTE_CLOSE_QUOTES:
 			state = *p == '>' ? WHITESPACE : TAG_WHITESPACE;
 		}
-		switch(state) {
-		case TAG_NAME:
-		case ATTRIBUTE_NAME:
-		case ATTRIBUTE_VALUE:
+
+		if(state == TAG_NAME || state == ATTRIBUTE_NAME)
 			this->addBuffer(*p);
-			break;
-		default:
-			break;
-		}
 	}
 }

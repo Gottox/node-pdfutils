@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cairo.h>
 #include <cairo-svg.h>
+#include <string.h>
+#include <uv.h>
 #include "page.h"
 #include "page_job.h"
 #include "document.h"
@@ -15,7 +17,19 @@ using namespace v8;
 using namespace node;
 using namespace std;
 
+#define LOCK_CHUNK(x) uv_mutex_lock(&x->chunkMutex)
+#define UNLOCK_CHUNK(x) uv_mutex_unlock(&x->chunkMutex)
+
 Persistent<Function> PageJob::constructor;
+
+void PageJob::Init(Handle<Object> target) {
+	Local<FunctionTemplate> tpl = FunctionTemplate::New();
+	tpl->SetClassName(String::NewSymbol("PDFPageJob"));
+	tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+	constructor = Persistent<Function>::New(tpl->GetFunction());
+	target->Set(String::NewSymbol("PageJob"), constructor);
+}
 
 PageJob::PageJob(Page &page, Format format) {
 	this->page = &page;
@@ -23,13 +37,23 @@ PageJob::PageJob(Page &page, Format format) {
 	this->w = page.w;
 	this->h = page.h;
 
-	this->sizeHack = format == FORMAT_SVG ? new SvgSizeHack() : NULL;
+	if(format == FORMAT_SVG)
+		this->sizeHack = new SvgSizeHack();
+	else
+		this->sizeHack = NULL;
 
-	const unsigned argc = 1;
-	Handle<Value> argv[argc] = {
+
+	Handle<Value> argv[] = {
 		this->page->handle_
 	};
-	Persistent<Object> instance = Persistent<Object>::New((*constructor)->NewInstance(argc, argv));
+	Persistent<Object> instance = Persistent<Object>::New((*constructor)->NewInstance(LENGTH(argv), argv));
+
+	uv_loop_t *loop = uv_default_loop();
+	uv_async_init(loop, &this->message_chunk, PageJob::ChunkCompleted);
+	uv_async_init(loop, &this->message_finished, PageJob::JobCompleted);
+	this->message_finished.data = this->message_chunk.data = this;
+	uv_mutex_init(&this->chunkMutex);
+
 	this->Wrap(instance);
 }
 
@@ -88,15 +112,6 @@ void PageJob::calcDimensions(Local<Object> opt) {
 	}
 }
 
-void PageJob::Init(Handle<Object> target) {
-	Local<FunctionTemplate> tpl = FunctionTemplate::New();
-	tpl->SetClassName(String::NewSymbol("PDFPageJob"));
-	tpl->InstanceTemplate()->SetInternalFieldCount(1);
-
-	constructor = Persistent<Function>::New(tpl->GetFunction());
-	target->Set(String::NewSymbol("PageJob"), constructor);
-}
-
 void PageJob::toSVG() {
 	cairo_surface_t *surface;
 	cairo_t *cr;
@@ -137,8 +152,8 @@ void PageJob::toPNG() {
 }
 
 void PageJob::toText() {
-	char *text = poppler_page_get_text(this->page->pg);
-	this->page->document->addChunk(this, (unsigned char*)text, strlen(text) + 1);
+	unsigned char *text = (unsigned char *)poppler_page_get_text(this->page->pg);
+	ProcChunk(this, text, strlen((char *)text));
 }
 
 void PageJob::run() {
@@ -161,25 +176,81 @@ void PageJob::run() {
 		// TODO ERROR
 		break;
 	}
+
+	uv_async_send(&this->message_finished);
 }
 
 cairo_status_t PageJob::ProcChunk(void *closure, const unsigned char *data, unsigned int length) {
 	PageJob *self = (PageJob *)closure;
 
+	Chunk *chunk = new Chunk;
+	chunk->value = new char[length];
+	chunk->length = length;
+	memcpy(chunk->value, data, length);
+
 	if(self->sizeHack != NULL) {
-		unsigned char *dt = new unsigned char[length];
-		memcpy(dt, data, length);
-		self->sizeHack->parse(dt, length);
-		data = dt;
-		if(self->sizeHack->finished)
+		self->sizeHack->parse(chunk->value, length);
+		if(self->sizeHack->finished) {
 			self->sizeHack = NULL;
+		}
 	}
 
-	self->page->document->addChunk(self, data, length);
+	LOCK_CHUNK(self);
+	self->chunks.push(chunk);
+	UNLOCK_CHUNK(self);
+	uv_async_send(&self->message_chunk);
 
 	return CAIRO_STATUS_SUCCESS;
 }
 
-void PageJob::done() {
-	this->MakeWeak();
+void PageJob::ChunkCompleted(uv_async_t* handle, int status) {
+	PageJob *self = (PageJob *)(handle->data);
+	HandleScope scope;
+
+	LOCK_CHUNK(self);
+	while(self->chunks.empty() == false) {
+		Chunk *chunk = self->chunks.front();
+		self->chunks.pop();
+		UNLOCK_CHUNK(self);
+
+		Local<Value> argv[] = {
+			Local<String>::New(String::New("data")),
+			Local<Object>::New(Buffer::New(chunk->value, chunk->length)->handle_),
+			Local<Object>::New(self->page->handle_)
+		};
+		TryCatch try_catch;
+		Local<Function> emit = Function::Cast(*self->handle_->Get(String::NewSymbol("emit")));
+		emit->Call(self->handle_, LENGTH(argv), argv);
+
+		if (try_catch.HasCaught()) {
+			FatalException(try_catch);
+		}
+
+		LOCK_CHUNK(self);
+	}
+	UNLOCK_CHUNK(self);
 }
+
+void PageJob::JobCompleted(uv_async_t* handle, int status) {
+	PageJob *self = (PageJob *)(handle->data);
+	HandleScope scope;
+
+	PageJob::ChunkCompleted(&self->message_chunk, status);
+
+	Local<Value> argv[] = {
+		Local<String>::New(String::New("end")),
+		Local<Object>::New(self->page->handle_)
+	};
+
+	TryCatch try_catch;
+	Local<Function> emit = Function::Cast(*self->handle_->Get(String::NewSymbol("emit")));
+	emit->Call(self->handle_, LENGTH(argv), argv);
+	if (try_catch.HasCaught()) {
+		FatalException(try_catch);
+	}
+
+	self->MakeWeak();
+	uv_close((uv_handle_t*) &self->message_chunk, NULL);
+	uv_close((uv_handle_t*) &self->message_finished, NULL);
+}
+

@@ -90,7 +90,6 @@ Handle<Value> Page::ConvertTo(const Arguments& args) {
 	if(format == FORMAT_UNKOWN)
 		return ThrowException(Exception::Error(String::New("unkown format to convert to")));
 
-
 	PageJob *pj = new PageJob(*self, format);
 	if(args.Length() >= 1) {
 		if(!args[0]->IsObject())

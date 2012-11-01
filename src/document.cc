@@ -15,14 +15,8 @@
 //#define LOCK_JOB(x) printf("Job lock %i\n", __LINE__);uv_mutex_lock(&x->jobMutex);printf("Job got %i\n", __LINE__)
 //#define UNLOCK_JOB(x) printf("Job unlock %i\n", __LINE__);uv_mutex_unlock(&x->jobMutex)
 
-#define LOCK_CHUNK(x) uv_mutex_lock(&x->chunkMutex)
-#define UNLOCK_CHUNK(x) uv_mutex_unlock(&x->chunkMutex)
-//#define LOCK_CHUNK(x) printf("Chunk lock %i\n", __LINE__);uv_mutex_lock(&x->chunkMutex);printf("Chunk got %i\n", __LINE__);
-//#define UNLOCK_CHUNK(x) printf("Chunk unlock %i\n", __LINE__);uv_mutex_unlock(&x->chunkMutex)
-
-#define TRY_MESSAGE(x) (uv_sem_trywait(&x->messageSem) == 0)
-#define LOCK_MESSAGE(x) uv_sem_wait(&x->messageSem)
-#define UNLOCK_MESSAGE(x) uv_sem_post(&x->messageSem)
+#define LOCK_STATE(x) uv_mutex_lock(&x->stateMutex)
+#define UNLOCK_STATE(x) uv_mutex_unlock(&x->stateMutex)
 //#define TRY_MESSAGE(x) (printf("try message lock %i\n", __LINE__) && uv_sem_trywait(&x->messageSem) == 0)
 //#define LOCK_MESSAGE(x) printf("message lock %i\n", __LINE__); uv_sem_wait(&x->messageSem); printf("message got %i\n", __LINE__);
 //#define UNLOCK_MESSAGE(x) printf("message unlock %i\n", __LINE__); uv_sem_post(&x->messageSem)
@@ -70,21 +64,24 @@ Document::Document(Persistent<Object> &buffer, Persistent<Function>& loadCb) {
 	this->buffer = Buffer::Data(buffer);
 	this->buflen = Buffer::Length(buffer);
 	this->loadCb = loadCb;
+	this->state = WORKER_INACTIVE;
+
+	uv_mutex_init(&this->jobMutex);
+	uv_mutex_init(&this->stateMutex);
+
+	this->worker.data = this;
+	uv_queue_work(uv_default_loop(), &this->worker, Document::BackgroundLoad, Document::BackgroundLoaded);
+
 }
 
 Document::~Document() {
 	LOCK_JOB(this);
-	while(this->finishedJobs.size())
-		this->finishedJobs.pop();
 	while(this->jobs.size())
 		this->jobs.pop();
 	UNLOCK_JOB(this);
 
 	uv_mutex_destroy(&this->jobMutex);
-
-	uv_mutex_destroy(&this->chunkMutex);
-
-	uv_sem_destroy(&this->messageSem);
+	uv_mutex_destroy(&this->stateMutex);
 
 	this->handle_.Dispose();
 	this->jsbuffer.Dispose();
@@ -115,14 +112,6 @@ Handle<Value> Document::New(const Arguments& args) {
 	Persistent<Object> buffer = Persistent<Object>::New(args[0]->ToObject());
 	Persistent<Function> cb = Persistent<Function>::New(Local<Function>::Cast(args[1]));
 	self = new Document(buffer, cb);
-
-	self->worker.data = self->message_finished.data = self->message_data.data = self;
-	uv_sem_init(&self->messageSem, 1);
-	uv_mutex_init(&self->jobMutex);
-	uv_mutex_init(&self->chunkMutex);
-
-
-	uv_queue_work(uv_default_loop(), &self->worker, Document::BackgroundLoad, Document::BackgroundLoaded);
 
 	self->Wrap(Persistent<Object>::New(args.This()));
 
@@ -179,129 +168,55 @@ void Document::BackgroundLoaded(uv_work_t* handle) {
 void Document::addJob(PageJob *job) {
 	LOCK_JOB(this);
 	this->jobs.push(job);
-	if(this->jobs.size() != 1) {
-		UNLOCK_JOB(this);
-	}
-	else {
+	UNLOCK_JOB(this);
+
+	LOCK_STATE(this);
+	if(this->state != WORKER_PROCESSING) {
+		this->state = WORKER_STARTING;
+
 		this->handle_.ClearWeak();
 		uv_loop_t *loop = uv_default_loop();
-		if(TRY_MESSAGE(this)) {
-			uv_async_init(loop, &this->message_finished, Document::WorkerFinished);
-			uv_async_init(loop, &this->message_data, Document::WorkerChunk);
-		}
-		else {
-			this->needMessage = true;
-		}
-		UNLOCK_MESSAGE(this);
-		UNLOCK_JOB(this);
 		uv_queue_work(loop, &this->worker, Document::Worker, Document::WorkerClean);
 	}
+	UNLOCK_STATE(this);
 }
 
 void Document::Worker(uv_work_t *handle) {
 	Document *self = (Document *)(handle->data);
 
+	LOCK_STATE(self);
+	self->state = WORKER_PROCESSING;
+	UNLOCK_STATE(self);
+
 	LOCK_JOB(self);
-	while(self->jobs.size()) {
+	while(self->jobs.empty() == false) {
 		PageJob *pj = self->jobs.front();
+		self->jobs.pop();
 		UNLOCK_JOB(self);
 
 		pj->run();
 
 		LOCK_JOB(self);
-		self->jobs.pop();
-		self->finishedJobs.push(pj);
-		uv_async_send(&self->message_finished);
 	}
-	LOCK_MESSAGE(self);
-	self->needMessage = false;
+	LOCK_STATE(self);
+	self->state = WORKER_STOPPING;
+	UNLOCK_STATE(self);
+
 	UNLOCK_JOB(self);
-}
-
-void Document::WorkerFinished(uv_async_t *handle, int status /*UNUSED*/) {
-	Document *self = (Document *)(handle->data);
-	HandleScope scope;
-
-	Document::WorkerChunk(handle, status);
-	LOCK_JOB(self);
-	while(self->finishedJobs.size()) {
-		PageJob *pj = self->finishedJobs.front();
-		self->finishedJobs.pop();
-		UNLOCK_JOB(self);
-
-		pj->done();
-		Local<Value> argv[] = {
-			Local<String>::New(String::New("end")),
-			Local<Object>::New(pj->page->handle_)
-		};
-		TryCatch try_catch;
-		Local<Function> emit = Function::Cast(*pj->handle_->Get(String::NewSymbol("emit")));
-		emit->Call(pj->handle_, LENGTH(argv), argv);
-		if (try_catch.HasCaught()) {
-			FatalException(try_catch);
-		}
-		LOCK_JOB(self);
-	}
-	UNLOCK_JOB(self);
-}
-
-void Document::addChunk(PageJob *job, const unsigned char* data, unsigned int length) {
-	Chunk *chunk = new Chunk;
-	chunk->value = new char[length];
-	memcpy(chunk->value, data, length);
-	chunk->length = length;
-	chunk->pj = job;
-
-	LOCK_CHUNK(this);
-	this->chunks.push(chunk);
-	UNLOCK_CHUNK(this);
-	uv_async_send(&this->message_data);
-}
-
-void Document::WorkerChunk(uv_async_t *handle, int status /*UNUSED*/) {
-	Document *self = (Document *)(handle->data);
-	HandleScope scope;
-
-	LOCK_CHUNK(self);
-	while(self->chunks.size()) {
-		Chunk *chunk = self->chunks.front();
-		self->chunks.pop();
-		UNLOCK_CHUNK(self);
-		PageJob *pj = chunk->pj;
-
-		Local<Value> argv[] = {
-			Local<String>::New(String::New("data")),
-			Local<Object>::New(Buffer::New(chunk->value, chunk->length)->handle_),
-			Local<Object>::New(pj->page->handle_)
-		};
-		TryCatch try_catch;
-		Local<Function> emit = Function::Cast(*pj->handle_->Get(String::NewSymbol("emit")));
-		emit->Call(pj->handle_, LENGTH(argv), argv);
-
-		if (try_catch.HasCaught()) {
-			FatalException(try_catch);
-		}
-		LOCK_CHUNK(self);
-	}
-	UNLOCK_CHUNK(self);
 }
 
 void Document::WorkerClean(uv_work_t *handle) {
 	Document *self = (Document *)(handle->data);
 	HandleScope scope;
 
-	WorkerChunk(&self->message_data, 0);
-	WorkerFinished(&self->message_finished, 0);
-
-	UNLOCK_MESSAGE(self);
-
 	while(!V8::IdleNotification()) {};
 
-	if(self->needMessage == false) {
-		uv_close((uv_handle_t*) &self->message_data, NULL);
-		uv_close((uv_handle_t*) &self->message_finished, NULL);
-		self->MakeWeak();
-	}
+	self->MakeWeak();
+
+	LOCK_STATE(self);
+	if(self->state == WORKER_STOPPING)
+		self->state = WORKER_INACTIVE;
+	UNLOCK_STATE(self);
 }
 
 

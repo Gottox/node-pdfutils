@@ -1,7 +1,7 @@
 #ifndef SVG_SIZE_HACK_H
 #define SVG_SIZE_HACK_H
 
-#define LENGTH(x) (sizeof x / sizeof x[0])
+#include "util.h"
 
 // A hack to let cairo output px instead of pt sized SVGs.
 
@@ -27,7 +27,7 @@ class SvgSizeHack {
 	public:
 		SvgSizeHack();
 		~SvgSizeHack();
-		void parse(unsigned char *chunk, int length);
+		void parse(char *chunk, int length);
 		bool finished;
 	private:
 		inline void addBuffer(char c) {
@@ -38,7 +38,7 @@ class SvgSizeHack {
 		}
 		enum State state;
 		char quote;
-		char buffer[16];
+		char buffer[8];
 		int bufpos;
 		bool isSVGTag;
 		bool widthDone;

@@ -10,29 +10,43 @@
 
 class Document;
 
+struct Chunk {
+	char *value;
+	int length;
+};
+
 class PageJob : public node::ObjectWrap {
 	public:
 		static void Init(v8::Handle<v8::Object> target);
-
 		static v8::Persistent<v8::Function> constructor;
-		v8::Persistent<v8::Function> cb;
-		Page *page;
-		Format format;
+		void calcDimensions(v8::Local<v8::Object> opt);
+
 		PageJob(Page &page, Format format);
 		~PageJob();
-		void calcDimensions(v8::Local<v8::Object> opt);
 
 		void run();
 		void done();
 
 	private:
+		std::queue<Chunk*> chunks;
+		uv_mutex_t chunkMutex;
+
+		uv_async_t message_finished;
+		uv_async_t message_chunk;
+
 		SvgSizeHack *sizeHack;
 		double w;
 		double h;
+
 		static cairo_status_t ProcChunk(void *closure, const unsigned char *data, unsigned int length);
+		static void ChunkCompleted(uv_async_t* handle, int status);
+		static void JobCompleted(uv_async_t* handle, int status);
+
 		void toPNG();
 		void toSVG();
 		void toText();
+		Format format;
+		Page *page;
 };
 
 #endif
