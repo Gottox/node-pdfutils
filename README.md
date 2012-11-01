@@ -143,6 +143,7 @@ This class inherits [Stream](http://nodejs.org/api/stream.html). It handles
 converting a Page (described above) to SVG, PNG or Text
 
 events:
+
  * __data__: emitted when a new chunk of the converted file is available
  * __end__: emitted when the file is successfully converted
  * __error__: emitted when the file cannot be converted. Is not implemented yet.
