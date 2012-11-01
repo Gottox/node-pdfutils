@@ -171,7 +171,7 @@ void Document::addJob(PageJob *job) {
 	UNLOCK_JOB(this);
 
 	LOCK_STATE(this);
-	if(this->state != WORKER_PROCESSING) {
+	if(this->state != WORKER_PROCESSING && this->state != WORKER_STARTING) {
 		this->state = WORKER_STARTING;
 
 		this->handle_.ClearWeak();
