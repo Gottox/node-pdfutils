@@ -7,6 +7,8 @@
 #include <cairo.h>
 #include <cairo-svg.h>
 #include <unistd.h>
+#include <map>
+#include <string>
 #include "document.h"
 #include "page.h"
 
@@ -40,24 +42,39 @@ const static char *properties[][2] = {
 	{ "title", "title" },
 };
 
-const static char *pageLayouts[] = {
-	[POPPLER_PAGE_LAYOUT_UNSET] = NULL,
-	[POPPLER_PAGE_LAYOUT_SINGLE_PAGE] = "singlePage",
-	[POPPLER_PAGE_LAYOUT_ONE_COLUMN] = "oneColumn",
-	[POPPLER_PAGE_LAYOUT_TWO_COLUMN_LEFT] = "twoColumnLeft",
-	[POPPLER_PAGE_LAYOUT_TWO_COLUMN_RIGHT] = "twoColumnRight",
-	[POPPLER_PAGE_LAYOUT_TWO_PAGE_LEFT] = "twoPageLeft",
-	[POPPLER_PAGE_LAYOUT_TWO_PAGE_RIGHT] ="twoPageRight"
-};
-const static char *pageModes[] = {
-	[POPPLER_PAGE_MODE_UNSET] = NULL,
-	[POPPLER_PAGE_MODE_NONE] = "none",
-	[POPPLER_PAGE_MODE_USE_OUTLINES] = "useOutlines",
-	[POPPLER_PAGE_MODE_USE_THUMBS] = "useThumbs",
-	[POPPLER_PAGE_MODE_FULL_SCREEN] = "fullscreen",
-	[POPPLER_PAGE_MODE_USE_OC] = "useOc",
-	[POPPLER_PAGE_MODE_USE_ATTACHMENTS] =  "useAttachments"
-};
+inline const char *pageLayout(int id) {
+	switch(id) {
+		case POPPLER_PAGE_LAYOUT_SINGLE_PAGE: return "singlePage";
+		case POPPLER_PAGE_LAYOUT_ONE_COLUMN: return "oneColumn";
+		case POPPLER_PAGE_LAYOUT_TWO_COLUMN_LEFT: return "twoColumnLeft";
+		case POPPLER_PAGE_LAYOUT_TWO_COLUMN_RIGHT: return "twoColumnRight";
+		case POPPLER_PAGE_LAYOUT_TWO_PAGE_LEFT: return "twoPageLeft";
+		case POPPLER_PAGE_LAYOUT_TWO_PAGE_RIGHT: return "twoPageRight";
+		default: return NULL;
+	}
+}
+inline const char *pageMode(int id) {
+	switch(id) {
+		case POPPLER_PAGE_MODE_NONE: return "none";
+		case POPPLER_PAGE_MODE_USE_OUTLINES: return "useOutlines";
+		case POPPLER_PAGE_MODE_USE_THUMBS: return "useThumbs";
+		case POPPLER_PAGE_MODE_FULL_SCREEN: return "fullscreen";
+		case POPPLER_PAGE_MODE_USE_OC: return "useOc";
+		case POPPLER_PAGE_MODE_USE_ATTACHMENTS: return "useAttachments";
+		default: return NULL;
+	}
+}
+
+void Document::Init(Handle<Object> target) {
+
+
+	Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
+	tpl->SetClassName(String::NewSymbol("PDFDocument"));
+	tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+	Persistent<Function> constructor = Persistent<Function>::New(tpl->GetFunction());
+	target->Set(String::NewSymbol("Document"), constructor);
+}
 
 Document::Document(Persistent<Object> &buffer, Persistent<Function>& loadCb) {
 	this->jsbuffer = buffer;
@@ -86,15 +103,6 @@ Document::~Document() {
 	this->handle_.Dispose();
 	this->jsbuffer.Dispose();
 
-}
-
-void Document::Init(Handle<Object> target) {
-	Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
-	tpl->SetClassName(String::NewSymbol("PDFDocument"));
-	tpl->InstanceTemplate()->SetInternalFieldCount(1);
-
-	Persistent<Function> constructor = Persistent<Function>::New(tpl->GetFunction());
-	target->Set(String::NewSymbol("Document"), constructor);
 }
 
 Handle<Value> Document::New(const Arguments& args) {
@@ -268,10 +276,10 @@ Handle<Value> Document::getProperty(const char *key) {
 			iValue = g_value_get_enum(&gvalue);
 
 			if(spec->value_type == POPPLER_TYPE_PAGE_LAYOUT) {
-				cValue = pageLayouts[iValue];
+				cValue = pageLayout(iValue);
 			}
 			else if(spec->value_type == POPPLER_TYPE_PAGE_MODE) {
-				cValue = pageModes[iValue];
+				cValue = pageMode(iValue);
 			}
 			val = Local<Value>::New(cValue
 				? String::New(cValue)

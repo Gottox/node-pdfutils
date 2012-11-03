@@ -7,5 +7,12 @@ enum Format {
 	FORMAT_UNKOWN
 };
 
-extern const char *formatFunctions[];
+inline const char *formatName(int id) {
+	switch(id) {
+	case FORMAT_SVG: return "asSVG";
+	case FORMAT_PNG: return "asPNG";
+	case FORMAT_TEXT: return "asText";
+	default: return NULL;
+	}
+}
 #endif

@@ -41,9 +41,9 @@ void Page::Init(Handle<Object> target) {
 
 	Local< ObjectTemplate > prt = tpl->PrototypeTemplate();
 	
-	for(i = 0; formatFunctions[i] != NULL; i++) {
+	for(i = 0; formatName(i) != NULL; i++) {
 		Local<Function> fnc = FunctionTemplate::New(ConvertTo)->GetFunction();
-		Local<String> sym = String::NewSymbol(formatFunctions[i]);
+		Local<String> sym = String::NewSymbol(formatName(i));
 		fnc->SetName(sym);
 		prt->Set(sym, fnc);
 	}
@@ -83,8 +83,8 @@ Handle<Value> Page::ConvertTo(const Arguments& args) {
 	char *name = *callee;
 	int len = callee.length();
 	Format format = FORMAT_UNKOWN;
-	for(i = 0; formatFunctions[i] != NULL && format == FORMAT_UNKOWN; i++) {
-		if(strncmp(name, formatFunctions[i], len) == 0)
+	for(i = 0; formatName(i) != NULL && format == FORMAT_UNKOWN; i++) {
+		if(strncmp(name, formatName(i), len) == 0)
 			format = (Format)i;
 	}
 	if(format == FORMAT_UNKOWN)
