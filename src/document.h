@@ -11,6 +11,7 @@
 
 
 enum WorkerState {
+	WORKER_INIT,
 	WORKER_INACTIVE,
 	WORKER_STARTING,
 	WORKER_PROCESSING,
@@ -20,8 +21,11 @@ enum WorkerState {
 class Document : public node::ObjectWrap {
 	public:
 		static void Init(v8::Handle<v8::Object> target);
-		v8::Persistent<v8::Function> loadCb;
+		void addJob(PageJob *job);
 		PopplerDocument *doc;
+
+	private:
+		v8::Persistent<v8::Function> loadCb;
 		std::vector<Page*> *pages;
 		std::queue<PageJob*> jobs;
 		uv_mutex_t jobMutex;
@@ -30,9 +34,7 @@ class Document : public node::ObjectWrap {
 		WorkerState state;
 		uv_work_t worker;
 		
-		void addJob(PageJob *job);
 
-	private:
 		v8::Persistent<v8::Object> jsbuffer;
 		char *buffer;
 		int buflen;

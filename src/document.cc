@@ -7,8 +7,6 @@
 #include <cairo.h>
 #include <cairo-svg.h>
 #include <unistd.h>
-#include <map>
-#include <string>
 #include "document.h"
 #include "page.h"
 
@@ -76,12 +74,33 @@ void Document::Init(Handle<Object> target) {
 	target->Set(String::NewSymbol("Document"), constructor);
 }
 
+Handle<Value> Document::New(const Arguments& args) {
+	HandleScope scope;
+
+	Document* self;
+	
+	if(args.Length() < 2)
+		return ThrowException(Exception::Error(String::New("constructor needs two arguments")));
+	else if(!Buffer::HasInstance(args[0]))
+		return ThrowException(Exception::Error(String::New("first argument must be a Buffer")));
+	else if(!args[1]->IsFunction())
+		return ThrowException(Exception::Error(String::New("second argument must be a Function")));
+
+	Persistent<Object> buffer = Persistent<Object>::New(args[0]->ToObject());
+	Persistent<Function> cb = Persistent<Function>::New(Local<Function>::Cast(args[1]));
+	self = new Document(buffer, cb);
+
+	self->Wrap(Persistent<Object>::New(args.This()));
+
+	return args.This();
+}
+
 Document::Document(Persistent<Object> &buffer, Persistent<Function>& loadCb) {
 	this->jsbuffer = buffer;
 	this->buffer = Buffer::Data(buffer);
 	this->buflen = Buffer::Length(buffer);
 	this->loadCb = loadCb;
-	this->state = WORKER_INACTIVE;
+	this->state = WORKER_INIT;
 
 	uv_mutex_init(&this->jobMutex);
 	uv_mutex_init(&this->stateMutex);
@@ -103,27 +122,6 @@ Document::~Document() {
 	this->handle_.Dispose();
 	this->jsbuffer.Dispose();
 
-}
-
-Handle<Value> Document::New(const Arguments& args) {
-	HandleScope scope;
-
-	Document* self;
-	
-	if(args.Length() < 2)
-		return ThrowException(Exception::Error(String::New("constructor needs two arguments")));
-	else if(!Buffer::HasInstance(args[0]))
-		return ThrowException(Exception::Error(String::New("first argument must be a Buffer")));
-	else if(!args[1]->IsFunction())
-		return ThrowException(Exception::Error(String::New("second argument must be a Function")));
-
-	Persistent<Object> buffer = Persistent<Object>::New(args[0]->ToObject());
-	Persistent<Function> cb = Persistent<Function>::New(Local<Function>::Cast(args[1]));
-	self = new Document(buffer, cb);
-
-	self->Wrap(Persistent<Object>::New(args.This()));
-
-	return args.This();
 }
 
 void  Document::BackgroundLoad(uv_work_t* handle) {
@@ -148,7 +146,7 @@ void Document::BackgroundLoaded(uv_work_t* handle) {
 		std::stringstream istr;
 		istr << i;
 		self->handle_->Set(String::New(istr.str().c_str()),
-				(*self->pages)[i]->createObject(),
+				(*self->pages)[i]->getObject(),
 				static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	}
 	self->handle_->Set(String::New("length"), Local<Number>::New(Number::New(pages)), 
@@ -171,6 +169,7 @@ void Document::BackgroundLoaded(uv_work_t* handle) {
 		FatalException(try_catch);
 	}
 	self->loadCb.Dispose();
+	self->state = WORKER_INACTIVE;
 }
 
 void Document::addJob(PageJob *job) {
