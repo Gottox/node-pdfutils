@@ -19,12 +19,14 @@ class Page : public node::ObjectWrap {
 
 	private:
 		~Page();
+		v8::Persistent<v8::Array> links;
 
 		static v8::Handle<v8::Value> ConvertTo(const v8::Arguments& args);
 
 		static v8::Persistent<v8::Function> constructor;
 
-		v8::Handle<v8::Array> createLinks();
+		static v8::Handle<v8::Value> GetLinks(v8::Local<v8::String> property, const v8::AccessorInfo &info);
+
 
 		int index;
 		char *label;

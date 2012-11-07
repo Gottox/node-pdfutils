@@ -11,6 +11,7 @@
 #include "page_job.h"
 #include "document.h"
 #include "formats.h"
+#include "link.h"
 
 using namespace v8;
 using namespace node;
@@ -34,6 +35,10 @@ void Page::Init(Handle<Object> target) {
 		prt->Set(sym, fnc);
 	}
 
+	prt->SetAccessor(String::NewSymbol("links"), Page::GetLinks, 0 /* setter */, Handle<Value>(), 
+			static_cast<v8::AccessControl>(DEFAULT), 
+			static_cast<v8::PropertyAttribute>(ReadOnly | DontEnum)
+			);
 
 	constructor = Persistent<Function>::New(tpl->GetFunction());
 	target->Set(String::NewSymbol("Page"), constructor);
@@ -71,78 +76,33 @@ Handle<Object> Page::getObject() {
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	this->Wrap(Persistent<Object>::New(instance));
 
-	instance->Set(String::NewSymbol("links"), this->createLinks());
-
 	// TODO make weak if there are no jobs running on this page;
 
 	return instance;
 }
 
-Handle<Array> Page::createLinks() {
-	GList *links = poppler_page_get_link_mapping(this->pg), *p;
-	int length = g_list_length(links), i;
-	Local<Array> result = Array::New(length);
-	PopplerActionAny *action;
+Handle<Value> Page::GetLinks(Local< String > property, const AccessorInfo &info) {
+	HandleScope scope;
+	Page* self = ObjectWrap::Unwrap<Page>(info.This());
 
-	Local<Object> obj;
-	for (i = 0, p = links; p; p = p->next, i++) {
-		std::stringstream istr;
-		istr << i;
-		PopplerLinkMapping *link = (PopplerLinkMapping *) p->data;
-		char *title = ((PopplerActionAny *)link->action)->title;
-		obj = Object::New();
-		result->Set(String::NewSymbol(istr.str().c_str()), obj);
-		obj->Set(String::NewSymbol("x"),
-				Number::New(this->w - link->area.x1));
-		obj->Set(String::NewSymbol("y"),
-				Number::New(this->h - link->area.y1));
-		obj->Set(String::NewSymbol("width"),
-				Number::New(this->w - (link->area.x2 - link->area.x1)));
-		obj->Set(String::NewSymbol("height"),
-				Number::New(this->h - (link->area.y2 - link->area.x1)));
-		obj->Set(String::NewSymbol("title"),
-				title ? String::New(title) : Null());
-		
-		action = (PopplerActionAny *)link->action;
-		Handle<String> type = String::NewSymbol("type"); 
-		switch(action->type) {
-		case POPPLER_ACTION_GOTO_DEST:
-			obj->Set(type, String::New("goto"));
-			break;
-		case POPPLER_ACTION_GOTO_REMOTE:
-			obj->Set(type, String::New("remote"));
-			break;
-		case POPPLER_ACTION_LAUNCH:
-			obj->Set(type, String::New("launch"));
-			break;
-		case POPPLER_ACTION_URI:
-			obj->Set(type, String::New("uri"));
-			break;
-		case POPPLER_ACTION_NAMED:
-			obj->Set(type, String::New("named"));
-			break;
-		case POPPLER_ACTION_MOVIE:
-			obj->Set(type, String::New("movie"));
-			break;
-		case POPPLER_ACTION_RENDITION:
-			obj->Set(type, String::New("rendition"));
-			break;
-		case POPPLER_ACTION_OCG_STATE:
-			obj->Set(type, String::New("ocgState"));
-			break;
-		case POPPLER_ACTION_JAVASCRIPT:
-			obj->Set(type, String::New("javascript"));
-			break;
-		default:
-			obj->Set(type, Null());
-		}
+	if(!self->links.IsEmpty())
+		return scope.Close(self->links);
+
+	GList *glinks = poppler_page_get_link_mapping(self->pg), *p;
+	int length = g_list_length(glinks), i;
+	Local<Array> links = Array::New(length);
+
+	for (i = 0, p = glinks; p; p = p->next, i++) {
+		Link *link = new Link(self, (PopplerLinkMapping *) p->data);
+		links->Set(i, link->handle_);
 	}
 
+	poppler_page_free_link_mapping(glinks);
 
-	poppler_page_free_link_mapping(links);
-	return result;
+	self->links = Persistent<Array>::New(links);
+
+	return scope.Close(self->links);
 }
-
 Handle<Value> Page::ConvertTo(const Arguments& args) {
 	HandleScope scope;
 	Page* self = ObjectWrap::Unwrap<Page>(args.This());
