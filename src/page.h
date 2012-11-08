@@ -25,7 +25,7 @@ class Page : public node::ObjectWrap {
 		static v8::Persistent<v8::Function> constructor;
 
 		static v8::Handle<v8::Value> GetLinks(v8::Local<v8::String> property, const v8::AccessorInfo &info);
-		v8::Handle<v8::Object> createObject();
+		void createObject();
 
 		int index;
 		char *label;

@@ -60,10 +60,7 @@ Page::~Page() {
 		this->handle_.Dispose();
 };
 
-Handle<Object> Page::createObject() {
-	if(!this->handle_.IsEmpty())
-		return this->handle_;
-
+void Page::createObject() {
 	Handle<Value> argv[] = {
 		//this->document->handle_
 	};
@@ -77,10 +74,6 @@ Handle<Object> Page::createObject() {
 	instance->Set(String::NewSymbol("label"), Local<String>::New(String::New(this->label)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	this->Wrap(Persistent<Object>::New(instance));
-
-	// TODO make weak if there are no jobs running on this page;
-
-	return instance;
 }
 
 Handle<Value> Page::GetLinks(Local< String > property, const AccessorInfo &info) {
