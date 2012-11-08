@@ -1,7 +1,6 @@
 #ifndef DOCUMENT_H
 #define DOCUMENT_H
 
-#include <vector>
 #include <queue>
 #include <node.h>
 #include <poppler.h>
@@ -26,7 +25,6 @@ class Document : public node::ObjectWrap {
 
 	private:
 		v8::Persistent<v8::Function> loadCb;
-		std::vector<Page*> pages;
 		unsigned int length;
 		std::queue<PageJob*> jobs;
 		uv_mutex_t jobMutex;

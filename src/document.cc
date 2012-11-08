@@ -138,9 +138,9 @@ void Document::BackgroundLoaded(uv_work_t* handle) {
 	for(i = 0; i < self->length; i++) {
 		std::stringstream istr;
 		istr << i;
-		self->pages.push_back(new Page(*self, i));
+		Page *page = new Page(*self, i);
 		self->handle_->Set(String::New(istr.str().c_str()),
-				self->pages[i]->handle_,
+				page->handle_,
 				static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	}
 	self->handle_->Set(String::New("length"), Local<Number>::New(Number::New(self->length)), 

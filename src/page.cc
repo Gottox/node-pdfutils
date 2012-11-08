@@ -76,7 +76,7 @@ void Page::createObject() {
 	this->Wrap(Persistent<Object>::New(instance));
 }
 
-Handle<Value> Page::GetLinks(Local< String > property, const AccessorInfo &info) {
+Handle<Value> Page::GetLinks(Local<String> property, const AccessorInfo &info) {
 	HandleScope scope;
 	Page* self = ObjectWrap::Unwrap<Page>(info.This());
 
