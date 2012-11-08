@@ -28,17 +28,17 @@ class Link : public node::ObjectWrap {
 		double w;
 		double h;
 		char *title;
-		void fillGoto();
-		void fillRemote();
-		void fillLaunch();
-		void fillUri();
-		void fillNamed();
-		void fillMovie();
-		void fillRendition();
-		void fillOCGState();
-		void fillJavascript();
+		void fillGoto(v8::Local<v8::Object> &dest);
+		void fillRemote(v8::Local<v8::Object> &dest);
+		void fillLaunch(v8::Local<v8::Object> &dest);
+		void fillUri(v8::Local<v8::Object> &dest);
+		void fillNamed(v8::Local<v8::Object> &dest);
+		void fillMovie(v8::Local<v8::Object> &dest);
+		void fillRendition(v8::Local<v8::Object> &dest);
+		void fillOCGState(v8::Local<v8::Object> &dest);
+		void fillJavascript(v8::Local<v8::Object> &dest);
 
-		void fillDest(PopplerDestType dest);
+		void fillDest(v8::Local<v8::Object> &dest, PopplerDest *d);
 };
 
 #endif

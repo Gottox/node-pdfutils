@@ -54,109 +54,135 @@ void Link::createObject() {
 	Local<Object> instance = (*constructor)->NewInstance(LENGTH(argv), argv);
 	this->Wrap(Persistent<Object>::New(instance));
 	instance->Set(String::NewSymbol("x"), Number::New(this->x), 
-			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
+			static_cast<PropertyAttribute>(ReadOnly)); 
 	instance->Set(String::NewSymbol("y"), Number::New(this->y), 
-			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
+			static_cast<PropertyAttribute>(ReadOnly)); 
 	instance->Set(String::NewSymbol("width"), Number::New(this->w), 
-			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
+			static_cast<PropertyAttribute>(ReadOnly)); 
 	instance->Set(String::NewSymbol("height"), Number::New(this->h), 
-			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
+			static_cast<PropertyAttribute>(ReadOnly)); 
 	instance->Set(String::NewSymbol("title"), this->title ? String::New(this->title) : Null(),
-			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
+			static_cast<PropertyAttribute>(ReadOnly)); 
+
+	Local<Object> dest = Object::New();
 
 	const char *type;
 
 	switch(action->type) {
 	case POPPLER_ACTION_GOTO_DEST:
 		type = "goto";
-		this->fillGoto();
+		this->fillGoto(dest);
 		break;
 	case POPPLER_ACTION_GOTO_REMOTE:
 		type = "remote";
-		this->fillRemote();
+		this->fillRemote(dest);
 		break;
 	case POPPLER_ACTION_LAUNCH:
 		type = "launch";
-		this->fillLaunch();
+		this->fillLaunch(dest);
 		break;
 	case POPPLER_ACTION_URI:
 		type = "uri";
-		this->fillUri();
+		this->fillUri(dest);
 		break;
 	case POPPLER_ACTION_NAMED:
 		type = "named";
-		this->fillNamed();
+		this->fillNamed(dest);
 		break;
 	case POPPLER_ACTION_MOVIE:
 		type = "movie";
-		this->fillMovie();
+		this->fillMovie(dest);
 		break;
 	case POPPLER_ACTION_RENDITION:
 		type = "rendition";
-		this->fillRendition();
+		this->fillRendition(dest);
 		break;
 	case POPPLER_ACTION_OCG_STATE:
 		type = "ocgState";
-		this->fillOCGState();
+		this->fillOCGState(dest);
 		break;
 	case POPPLER_ACTION_JAVASCRIPT:
 		type = "javascript";
-		this->fillJavascript();
+		this->fillJavascript(dest);
 		break;
 	default:
 		type = NULL;
 	}
 
 	instance->Set(String::NewSymbol("type"), type ? String::New(type) : Null());
+	if(type)
+		instance->Set(String::NewSymbol("dest"), dest);
+	else
+		instance->Set(String::NewSymbol("dest"), Null());
 
 }
 
 
-void Link::fillGoto() {
+void Link::fillGoto(Local<Object> &dest) {
 	ACTION(PopplerActionGotoDest);
 	
-
+	fillDest(dest, action->dest);
 }
 
-void Link::fillRemote() {
+void Link::fillRemote(Local<Object> &dest) {
 	ACTION(PopplerActionGotoRemote);
 
+	dest->Set(String::NewSymbol("filename"), String::New(action->file_name));
+	fillDest(dest, action->dest);
 }
 
-void Link::fillLaunch() {
+void Link::fillLaunch(Local<Object> &dest) {
 	ACTION(PopplerActionLaunch);
 
+
+	dest->Set(String::NewSymbol("filename"), String::New(action->file_name));
+	dest->Set(String::NewSymbol("args"), String::New(action->params));
 }
 
-void Link::fillUri() {
+void Link::fillUri(Local<Object> &dest) {
 	ACTION(PopplerActionUri);
 
+	dest->Set(String::NewSymbol("uri"), String::New(action->uri));
 }
 
-void Link::fillNamed() {
-	ACTION(PopplerActionNamed);
+void Link::fillNamed(Local<Object> &dest) {
+	//ACTION(PopplerActionNamed);
 
+	//TODO
 }
 
-void Link::fillMovie() {
-	ACTION(PopplerActionMovie);
+void Link::fillMovie(Local<Object> &dest) {
+	//ACTION(PopplerActionMovie);
 
+	//TODO
 }
 
-void Link::fillRendition() {
-	ACTION(PopplerActionRendition);
+void Link::fillRendition(Local<Object> &dest) {
+	//ACTION(PopplerActionRendition);
 
+	//TODO
 }
 
-void Link::fillOCGState() {
-	ACTION(PopplerActionOCGState);
+void Link::fillOCGState(Local<Object> &dest) {
+	//ACTION(PopplerActionOCGState);
 
+	//TODO
 }
 
-void Link::fillJavascript() {
+void Link::fillJavascript(Local<Object> &dest) {
 	ACTION(PopplerActionJavascript);
 
+	dest->Set(String::NewSymbol("src"), String::New(action->script));
 }
-void Link::fillDest(PopplerDestType dest) {
-	
+void Link::fillDest(Local<Object> &dest, PopplerDest *d) {
+	if(d->named_dest) {
+		dest->Set(String::NewSymbol("name"), d->named_dest ? String::New(d->named_dest) : Null());
+		d = poppler_document_find_dest(this->page->document->doc, d->named_dest);
+	}
+
+	dest->Set(String::NewSymbol("left"), Number::New(d->left));
+	dest->Set(String::NewSymbol("top"), Number::New(d->top));
+	dest->Set(String::NewSymbol("bottom"), Number::New(d->bottom));
+	dest->Set(String::NewSymbol("right"), Number::New(d->right));
+	dest->Set(String::NewSymbol("page"), Number::New(d->page_num));
 }
