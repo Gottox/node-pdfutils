@@ -10,6 +10,8 @@
 #include "document.h"
 #include "formats.h"
 
+#define ACTION(t) t *action = (t *)this->action
+
 using namespace v8;
 using namespace node;
 using namespace std;
@@ -41,6 +43,7 @@ Link::Link(Page *page, PopplerLinkMapping *link) {
 
 Link::~Link() {
 	poppler_action_free(this->action);
+
 	if(!this->handle_.IsEmpty())
 		this->handle_.Dispose();
 };
@@ -49,6 +52,7 @@ void Link::createObject() {
 	Handle<Value> argv[] = {
 	};
 	Local<Object> instance = (*constructor)->NewInstance(LENGTH(argv), argv);
+	this->Wrap(Persistent<Object>::New(instance));
 	instance->Set(String::NewSymbol("x"), Number::New(this->x), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	instance->Set(String::NewSymbol("y"), Number::New(this->y), 
@@ -60,38 +64,99 @@ void Link::createObject() {
 	instance->Set(String::NewSymbol("title"), this->title ? String::New(this->title) : Null(),
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 
-	Handle<String> type = String::NewSymbol("type"); 
+	const char *type;
+
 	switch(action->type) {
 	case POPPLER_ACTION_GOTO_DEST:
-		instance->Set(type, String::New("goto"));
+		type = "goto";
+		this->fillGoto();
 		break;
 	case POPPLER_ACTION_GOTO_REMOTE:
-		instance->Set(type, String::New("remote"));
+		type = "remote";
+		this->fillRemote();
 		break;
 	case POPPLER_ACTION_LAUNCH:
-		instance->Set(type, String::New("launch"));
+		type = "launch";
+		this->fillLaunch();
 		break;
 	case POPPLER_ACTION_URI:
-		instance->Set(type, String::New("uri"));
+		type = "uri";
+		this->fillUri();
 		break;
 	case POPPLER_ACTION_NAMED:
-		instance->Set(type, String::New("named"));
+		type = "named";
+		this->fillNamed();
 		break;
 	case POPPLER_ACTION_MOVIE:
-		instance->Set(type, String::New("movie"));
+		type = "movie";
+		this->fillMovie();
 		break;
 	case POPPLER_ACTION_RENDITION:
-		instance->Set(type, String::New("rendition"));
+		type = "rendition";
+		this->fillRendition();
 		break;
 	case POPPLER_ACTION_OCG_STATE:
-		instance->Set(type, String::New("ocgState"));
+		type = "ocgState";
+		this->fillOCGState();
 		break;
 	case POPPLER_ACTION_JAVASCRIPT:
-		instance->Set(type, String::New("javascript"));
+		type = "javascript";
+		this->fillJavascript();
 		break;
 	default:
-		instance->Set(type, Null());
+		type = NULL;
 	}
+
+	instance->Set(String::NewSymbol("type"), type ? String::New(type) : Null());
+
+}
+
+
+void Link::fillGoto() {
+	ACTION(PopplerActionGotoDest);
 	
-	this->Wrap(Persistent<Object>::New(instance));
+
+}
+
+void Link::fillRemote() {
+	ACTION(PopplerActionGotoRemote);
+
+}
+
+void Link::fillLaunch() {
+	ACTION(PopplerActionLaunch);
+
+}
+
+void Link::fillUri() {
+	ACTION(PopplerActionUri);
+
+}
+
+void Link::fillNamed() {
+	ACTION(PopplerActionNamed);
+
+}
+
+void Link::fillMovie() {
+	ACTION(PopplerActionMovie);
+
+}
+
+void Link::fillRendition() {
+	ACTION(PopplerActionRendition);
+
+}
+
+void Link::fillOCGState() {
+	ACTION(PopplerActionOCGState);
+
+}
+
+void Link::fillJavascript() {
+	ACTION(PopplerActionJavascript);
+
+}
+void Link::fillDest(PopplerDestType dest) {
+	
 }

@@ -44,14 +44,12 @@ void Page::Init(Handle<Object> target) {
 	target->Set(String::NewSymbol("Page"), constructor);
 }
 
-Page::Page(Document &document, int index) {
-	this->document = &document;
+Page::Page(Document *document, int index) {
+	this->document = document;
 	this->index = index;
 	this->pg = poppler_document_get_page(this->document->doc, this->index);
 	poppler_page_get_size (this->pg, &this->w, &this->h);
 	this->label = poppler_page_get_label(this->pg);
-	
-	this->createObject();
 }
 
 Page::~Page() {
@@ -61,6 +59,10 @@ Page::~Page() {
 };
 
 void Page::createObject() {
+	HandleScope scope;
+
+	if(!this->handle_.IsEmpty())
+		return;
 	Handle<Value> argv[] = {
 		//this->document->handle_
 	};

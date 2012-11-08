@@ -27,12 +27,12 @@ class Document : public node::ObjectWrap {
 		v8::Persistent<v8::Function> loadCb;
 		unsigned int length;
 		std::queue<PageJob*> jobs;
+		Page **pages;
 		uv_mutex_t jobMutex;
 		bool needMessage;
 		uv_mutex_t stateMutex;
 		WorkerState state;
 		uv_work_t worker;
-		
 
 		v8::Persistent<v8::Object> jsbuffer;
 		char *buffer;
@@ -45,6 +45,7 @@ class Document : public node::ObjectWrap {
 		static v8::Handle<v8::Value> New(const v8::Arguments& args);
 		v8::Handle<v8::Value> getProperty(const char *key);
 		
+		static v8::Handle<v8::Value> GetPage(v8::Local<v8::String> property, const v8::AccessorInfo &info);
 		static void BackgroundLoad(uv_work_t* req);
 		static void BackgroundLoaded(uv_work_t* req);
 

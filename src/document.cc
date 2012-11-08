@@ -126,8 +126,14 @@ Document::~Document() {
 
 void  Document::BackgroundLoad(uv_work_t* handle) {
 	Document *self = (Document *)(handle->data);
+	unsigned int i;
+
 	self->doc = poppler_document_new_from_data(self->buffer, self->buflen, NULL, NULL);
 	self->length = poppler_document_get_n_pages(self->doc);
+	self->pages = new Page *[self->length];
+	for(i = 0; i < self->length; i++) {
+		self->pages[i] = new Page(self, i);
+	}
 }
 
 void Document::BackgroundLoaded(uv_work_t* handle) {
@@ -138,10 +144,11 @@ void Document::BackgroundLoaded(uv_work_t* handle) {
 	for(i = 0; i < self->length; i++) {
 		std::stringstream istr;
 		istr << i;
-		Page *page = new Page(*self, i);
-		self->handle_->Set(String::New(istr.str().c_str()),
-				page->handle_,
-				static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
+		self->handle_->SetAccessor(String::NewSymbol(istr.str().c_str()),
+				Document::GetPage, 0 /* setter */, Handle<Value>(), 
+				static_cast<v8::AccessControl>(DEFAULT), 
+				static_cast<v8::PropertyAttribute>(ReadOnly | DontEnum)
+				);
 	}
 	self->handle_->Set(String::New("length"), Local<Number>::New(Number::New(self->length)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
@@ -164,6 +171,17 @@ void Document::BackgroundLoaded(uv_work_t* handle) {
 	}
 	self->loadCb.Dispose();
 	self->state = WORKER_INACTIVE;
+}
+
+Handle<Value> Document::GetPage(v8::Local<v8::String> property, const v8::AccessorInfo &info) {
+	HandleScope scope;
+	Document* self = ObjectWrap::Unwrap<Document>(info.This());
+
+	int n = atoi(*String::Utf8Value(property));
+	Page *page = self->pages[n];
+	page->createObject();
+
+	return page->handle_;
 }
 
 void Document::addJob(PageJob *job) {
@@ -212,7 +230,7 @@ void Document::WorkerClean(uv_work_t *handle) {
 
 	while(!V8::IdleNotification()) {};
 
-	self->MakeWeak();
+	//self->MakeWeak();
 
 	LOCK_STATE(self);
 	if(self->state == WORKER_STOPPING)

@@ -14,12 +14,6 @@ class Link : public node::ObjectWrap {
 
 		Link(Page *page, PopplerLinkMapping *link);
 
-		PopplerAction *action;
-		double x;
-		double y;
-		double w;
-		double h;
-		char *title;
 
 	private:
 		~Link();
@@ -28,6 +22,23 @@ class Link : public node::ObjectWrap {
 
 		void createObject();
 
+		PopplerAction *action;
+		double x;
+		double y;
+		double w;
+		double h;
+		char *title;
+		void fillGoto();
+		void fillRemote();
+		void fillLaunch();
+		void fillUri();
+		void fillNamed();
+		void fillMovie();
+		void fillRendition();
+		void fillOCGState();
+		void fillJavascript();
+
+		void fillDest(PopplerDestType dest);
 };
 
 #endif
