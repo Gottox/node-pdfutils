@@ -26,7 +26,8 @@ class Document : public node::ObjectWrap {
 
 	private:
 		v8::Persistent<v8::Function> loadCb;
-		std::vector<Page*> *pages;
+		std::vector<Page*> pages;
+		unsigned int length;
 		std::queue<PageJob*> jobs;
 		uv_mutex_t jobMutex;
 		bool needMessage;

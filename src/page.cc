@@ -50,6 +50,8 @@ Page::Page(Document &document, int index) {
 	this->pg = poppler_document_get_page(this->document->doc, this->index);
 	poppler_page_get_size (this->pg, &this->w, &this->h);
 	this->label = poppler_page_get_label(this->pg);
+	
+	this->createObject();
 }
 
 Page::~Page() {
@@ -58,7 +60,7 @@ Page::~Page() {
 		this->handle_.Dispose();
 };
 
-Handle<Object> Page::getObject() {
+Handle<Object> Page::createObject() {
 	if(!this->handle_.IsEmpty())
 		return this->handle_;
 

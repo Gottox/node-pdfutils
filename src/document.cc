@@ -126,14 +126,8 @@ Document::~Document() {
 
 void  Document::BackgroundLoad(uv_work_t* handle) {
 	Document *self = (Document *)(handle->data);
-	int i = 0;
 	self->doc = poppler_document_new_from_data(self->buffer, self->buflen, NULL, NULL);
-	int pages = poppler_document_get_n_pages(self->doc);
-
-	self->pages = new std::vector<Page*>();
-	for(i = 0; i < pages; i++) {
-		self->pages->push_back(new Page(*self, i));
-	}
+	self->length = poppler_document_get_n_pages(self->doc);
 }
 
 void Document::BackgroundLoaded(uv_work_t* handle) {
@@ -141,15 +135,15 @@ void Document::BackgroundLoaded(uv_work_t* handle) {
 	unsigned int i;
 	HandleScope scope;
 
-	unsigned int pages = self->pages->size();
-	for(i = 0; i < pages; i++) {
+	for(i = 0; i < self->length; i++) {
 		std::stringstream istr;
 		istr << i;
+		self->pages.push_back(new Page(*self, i));
 		self->handle_->Set(String::New(istr.str().c_str()),
-				(*self->pages)[i]->getObject(),
+				self->pages[i]->handle_,
 				static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 	}
-	self->handle_->Set(String::New("length"), Local<Number>::New(Number::New(pages)), 
+	self->handle_->Set(String::New("length"), Local<Number>::New(Number::New(self->length)), 
 			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
 
 	for(i = 0; i < LENGTH(properties); i++) {

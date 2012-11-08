@@ -12,7 +12,6 @@ class Page : public node::ObjectWrap {
 		static void Init(v8::Handle<v8::Object> target);
 		Document *document;
 		PopplerPage *pg;
-		v8::Handle<v8::Object> getObject();
 		Page(Document &document, int index);
 		double w;
 		double h;
@@ -26,7 +25,7 @@ class Page : public node::ObjectWrap {
 		static v8::Persistent<v8::Function> constructor;
 
 		static v8::Handle<v8::Value> GetLinks(v8::Local<v8::String> property, const v8::AccessorInfo &info);
-
+		v8::Handle<v8::Object> createObject();
 
 		int index;
 		char *label;
