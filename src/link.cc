@@ -1,14 +1,8 @@
-#define BUILDING_NODE_EXTENSION
 #include <node.h>
-#include <node_buffer.h>
 #include <poppler.h>
-#include <stdlib.h>
-#include <cairo.h>
-#include <cairo-svg.h>
 #include "link.h"
 #include "page.h"
 #include "document.h"
-#include "formats.h"
 
 #define ACTION(t) t *action = (t *)this->action
 
@@ -49,6 +43,7 @@ Link::~Link() {
 };
 
 void Link::createObject() {
+	const char *type;
 	Handle<Value> argv[] = {
 	};
 	Local<Object> instance = (*constructor)->NewInstance(LENGTH(argv), argv);
@@ -66,7 +61,6 @@ void Link::createObject() {
 
 	Local<Object> dest = Object::New();
 
-	const char *type;
 
 	switch(action->type) {
 	case POPPLER_ACTION_GOTO_DEST:

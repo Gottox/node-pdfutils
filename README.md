@@ -114,6 +114,7 @@ members:
  * __height__: width of the document
  * __index__: number of this page.
  * __label__: label of this page or null if no label was defined.
+ * __links__: array of links
  * __asSVG(opts)__: returns an instance of PageJob described below, opts is an
    optional argument with an Object with the following optional fields:
    * _maxWidth_: maximal width of the resulting SVG in px.

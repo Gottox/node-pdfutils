@@ -1,4 +1,3 @@
-#define BUILDING_NODE_EXTENSION
 #include <sstream>
 #include <node.h>
 #include <node_buffer.h>

@@ -1,4 +1,3 @@
-#define BUILDING_NODE_EXTENSION
 #include <ctype.h>
 #include "svg_size_hack.h"
 #include <string.h>
