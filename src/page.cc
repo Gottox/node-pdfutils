@@ -116,7 +116,7 @@ Handle<Value> Page::ConvertTo(const Arguments& args) {
 		return ThrowException(Exception::Error(String::New("unkown format to convert to")));
 
 	PageJob *pj = new PageJob(*self, format);
-	if(args.Length() >= 1) {
+	if(args.Length() >= 1 && !(args[0]->IsUndefined() || args[0]->IsNull())) {
 		if(!args[0]->IsObject())
 			return ThrowException(Exception::Error(String::New("first argument must be an Object")));
 		pj->calcDimensions(args[0]->ToObject());
