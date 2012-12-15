@@ -105,7 +105,9 @@ Document::Document(Persistent<Object> &buffer, Persistent<Function>& loadCb) {
 	uv_mutex_init(&this->stateMutex);
 
 	this->worker.data = this;
-	uv_queue_work(uv_default_loop(), &this->worker, Document::BackgroundLoad, Document::BackgroundLoaded);
+	uv_queue_work(uv_default_loop(), &this->worker,
+			Document::BackgroundLoad,
+			(uv_after_work_cb)Document::BackgroundLoaded);
 
 }
 
@@ -194,7 +196,9 @@ void Document::addJob(PageJob *job) {
 
 		this->handle_.ClearWeak();
 		uv_loop_t *loop = uv_default_loop();
-		uv_queue_work(loop, &this->worker, Document::Worker, Document::WorkerClean);
+		uv_queue_work(loop, &this->worker,
+				Document::Worker,
+				(uv_after_work_cb)Document::WorkerClean);
 	}
 	UNLOCK_STATE(this);
 }
