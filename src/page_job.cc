@@ -46,6 +46,17 @@ PageJob::PageJob(Page &page, Format format) {
 		this->page->handle_
 	};
 	Persistent<Object> instance = Persistent<Object>::New((*constructor)->NewInstance(LENGTH(argv), argv));
+	instance->SetAccessor(String::NewSymbol("height"), PageJob::GetDimension, 0 /* setter */, Handle<Value>(), 
+			static_cast<v8::AccessControl>(DEFAULT), 
+			static_cast<v8::PropertyAttribute>(ReadOnly)
+			);
+	instance->SetAccessor(String::NewSymbol("width"), PageJob::GetDimension, 0 /* setter */, Handle<Value>(), 
+			static_cast<v8::AccessControl>(DEFAULT), 
+			static_cast<v8::PropertyAttribute>(ReadOnly)
+			);
+	instance->Set(String::NewSymbol("page"), page.handle_, 
+			static_cast<v8::PropertyAttribute>(v8::ReadOnly)); 
+
 
 	uv_loop_t *loop = uv_default_loop();
 	uv_async_init(loop, &this->message_chunk, PageJob::ChunkCompleted);
@@ -56,29 +67,50 @@ PageJob::PageJob(Page &page, Format format) {
 	this->Wrap(instance);
 }
 
+Handle<Value> PageJob::GetDimension(Local<String> property, const AccessorInfo &info) {
+	HandleScope scope;
+	PageJob* self = ObjectWrap::Unwrap<PageJob>(info.This());
+
+	char *p = *String::Utf8Value(property);
+	Local<Value> result;
+	
+	if(strcmp("width", p) == 0)
+		result = Number::New(self->w);
+	else if(strcmp("height", p) == 0)
+		result = Number::New(self->h);
+	
+	return scope.Close(result);
+}
+
 PageJob::~PageJob() {
 	this->handle_.Dispose();
 }
 
 void PageJob::calcDimensions(Local<Object> opt) {
+	Local<String> s_maxWidth = String::NewSymbol("maxWidth");
+	Local<String> s_minWidth = String::NewSymbol("minWidth");
+	Local<String> s_maxHeight = String::NewSymbol("maxHeight");
+	Local<String> s_minHeight = String::NewSymbol("minHeight");
+	Local<String> s_height = String::NewSymbol("height");
+	Local<String> s_width = String::NewSymbol("width");
 	double maxHeight = -1.0;
 	double maxWidth = -1.0;
 	double minHeight = 1.0;
 	double minWidth = 1.0;
 	double aspect = this->w / this->h;
 
-	if(opt->Has(String::NewSymbol("maxWidth")))
-		maxWidth = max(1.0, opt->Get(String::NewSymbol("maxWidth"))->ToNumber()->Value());
-	if(opt->Has(String::NewSymbol("maxHeight")))
-		maxHeight = max(1.0, opt->Get(String::NewSymbol("maxHeight"))->ToNumber()->Value());
-	if(opt->Has(String::NewSymbol("minWidth")))
-		minWidth = max(1.0, opt->Get(String::NewSymbol("minWidth"))->ToNumber()->Value());
-	if(opt->Has(String::NewSymbol("minHeight")))
+	if(opt->Has(s_maxWidth))
+		maxWidth = max(1.0, opt->Get(s_maxWidth)->ToNumber()->Value());
+	if(opt->Has(s_maxHeight))
+		maxHeight = max(1.0, opt->Get(s_maxHeight)->ToNumber()->Value());
+	if(opt->Has(s_minWidth))
+		minWidth = max(1.0, opt->Get(s_minWidth)->ToNumber()->Value());
+	if(opt->Has(s_minHeight))
 		minHeight = max(1.0, opt->Get(String::NewSymbol("minHeight"))->ToNumber()->Value());
-	if(opt->Has(String::NewSymbol("width")))
-		maxWidth = minWidth = max(1.0, opt->Get(String::NewSymbol("width"))->ToNumber()->Value());
-	if(opt->Has(String::NewSymbol("height")))
-		maxHeight = minHeight = max(1.0, opt->Get(String::NewSymbol("height"))->ToNumber()->Value());
+	if(opt->Has(s_width))
+		maxWidth = minWidth = max(1.0, opt->Get(s_width)->ToNumber()->Value());
+	if(opt->Has(s_height))
+		maxHeight = minHeight = max(1.0, opt->Get(s_height)->ToNumber()->Value());
 
 
 	double neverReached = minHeight * minWidth * max(1.0, maxHeight) * max(1.0, maxWidth) * this->h * this->w;
@@ -141,6 +173,9 @@ void PageJob::toText() {
 void PageJob::draw(cairo_surface_t *surface) {
 	cairo_t *cr;
 	cr = cairo_create(surface);
+	cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
+	cairo_rectangle(cr, 0, 0, this->w, this->h);
+	cairo_fill(cr);
 	cairo_scale(cr, this->w/this->page->w, this->h/this->page->h);
 	poppler_page_render(this->page->pg, cr);
 	if(cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS) {

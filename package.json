@@ -1,6 +1,6 @@
 {
   "name": "pdfutils",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "Enno Boland <eb@s01.de>",
   "description": "tool for analyzing and converting PDF documents.",
   "main": "./index",

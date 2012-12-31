@@ -41,6 +41,7 @@ class PageJob : public node::ObjectWrap {
 		static cairo_status_t ProcChunk(void *closure, const unsigned char *data, unsigned int length);
 		static void ChunkCompleted(uv_async_t* handle, int status);
 		static void JobCompleted(uv_async_t* handle, int status);
+		static v8::Handle<v8::Value> GetDimension(v8::Local<v8::String> property, const v8::AccessorInfo &info);
 
 		void toPNG();
 		void toSVG();
