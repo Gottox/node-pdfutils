@@ -113,46 +113,42 @@ void PageJob::calcDimensions(Local<Object> opt) {
 
 void PageJob::toSVG() {
 	cairo_surface_t *surface;
-	cairo_t *cr;
 
 	surface = cairo_svg_surface_create_for_stream(PageJob::ProcChunk, this, this->w, this->h);
 
-	cr = cairo_create(surface);
-	cairo_scale(cr, this->w/this->page->w, this->h/this->page->h);
-	poppler_page_render(this->page->pg, cr);
-	cairo_show_page(cr);
+	this->draw(surface);
 
-	if(cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS) {
-		// TODO ERROR
-	}
-	cairo_destroy(cr);
 	cairo_surface_destroy(surface);
 }
 
 void PageJob::toPNG() {
 	cairo_surface_t *surface;
-	cairo_t *cr;
 
 	surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, this->w, this->h);
 
-	cr = cairo_create(surface);
-	cairo_scale(cr, this->w/this->page->w, this->h/this->page->h);
-	poppler_page_render(this->page->pg, cr);
-	if(this->format == FORMAT_PNG)
-		cairo_surface_write_to_png_stream(surface, PageJob::ProcChunk, this);
-	cairo_show_page(cr);
+	this->draw(surface);
 
-	if(cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS) {
-		// TODO ERROR
-	}
-	cairo_destroy(cr);
+	cairo_surface_write_to_png_stream(surface, PageJob::ProcChunk, this);
+
 	cairo_surface_destroy(surface);
-
 }
 
 void PageJob::toText() {
 	unsigned char *text = (unsigned char *)poppler_page_get_text(this->page->pg);
 	ProcChunk(this, text, strlen((char *)text));
+}
+
+void PageJob::draw(cairo_surface_t *surface) {
+	cairo_t *cr;
+	cr = cairo_create(surface);
+	cairo_scale(cr, this->w/this->page->w, this->h/this->page->h);
+	poppler_page_render(this->page->pg, cr);
+	if(cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS) {
+		// TODO ERROR
+	}
+	cairo_show_page(cr);
+
+	cairo_destroy(cr);
 }
 
 void PageJob::run() {
