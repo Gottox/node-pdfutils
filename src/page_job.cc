@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cairo.h>
 #include <cairo-svg.h>
+#include <cairo-pdf.h>
 #include <string.h>
 #include <uv.h>
 #include "page.h"
@@ -165,6 +166,17 @@ void PageJob::toPNG() {
 	cairo_surface_destroy(surface);
 }
 
+void PageJob::toPDF() {
+	cairo_surface_t *surface;
+
+	surface = cairo_pdf_surface_create_for_stream(PageJob::ProcChunk, this, this->w, this->h);
+
+	this->draw(surface);
+
+	cairo_surface_destroy(surface);
+}
+
+
 void PageJob::toText() {
 	unsigned char *text = (unsigned char *)poppler_page_get_text(this->page->pg);
 	ProcChunk(this, text, strlen((char *)text));
@@ -195,6 +207,9 @@ void PageJob::run() {
 	switch(this->format) {
 	case FORMAT_SVG:
 		this->toSVG();
+		break;
+	case FORMAT_PDF:
+		this->toPDF();
 		break;
 	case FORMAT_PNG:
 		this->toPNG();

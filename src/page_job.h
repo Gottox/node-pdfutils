@@ -45,6 +45,7 @@ class PageJob : public node::ObjectWrap {
 
 		void toPNG();
 		void toSVG();
+		void toPDF();
 		void toText();
 		void draw(cairo_surface_t *surface);
 		Format format;
