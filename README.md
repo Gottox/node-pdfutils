@@ -114,7 +114,7 @@ members:
  * __height__: width of the document
  * __index__: number of this page.
  * __label__: label of this page or null if no label was defined.
- * __links__: array of links
+ * __links__: array containing links of a page
  * __asSVG(opts)__: returns an instance of PageJob described below, opts is an
    optional argument with an Object with the following optional fields:
    * _maxWidth_: maximal width of the resulting SVG in px.
@@ -124,6 +124,16 @@ members:
    * _width_: the width of the resulting SVG in px. Overwrites minWidth and
      maxWidth.
    * _height_: the height of the resulting SVG in px. Overwrites minHeight and
+     maxHeight.
+ * __asPDF(opts)__: returns an instance of PageJob described below, opts is an
+   optional argument with an Object with the following optional fields:
+   * _maxWidth_: maximal width of the resulting PDF in pt.
+   * _minWidth_: minimal width of the resulting PDF in pt.
+   * _maxHeight_: maximal height of the resulting PDF in pt.
+   * _minHeight_: minimal height of the resulting PDF in pt.
+   * _width_: the width of the resulting PDF in pt. Overwrites minWidth and
+     maxWidth.
+   * _height_: the height of the resulting PDF in pt. Overwrites minHeight and
      maxHeight.
  * __asPNG(opts)__: returns an instance of PageJob described below, opts is an
    optional argument with an Object with the following optional fields:
@@ -142,6 +152,10 @@ members:
 
 This class inherits [Stream](http://nodejs.org/api/stream.html). It handles
 converting a Page (described above) to SVG, PNG or Text
+
+members:
+
+ * __links__: array containing links of a page, translated to fit the output page.
 
 events:
 
