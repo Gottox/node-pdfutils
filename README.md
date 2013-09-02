@@ -20,13 +20,18 @@ Installation
 
 To install pdfutils you have to install libpoppler-glib first.
 
-Under Debian execute:
+Using Debian execute:
 
 	apt-get install libpoppler-glib-dev libpoppler-glib8 libcairo2-dev libcairo2
 
-Under MacOS using Macports use:
+Using MacOS and Macports:
 
 	port install poppler
+	
+or if you prefere brew:
+
+	brew install poppler --with-glib
+	PKG_CONFIG_PATH=/usr/X11/lib/pkgconfig npm install pdfutils
 
 Then install pdfutils
 
