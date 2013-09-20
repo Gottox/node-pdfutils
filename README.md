@@ -31,7 +31,7 @@ Using MacOS and Macports:
 or if you prefere brew:
 
 	brew install poppler --with-glib
-	PKG_CONFIG_PATH=/usr/X11/lib/pkgconfig npm install pdfutils
+	export PKG_CONFIG_PATH=/usr/X11/lib/pkgconfig
 
 Then install pdfutils
 
