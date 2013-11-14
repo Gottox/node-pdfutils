@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <cairo.h>
 #include <cairo-svg.h>
+#include <string.h> 
 #include <sstream>
 #include <algorithm>
 #include "page.h"
