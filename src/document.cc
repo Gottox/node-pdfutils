@@ -3,6 +3,7 @@
 #include <node_buffer.h>
 #include <poppler.h>
 #include <stdlib.h>
+#include <strings.h>
 #include <cairo.h>
 #include <cairo-svg.h>
 #include <unistd.h>
