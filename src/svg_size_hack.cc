@@ -11,6 +11,8 @@ SvgSizeHack::SvgSizeHack() {
 	isSVGTag = false;
 	attribute = ATTR_UNKNOWN;
 	finished = false;
+	widthDone = false;
+	heightDone = false;
 }
 
 SvgSizeHack::~SvgSizeHack() {

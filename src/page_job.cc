@@ -258,9 +258,13 @@ void PageJob::ChunkCompleted(uv_async_t* handle, int status) {
 		self->chunks.pop();
 		UNLOCK_CHUNK(self);
 
+		Buffer *buffer = Buffer::New(chunk->length);
+		memcpy(Buffer::Data(buffer->handle_), chunk->value, chunk->length);
+		delete[] chunk->value;
+		delete chunk;
 		Local<Value> argv[] = {
 			Local<String>::New(String::New("data")),
-			Local<Object>::New(Buffer::New(chunk->value, chunk->length)->handle_),
+			Local<Object>::New(buffer->handle_),
 			Local<Object>::New(self->page->handle_)
 		};
 		TryCatch try_catch;

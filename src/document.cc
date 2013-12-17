@@ -118,6 +118,7 @@ Document::~Document() {
 		this->jobs.pop();
 	UNLOCK_JOB(this);
 
+	g_object_unref(this->doc);
 	uv_mutex_destroy(&this->jobMutex);
 	uv_mutex_destroy(&this->stateMutex);
 

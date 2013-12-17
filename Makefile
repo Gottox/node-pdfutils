@@ -1,5 +1,5 @@
 all:
-	node-gyp --verbose build
+	node-gyp --verbose --debug build
 
 test:
 	@echo Yay

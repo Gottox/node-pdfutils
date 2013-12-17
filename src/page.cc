@@ -56,6 +56,7 @@ Page::~Page() {
 	g_free(this->label);
 	if(!this->handle_.IsEmpty())
 		this->handle_.Dispose();
+	g_object_unref(this->pg);
 };
 
 void Page::createObject() {
