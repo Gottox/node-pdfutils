@@ -7,6 +7,7 @@
 #include <cairo.h>
 #include <cairo-svg.h>
 #include <unistd.h>
+#include <strings.h> // bzero
 #include "document.h"
 #include "page.h"
 
