@@ -24,6 +24,10 @@ Using Debian execute:
 
 	apt-get install libpoppler-glib-dev libpoppler-glib8 libcairo2-dev libcairo2
 
+Using CentOS execute:
+
+	yum install poppler poppler-glib-devel
+	
 Using MacOS and Macports:
 
 	port install poppler
