@@ -40,6 +40,11 @@ void Page::Init(Handle<Object> target) {
 			static_cast<v8::PropertyAttribute>(ReadOnly | DontEnum)
 			);
 
+	prt->SetAccessor(String::NewSymbol("textAttributes"), Page::GetTextAttributes, 0 /* setter */, Handle<Value>(), 
+			static_cast<v8::AccessControl>(DEFAULT),
+			static_cast<v8::PropertyAttribute>(ReadOnly | DontEnum)
+			);
+
 	constructor = Persistent<Function>::New(tpl->GetFunction());
 	target->Set(String::NewSymbol("Page"), constructor);
 }
@@ -101,6 +106,32 @@ Handle<Value> Page::GetLinks(Local<String> property, const AccessorInfo &info) {
 
 	return scope.Close(self->links);
 }
+
+Handle<Value> Page::GetTextAttributes(Local<String> property, const AccessorInfo &info) {
+	HandleScope scope;
+	Page* self = ObjectWrap::Unwrap<Page>(info.This());
+
+	GList *gattrs = poppler_page_get_text_attributes(self->pg), *p;
+	int length = g_list_length(gattrs), i;
+	Local<Array> attrs = Array::New(length);
+	Local<Object> attr;
+
+	for (i = 0, p = gattrs; p; p = p->next, i++) {
+		PopplerTextAttributes *gattr = (PopplerTextAttributes *)p->data;
+                attr = Object::New();
+		attr->Set(String::NewSymbol("fontName"), Local<String>::New(String::New(gattr->font_name)));
+		attr->Set(String::NewSymbol("fontSize"), Local<Number>::New(Number::New(gattr->font_size)));
+		attr->Set(String::NewSymbol("isUnderlined"), Local<Boolean>::New(Boolean::New(gattr->is_underlined)));
+		attr->Set(String::NewSymbol("startIndex"), Local<Integer>::New(Integer::New(gattr->start_index)));
+		attr->Set(String::NewSymbol("endIndex"), Local<Integer>::New(Integer::New(gattr->end_index)));
+		attrs->Set(i, attr);
+	}
+
+	poppler_page_free_text_attributes(gattrs);
+
+	return scope.Close(attrs);
+}
+
 Handle<Value> Page::ConvertTo(const Arguments& args) {
 	HandleScope scope;
 	Page* self = ObjectWrap::Unwrap<Page>(args.This());
