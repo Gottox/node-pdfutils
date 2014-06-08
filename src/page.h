@@ -22,6 +22,7 @@ class Page : public node::ObjectWrap {
 		v8::Persistent<v8::Array> links;
 
 		static v8::Handle<v8::Value> GetLinks(v8::Local<v8::String> property, const v8::AccessorInfo &info);
+		static v8::Handle<v8::Value> GetTextAttributes(v8::Local<v8::String> property, const v8::AccessorInfo &info);
 
 		static v8::Handle<v8::Value> ConvertTo(const v8::Arguments& args);
 
