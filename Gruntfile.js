@@ -45,20 +45,19 @@ module.exports = function(grunt) {
 					require: ["test/common.js"]
 				}
 			}
-		}
+		},
+		clean: [ "build", "doc" ]
 	});
 
 	grunt.loadNpmTasks('grunt-node-gyp');
-    grunt.loadNpmTasks("grunt-contrib-jshint")
-    grunt.loadNpmTasks("grunt-jsdoc")
-    grunt.loadNpmTasks("grunt-mocha-test")
+	grunt.loadNpmTasks("grunt-contrib-jshint")
+	grunt.loadNpmTasks("grunt-jsdoc")
+	grunt.loadNpmTasks("grunt-mocha-test")
+	grunt.loadNpmTasks('grunt-contrib-clean');
+
 
 	grunt.registerTask('default', [
 			'gyp:release'
-	]);
-
-	grunt.registerTask('clean', [
-			'gyp:clean'
 	]);
 
 	grunt.registerTask("test", [
