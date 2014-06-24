@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - "0.11"
+  - "0.10"
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y libpoppler-glib-dev
+notifications:
+  irc:
+      channels:
+          - "chat.freenode.net#pdfutils"
+      use_notice: true
