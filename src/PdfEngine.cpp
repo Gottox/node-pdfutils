@@ -8,7 +8,7 @@
 #include "PdfEngine.h"
 
 PdfEngine::PdfEngine() {
-
+	_password = NULL;
 }
 
 PdfEngine::~PdfEngine() {

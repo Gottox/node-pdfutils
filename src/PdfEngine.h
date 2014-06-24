@@ -16,7 +16,7 @@
 
 class PdfEngine : public node::ObjectWrap {
 private:
-	const char *_password = NULL;
+	const char *_password;
 
 protected:
 	PdfEngine();

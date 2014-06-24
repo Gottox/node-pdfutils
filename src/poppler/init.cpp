@@ -16,7 +16,7 @@ public:
 	}
 
 private:
-	PopplerEngine() {
+	PopplerEngine() : PdfEngine() {
 	
 	}
 
