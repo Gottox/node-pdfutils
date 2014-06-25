@@ -2,15 +2,19 @@
 	"targets": [{
 		"target_name": "pdfutils",
 		"sources": [
-			"src/init.cpp",
+			"src/PdfDocument.cpp",
 			"src/PdfEngine.cpp",
+			"src/PdfPage.cpp",
+			"src/init.cpp",
 		],
 	}, {
 		"target_name": "popplerEngine",
 		"sources": [
-			"src/poppler/init.cpp",
-			"src/PdfEngineFactory.cpp",
+			"src/PdfDocument.cpp",
 			"src/PdfEngine.cpp",
+			"src/PdfEngineFactory.cpp",
+			"src/PdfPage.cpp",
+			"src/poppler/init.cpp",
 		],
 		"xcode_settings": {
 			"OTHER_CFLAGS": [

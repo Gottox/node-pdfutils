@@ -10,6 +10,8 @@
 #include <v8.h>
 #include "PdfEngine.h"
 #include "PdfEngineFactory.h"
+#include "PdfDocument.h"
+#include "PdfPage.h"
 
 using namespace v8;
 Handle<Value> Method(const Arguments& args) {
@@ -25,14 +27,12 @@ Handle<Value> syncLoad(const Arguments& args) {
 	//char *data = node::Buffer::Data(args[2]);
 	//size_t length = node::Buffer::Length(args[2]);
 
-	Local<Object> engineWrap = doc->Get(String::NewSymbol("_engine"))->ToObject();
-	PdfEngineFactory *factory = node::ObjectWrap::Unwrap<PdfEngineFactory>(engineWrap);
+	//Local<Object> engineWrap = doc->Get(String::NewSymbol("_engine"))->ToObject();
+	//PdfEngineFactory *factory = node::ObjectWrap::Unwrap<PdfEngineFactory>(engineWrap);
 
-	PdfEngine *engine = factory->newInstance();
+	//PdfEngine *engine = factory->newInstance();
 
-	//engine.loadData(data, length);
-
-	doc->Set(String::NewSymbol("_handle"), engine->wrapJs());
+	//engine->loadData(data, length);
 
 	return scope.Close(doc);
 }
@@ -47,6 +47,9 @@ void init(Handle<Object> exports) {
 			FunctionTemplate::New(syncLoad)->GetFunction());
 	exports->Set(String::NewSymbol("syncLoadFromFd"),
 			FunctionTemplate::New(Method)->GetFunction());
+
+	PdfPage::Init(exports);
+	PdfDocument::Init(exports);
 }
 
 NODE_MODULE(pdfutils, init)

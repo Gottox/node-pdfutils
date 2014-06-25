@@ -1,7 +1,8 @@
-describe('PdfDocument', function() {
+describe('pdfutils', function() {
 	it("can be initialized", function() {
 		pdfutils();
-		new pdfutils.PdfDocument();
+		expect(pdfutils.PdfDocument).to.be.an(Function);
+		new pdfutils.PdfDocument()
 	});
 	it("can load PDF File synchronously", function() {
 		var pdf = pdfutils(__dirname + "/pdfs/testfile1.pdf");
