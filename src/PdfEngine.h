@@ -13,7 +13,16 @@
 #include <vector>
 #include "pdfutils.h"
 #include "PdfPage.h"
+#include "PdfDocument.h"
 
+class PdfPage;
+class PdfDocument;
+/**
+ * @brief Base Class for interaction with a PDF-Engine such as Poppler
+ *
+ * This class operates as binder between the PDF-Engine and the PDFDocument.
+ * It may operate from multiple threads.
+ */
 class PdfEngine {
 private:
 	const char *_password;
@@ -31,11 +40,20 @@ public:
 		return _password;
 	}
 
-	virtual bool isThreadSafe();
-	virtual int loadFromData(char *data, size_t length) = 0;
-	virtual int loadFromFd(int fd) = 0;
+	inline void error(char *msg) {
+	
+	}
 
-	virtual int pageCount() = 0;
+	virtual bool isThreadSafe();
+
+	virtual int openFromData(char *data, size_t length) = 0;
+	virtual int openFromFd(int fd) = 0;
+
+	virtual void fillDocument(const PdfDocument *document) = 0;
+	virtual void fillPage(int index, const PdfPage *page) = 0;
+
+	virtual void close() = 0;
+
 };
 
 #endif /* !PDFENGINE_H */

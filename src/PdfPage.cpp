@@ -9,6 +9,10 @@
 
 JS_SHIM(PdfPage)
 
+PdfEngine *PdfPage::engine(){
+	return _engine;
+}
+
 int PdfPage::page(){
 	return _page;
 }
@@ -22,6 +26,9 @@ int PdfPage::height(){
 	return _height;
 }
 
+void PdfPage::setEngine(PdfEngine *engine){
+	_engine = engine;
+}
 void PdfPage::setPage(const int page){
 	_page = page;
 }

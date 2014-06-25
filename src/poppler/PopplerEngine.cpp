@@ -20,19 +20,22 @@ private:
 	
 	}
 
-	virtual bool isThreadSafe() {
-		return false;
-	}
-	virtual int loadFromData(char *data, size_t length) {
-		return 0;
-	}
-	virtual int loadFromFd(int fd) {
+	virtual int openFromData(char *data, size_t length){
 		return 0;
 	}
 
-	virtual int pageCount() {
+	virtual int openFromFd(int fd) {
 		return 0;
 	}
+
+	virtual void fillDocument(const PdfDocument *document) {
+	}
+	virtual void fillPage(int index, const PdfPage *page) {
+	}
+
+	virtual void close() {
+	}
+
 };
 
 PDF_ENGINE(poppler, "gpl", PopplerEngine::NewInstance)

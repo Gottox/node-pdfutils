@@ -31,7 +31,7 @@ v8::Handle<v8::Value> cls::New(const v8::Arguments& args) { \
 	v8::HandleScope scope; \
 	int i = 0; \
  \
-	cls* obj = new cls(); \
+	cls* obj = new cls(args); \
 	obj->Wrap(args.This()); \
 	v8::Local<v8::Function> super = v8::Local<v8::Function>::Cast(args.Callee()->Get(v8::String::NewSymbol("super_"))); \
 	v8::Local<v8::Value> argv[args.Length()]; \

@@ -14,7 +14,7 @@
 			"src/PdfEngine.cpp",
 			"src/PdfEngineFactory.cpp",
 			"src/PdfPage.cpp",
-			"src/poppler/init.cpp",
+			"src/poppler/PopplerEngine.cpp",
 		],
 		"xcode_settings": {
 			"OTHER_CFLAGS": [

@@ -19,33 +19,23 @@ Handle<Value> Method(const Arguments& args) {
 	return scope.Close(String::New("world"));
 }
 
-Handle<Value> syncLoad(const Arguments& args) {
+/*
+ * JsArgs:
+ * doc - PdfDocument
+ * password - String
+ *
+ */
+Handle<Value> openFromFd(const Arguments& args) {
 	HandleScope scope;
-	Local<Object> doc = args[0]->ToObject();
-	//Local<String> password = args[1]->ToString();
-
-	//char *data = node::Buffer::Data(args[2]);
-	//size_t length = node::Buffer::Length(args[2]);
-
-	//Local<Object> engineWrap = doc->Get(String::NewSymbol("_engine"))->ToObject();
-	//PdfEngineFactory *factory = node::ObjectWrap::Unwrap<PdfEngineFactory>(engineWrap);
-
-	//PdfEngine *engine = factory->newInstance();
-
-	//engine->loadData(data, length);
+	v8::Local<v8::Object> doc = args[0]->ToObject();
+	v8::Local<v8::Object> jsEngine = doc->Get(v8::String::NewSymbol("_engine"))->ToObject();
+	PdfEngine *engine = node::ObjectWrap::Unwrap<PdfEngine>(jsEngine);
 
 	return scope.Close(doc);
 }
 
 void init(Handle<Object> exports) {
-	exports->Set(String::NewSymbol("asyncLoad"),
-			FunctionTemplate::New(Method)->GetFunction());
-	exports->Set(String::NewSymbol("asyncLoadFromFd"),
-			FunctionTemplate::New(Method)->GetFunction());
-
-	exports->Set(String::NewSymbol("syncLoad"),
-			FunctionTemplate::New(syncLoad)->GetFunction());
-	exports->Set(String::NewSymbol("syncLoadFromFd"),
+	exports->Set(String::NewSymbol("openFromFd"),
 			FunctionTemplate::New(Method)->GetFunction());
 
 	PdfPage::Init(exports);

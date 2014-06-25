@@ -11,11 +11,22 @@
 #include "PdfPage.h"
 #include "PdfEngine.h"
 #include "jsShim.h"
+#include <node.h>
+#include <v8.h>
  
+class PdfEngine;
+/**
+ * @brief Class representation of a PDF-Document.
+ *
+ * This class should be filled from a PDFEngine
+ */
 class PdfDocument : public node::ObjectWrap {
 	JS_SHIM_H
 
 private:
+	PdfDocument(const v8::Arguments& args) {
+		
+	}
 	PdfEngine *_engine;
 	const char *_author;
 	int _creationDate;

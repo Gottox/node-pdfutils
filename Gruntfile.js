@@ -46,6 +46,9 @@ module.exports = function(grunt) {
 				}
 			}
 		},
+		exec: {
+			doxygen: "mkdir -p doc/cpp; doxygen doxygen.conf"
+		},
 		clean: [ "build", "doc" ]
 	});
 
@@ -54,7 +57,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-jsdoc")
 	grunt.loadNpmTasks("grunt-mocha-test")
 	grunt.loadNpmTasks('grunt-contrib-clean');
-
+	grunt.loadNpmTasks('grunt-exec');
 
 	grunt.registerTask('default', [
 			'gyp:release'
@@ -68,5 +71,6 @@ module.exports = function(grunt) {
 
 	grunt.registerTask("doc", [
 			"jsdoc",
+			"exec:doxygen"
 	]);
 };

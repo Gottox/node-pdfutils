@@ -20,6 +20,12 @@ NODE_MODULE(n ## Engine, n ## _init__)
 
 typedef PdfEngine *(*PdfEngineInit)(void);
 
+/**
+ * @brief Factory Class for PDF Engines
+ *
+ * This class provides functionality to reuse the node.js module system
+ * to dynamicly load multiple PdfEngines.
+ */
 class PdfEngineFactory : public node::ObjectWrap {
 private:
 	PdfEngineInit init;
