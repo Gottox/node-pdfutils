@@ -6,6 +6,7 @@
 			"src/PdfEngine.cpp",
 			"src/PdfPage.cpp",
 			"src/init.cpp",
+			"src/v8utils.cpp",
 		],
 	}, {
 		"target_name": "popplerEngine",

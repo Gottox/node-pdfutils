@@ -5,37 +5,26 @@
  * Distributed under terms of the GPLv2 license.
  */
 
-#include <node.h>
-#include <v8.h>
-#include "../PdfEngineFactory.h"
+#include "PopplerEngine.h"
 
-class PopplerEngine : public PdfEngine {
-public:
-	static PdfEngine *NewInstance() {
-		return new PopplerEngine();
-	}
+PopplerEngine::PopplerEngine() : PdfEngine() {
 
-private:
-	PopplerEngine() : PdfEngine() {
-	
-	}
+}
 
-	virtual int openFromData(char *data, size_t length){
-		return 0;
-	}
+int PopplerEngine::openFromData(char *data, size_t length){
+	return 0;
+}
 
-	virtual int openFromFd(int fd) {
-		return 0;
-	}
+int PopplerEngine::openFromFd(int fd) {
+	return 0;
+}
 
-	virtual void fillDocument(const PdfDocument *document) {
-	}
-	virtual void fillPage(int index, const PdfPage *page) {
-	}
+void PopplerEngine::fillDocument(const PdfDocument *document) {
+}
+void PopplerEngine::fillPage(int index, const PdfPage *page) {
+}
 
-	virtual void close() {
-	}
-
-};
+void PopplerEngine::close() {
+}
 
 PDF_ENGINE(poppler, "gpl", PopplerEngine::NewInstance)
