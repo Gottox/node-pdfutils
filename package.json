@@ -1,11 +1,18 @@
 {
   "name": "pdfutils",
   "version": "0.4.0",
-  "description": "Utils for analyzing and converting PDF Documents.",
-  "main": "index.js",
+  "author": "Enno Boland <eb@s01.de>",
+  "description": "tool for analyzing and converting PDF documents",
+  "license": "GPL/MIT",
+  "main": "./index",
   "scripts": {
     "test": "grunt test"
   },
+  "keywords": [
+    "pdf",
+    "document",
+    "util"
+  ],
   "devDependencies": {
     "expect.js": "*",
     "grunt": "^0.4.5",
@@ -19,5 +26,10 @@
   },
   "dependencies": {
     "extend": "^1.3.0"
+  },
+  "repository" :
+  {
+    "type" : "git",
+    "url" : "http://github.com/Gottox/node-pdfutils.git"
   }
 }
