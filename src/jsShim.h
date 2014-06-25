@@ -8,6 +8,13 @@
 #ifndef JSSHIM_H
 #define JSSHIM_H
 
+#define JS_SHIM_H \
+public: \
+	static void Init(v8::Handle<v8::Object> exports); \
+	static v8::Handle<v8::Value> New(const v8::Arguments& args); \
+private: \
+	static v8::Persistent<v8::Function> constructor;
+
 #define JS_SHIM(cls) \
 v8::Persistent<v8::Function> cls::constructor; \
  \

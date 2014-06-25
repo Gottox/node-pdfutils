@@ -6,7 +6,6 @@
  */
 
 #include "PdfDocument.h"
-#include "jsShim.h"
 
 JS_SHIM(PdfDocument)
 

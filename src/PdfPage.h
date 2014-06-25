@@ -10,14 +10,10 @@
 
 #include "pdfutils.h"
 #include "PdfEngine.h"
-#include <node.h>
-#include <v8.h>
+#include "jsShim.h"
 
 class PdfPage : public node::ObjectWrap {
-public:
-	static void Init(v8::Handle<v8::Object> exports);
-	static v8::Handle<v8::Value> New(const v8::Arguments& args);
-	static v8::Persistent<v8::Function> constructor;
+	JS_SHIM_H
 
 	int _page;
 	const char *_label;
