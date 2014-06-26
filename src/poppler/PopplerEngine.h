@@ -11,23 +11,24 @@
 #include <node.h>
 #include <v8.h>
 #include "../PdfEngineFactory.h"
+#include <glib/poppler.h>
 
 class PopplerEngine : public PdfEngine {
 public:
+	PopplerEngine();
+
 	static PdfEngine *NewInstance() {
 		return new PopplerEngine();
 	}
 
-	virtual int openFromData(char *data, size_t length);
-	virtual int openFromFd(int fd);
-	virtual void fillDocument(const PdfDocument *document);
-	virtual void fillPage(int index, const PdfPage *page);
+	virtual char *openFromData(char *data, size_t length);
+	virtual char *openFromPath(char *src);
+	virtual void fillDocument(PdfDocument *document);
+	virtual void fillPage(int index, PdfPage *page);
 	virtual void close();
 
 private:
-	PopplerEngine();
-
-
+	PopplerDocument *doc;
 };
 
 #endif /* !POPPLERENGINE_H */

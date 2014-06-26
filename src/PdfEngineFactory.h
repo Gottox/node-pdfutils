@@ -12,9 +12,12 @@
 #include <node.h>
 #include "PdfEngine.h"
 
-#define PDF_ENGINE(n, ...) \
+#define PDF_ENGINE(n, cls, ...) \
+PdfEngine *n ## _newInstance() { \
+	return new cls (); \
+} \
 void n ## _init__(v8::Handle<v8::Object> exports) { \
-	new PdfEngineFactory(exports, #n, __VA_ARGS__); \
+	new PdfEngineFactory(exports, #n, n ## _newInstance, __VA_ARGS__); \
 } \
 NODE_MODULE(n ## Engine, n ## _init__)
 
@@ -32,9 +35,9 @@ private:
 public:
 	PdfEngineFactory(v8::Handle<v8::Object> &exports,
 			const char *name,
+			const PdfEngineInit pdfInit,
 			// Macro args:
-			const char *license,
-			const PdfEngineInit pdfInit);
+			const char *license);
 
 	PdfEngine *newInstance();
 };

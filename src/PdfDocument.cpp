@@ -24,9 +24,8 @@ const char *PdfDocument::creator() {
 const char *PdfDocument::format() {
 	return _format;
 }
-std::vector<const char *> PdfDocument::keywords() {
-	// TODO
-	return std::vector<const char*>();
+const char * PdfDocument::keywords() {
+	return _keywords;
 }
 bool PdfDocument::linearized() {
 	return _linearized;
@@ -71,8 +70,8 @@ void PdfDocument::setCreator(const char *creator) {
 void PdfDocument::setFormat(const char *format) {
 	_format = format;
 }
-void PdfDocument::setKeywords(const std::vector <const char *> keywords) {
-	// TODO
+void PdfDocument::setKeywords(const char *keywords) {
+	_keywords = keywords;
 }
 void PdfDocument::setLinearized(const bool linearized) {
 	_linearized = linearized;

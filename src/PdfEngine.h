@@ -46,11 +46,11 @@ public:
 
 	virtual bool isThreadSafe();
 
-	virtual int openFromData(char *data, size_t length) = 0;
-	virtual int openFromFd(int fd) = 0;
+	virtual char* openFromData(char *data, size_t length) = 0;
+	virtual char* openFromPath(char *src) = 0;
 
-	virtual void fillDocument(const PdfDocument *document) = 0;
-	virtual void fillPage(int index, const PdfPage *page) = 0;
+	virtual void fillDocument(PdfDocument *document) = 0;
+	virtual void fillPage(int index, PdfPage *page) = 0;
 
 	virtual void close() = 0;
 

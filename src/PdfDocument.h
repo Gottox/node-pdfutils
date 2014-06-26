@@ -32,7 +32,7 @@ private:
 	int _creationDate;
 	const char *_creator;
 	const char *_format;
-	std::vector<char *> _keywords;
+	const char * _keywords;
 	bool _linearized;
 	const char *_metadata;
 	int _modDate;
@@ -49,7 +49,7 @@ public:
 	int creationDate();
 	const char *creator();
 	const char *format();
-	std::vector<const char *> keywords();
+	const char *keywords();
 	bool linearized();
 	const char *metadata();
 	int modDate();
@@ -65,7 +65,7 @@ public:
 	void setCreationDate(const int creationDate);
 	void setCreator(const char *creator);
 	void setFormat(const char *format);
-	void setKeywords(const std::vector <const char *> keywords);
+	void setKeywords(const char * keywords);
 	void setLinearized(const bool linearized);
 	void setMetadata(const char *metadata);
 	void setModDate(const int modDate);

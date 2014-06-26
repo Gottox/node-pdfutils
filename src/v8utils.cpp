@@ -8,7 +8,7 @@
 #include "v8utils.h"
 #include <cstring>
 
-char *v8toChar(v8::Local<v8::Value> value) {
+char *v8ToChar(v8::Local<v8::Value> value) {
 	if (value->IsString()) {
 		v8::String::AsciiValue string(value);
 		int len = string.length() + 1;
@@ -19,7 +19,7 @@ char *v8toChar(v8::Local<v8::Value> value) {
 	return NULL;
 }
 
-int v8toInt(v8::Local<v8::Value> value, int fallback) {
+int v8ToInt(v8::Local<v8::Value> value, int fallback) {
 	if (value->IsNumber()) {
 		return value->IntegerValue();
 	}

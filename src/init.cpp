@@ -26,23 +26,29 @@ Handle<Value> Method(const Arguments& args) {
  * password - String
  * fd - file descriptor
  */
-Handle<Value> openFromFd(const Arguments& args) {
+Handle<Value> openFromPath(const Arguments& args) {
+	char *error;
 	HandleScope scope;
-	v8::Local<v8::Object> doc = args[0]->ToObject();
-	v8::Local<v8::Object> jsEngine = doc->Get(v8::String::NewSymbol("_engine"))->ToObject();
-	PdfEngine *engine = node::ObjectWrap::Unwrap<PdfEngine>(jsEngine);
+	v8::Local<v8::Object> jsDoc = args[0]->ToObject();
+	PdfDocument *doc = node::ObjectWrap::Unwrap<PdfDocument>(jsDoc);
+	v8::Local<v8::Object> jsEngine = jsDoc->Get(v8::String::NewSymbol("_engine"))->ToObject();
+
+	PdfEngineFactory *factory = node::ObjectWrap::Unwrap<PdfEngineFactory>(jsEngine);
+	PdfEngine *engine = factory->newInstance();
 	engine->setPassword(v8ToChar(args[1]));
 
-	int fd = v8ToInt(args[2]);
-	engine->openFromFd(fd);
-	// TODO error handling
+	char *src = v8ToChar(args[2]);
+	if((error = engine->openFromPath(src))) {
+		THROW_FREE(Error, error);
+	}
+	engine->fillDocument(doc);
 
-	return scope.Close(doc);
+	return scope.Close(jsDoc);
 }
 
 void init(Handle<Object> exports) {
-	exports->Set(String::NewSymbol("openFromFd"),
-			FunctionTemplate::New(Method)->GetFunction());
+	exports->Set(String::NewSymbol("openFromPath"),
+			FunctionTemplate::New(openFromPath)->GetFunction());
 
 	PdfPage::Init(exports);
 	PdfDocument::Init(exports);
