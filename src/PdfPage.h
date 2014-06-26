@@ -34,16 +34,46 @@ private:
 	double _height;
 
 public:
+	/**
+	 * @brief engine used to create this page
+	 */
 	PdfEngine *engine();
+	/**
+	 * @brief index of this page
+	 */
 	int index();
+	/**
+	 * @brief label of this page
+	 */
 	const char *label();
+	/**
+	 * @brief width of this page
+	 */
 	double width();
+	/**
+	 * @brief height of this page
+	 */
 	double height();
 
+	/**
+	 * @brief sets engine of this page
+	 */
 	void setEngine(PdfEngine *);
+	/**
+	 * @brief sets index of this page
+	 */
 	void setIndex(const int indext);
+	/**
+	 * @brief sets label of this page
+	 */
 	void setLabel(const char *label);
+	/**
+	 * @brief sets width of this page
+	 */
 	void setWidth(const double width);
+	/**
+	 * @brief sets height of this page
+	 */
 	void setHeight(const double height);
 };
 
