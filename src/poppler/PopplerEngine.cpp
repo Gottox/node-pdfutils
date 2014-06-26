@@ -7,12 +7,13 @@
 
 #include "PopplerEngine.h"
 #include <glib.h>
-#include <gio/gunixinputstream.h>
 #include <cstring>
 
 void
 PopplerEngine::Init() {
+#if GLIB_MAJOR_VERSION < 2 && GLIB_MINOR_VERSION < 36
 	g_type_init();
+#endif
 }
 
 PopplerEngine::PopplerEngine() : PdfEngine() {
@@ -72,7 +73,14 @@ PopplerEngine::fillDocument(PdfDocument *document) {
 	document->setSubject(poppler_document_get_subject(this->doc));
 	document->setTitle(poppler_document_get_title(this->doc));
 }
+
 void PopplerEngine::fillPage(int index, PdfPage *page) {
+	double width, height;
+	PopplerPage *pg = poppler_document_get_page(this->doc, index);
+	page->setLabel(poppler_page_get_label(pg));
+	poppler_page_get_size(pg, &width, &height);
+	page->setWidth(width);
+	page->setHeight(height);
 }
 
 void PopplerEngine::close() {

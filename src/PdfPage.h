@@ -28,23 +28,23 @@ private:
 		
 	}
 	PdfEngine *_engine;
-	int _page;
+	int _index;
 	const char *_label;
-	int _width;
-	int _height;
+	double _width;
+	double _height;
 
 public:
 	PdfEngine *engine();
-	int page();
+	int index();
 	const char *label();
-	int width();
-	int height();
+	double width();
+	double height();
 
 	void setEngine(PdfEngine *);
-	void setPage(const int page);
+	void setIndex(const int indext);
 	void setLabel(const char *label);
-	void setWidth(const int width);
-	void setHeight(const int height);
+	void setWidth(const double width);
+	void setHeight(const double height);
 };
 
 #endif /* !PDFPAGE_H */

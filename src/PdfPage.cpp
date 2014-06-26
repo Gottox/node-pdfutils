@@ -13,31 +13,31 @@ PdfEngine *PdfPage::engine(){
 	return _engine;
 }
 
-int PdfPage::page(){
-	return _page;
+int PdfPage::index(){
+	return _index;
 }
 const char *PdfPage::label(){
 	return _label;
 }
-int PdfPage::width(){
+double PdfPage::width(){
 	return _width;
 }
-int PdfPage::height(){
+double PdfPage::height(){
 	return _height;
 }
 
 void PdfPage::setEngine(PdfEngine *engine){
 	_engine = engine;
 }
-void PdfPage::setPage(const int page){
-	_page = page;
+void PdfPage::setIndex(const int index){
+	_index = index;
 }
 void PdfPage::setLabel(const char *label){
 	_label = label;
 }
-void PdfPage::setWidth(const int width){
+void PdfPage::setWidth(const double width){
 	_width = width;
 }
-void PdfPage::setHeight(const int height){
+void PdfPage::setHeight(const double height){
 	_height = height;
 }
