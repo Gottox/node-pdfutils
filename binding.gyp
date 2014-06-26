@@ -24,17 +24,17 @@
 		],
 		"xcode_settings": {
 			"OTHER_CFLAGS": [
-				"<!@(pkg-config --cflags poppler-glib gio-unix-2.0)"
+				"<!@(pkg-config --cflags poppler-glib)"
 			],
 		},
 		"cflags": [
-			"<!@(pkg-config --cflags poppler-glib gio-unix-2.0) -fPIC"
+			"<!@(pkg-config --cflags poppler-glib) -fPIC"
 		],
 		"ldflags": [
-			"<!@(pkg-config --libs poppler-glib gio-unix-2.0)"
+			"<!@(pkg-config --libs poppler-glib)"
 		],
 		"libraries": [
-			"<!@(pkg-config --libs poppler-glib gio-unix-2.0)"
+			"<!@(pkg-config --libs poppler-glib)"
 		]
 	}]
 }
