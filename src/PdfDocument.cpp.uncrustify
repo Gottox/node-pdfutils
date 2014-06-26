@@ -9,9 +9,6 @@
 
 JS_SHIM(PdfDocument)
 
-PdfDocument::PdfDocument(const v8::Arguments& args) {
-
-}
 PdfEngine *PdfDocument::engine() {
 	return _engine;
 }

@@ -24,9 +24,7 @@ class PdfDocument : public node::ObjectWrap {
 	JS_SHIM_H
 
 private:
-	PdfDocument(const v8::Arguments& args) {
-		
-	}
+	PdfDocument(const v8::Arguments& args);
 	PdfEngine *_engine;
 	const char *_author;
 	int _creationDate;
