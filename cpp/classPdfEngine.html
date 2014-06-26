@@ -93,6 +93,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
  <a href="classPdfEngine.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="PdfEngine_8h_source.html">PdfEngine.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for PdfEngine:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classPdfEngine.png" usemap="#PdfEngine_map" alt=""/>
+  <map id="PdfEngine_map" name="PdfEngine_map">
+<area href="classPopplerEngine.html" alt="PopplerEngine" shape="rect" coords="0,56,95,80"/>
+</map>
+ </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -108,18 +117,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>error</b> (char *msg)
 <tr class="memitem:aa23ebd7d06ecd9bef118b0b841d27d13"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa23ebd7d06ecd9bef118b0b841d27d13"></a>
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>isThreadSafe</b> ()</td></tr>
 <tr class="separator:aa23ebd7d06ecd9bef118b0b841d27d13"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2623a5a37210b8efafad280908ed454c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2623a5a37210b8efafad280908ed454c"></a>
-virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>openFromData</b> (char *data, size_t length)=0</td></tr>
-<tr class="separator:a2623a5a37210b8efafad280908ed454c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33e1009716a7f63a375eed03a085e50d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33e1009716a7f63a375eed03a085e50d"></a>
-virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>openFromFd</b> (int fd)=0</td></tr>
-<tr class="separator:a33e1009716a7f63a375eed03a085e50d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad25551325e0afe1152ef82e1c02fef82"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad25551325e0afe1152ef82e1c02fef82"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>fillDocument</b> (const <a class="el" href="classPdfDocument.html">PdfDocument</a> *document)=0</td></tr>
-<tr class="separator:ad25551325e0afe1152ef82e1c02fef82"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c705ed84e4adb95ee545577e69ae30d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2c705ed84e4adb95ee545577e69ae30d"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>fillPage</b> (int index, const <a class="el" href="classPdfPage.html">PdfPage</a> *page)=0</td></tr>
-<tr class="separator:a2c705ed84e4adb95ee545577e69ae30d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74badb7d1cf0f5196caa5a4e28864638"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a74badb7d1cf0f5196caa5a4e28864638"></a>
+virtual char *&#160;</td><td class="memItemRight" valign="bottom"><b>openFromData</b> (char *data, size_t length)=0</td></tr>
+<tr class="separator:a74badb7d1cf0f5196caa5a4e28864638"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a717b08db6d9eb9d6a4aa283c0b7c1a78"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a717b08db6d9eb9d6a4aa283c0b7c1a78"></a>
+virtual char *&#160;</td><td class="memItemRight" valign="bottom"><b>openFromPath</b> (char *src)=0</td></tr>
+<tr class="separator:a717b08db6d9eb9d6a4aa283c0b7c1a78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdf1352ecb26a3eeb10562b84cf7c3d3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acdf1352ecb26a3eeb10562b84cf7c3d3"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>fillDocument</b> (<a class="el" href="classPdfDocument.html">PdfDocument</a> *document)=0</td></tr>
+<tr class="separator:acdf1352ecb26a3eeb10562b84cf7c3d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f7b7a2e1c5a2b86f87e4048ac5ffec1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f7b7a2e1c5a2b86f87e4048ac5ffec1"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>fillPage</b> (int index, <a class="el" href="classPdfPage.html">PdfPage</a> *page)=0</td></tr>
+<tr class="separator:a7f7b7a2e1c5a2b86f87e4048ac5ffec1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67a79227b72d0946c076098848b7c55e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a67a79227b72d0946c076098848b7c55e"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> ()=0</td></tr>
 <tr class="separator:a67a79227b72d0946c076098848b7c55e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -134,7 +143,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> ()=
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 25 2014 15:25:39 for node-pdfutils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 27 2014 01:44:05 for node-pdfutils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

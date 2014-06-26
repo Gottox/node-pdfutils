@@ -90,11 +90,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="directory">
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>close</b>()=0 (defined in <a class="el" href="classPdfEngine.html">PdfEngine</a>)</td><td class="entry"><a class="el" href="classPdfEngine.html">PdfEngine</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>error</b>(char *msg) (defined in <a class="el" href="classPdfEngine.html">PdfEngine</a>)</td><td class="entry"><a class="el" href="classPdfEngine.html">PdfEngine</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>fillDocument</b>(const PdfDocument *document)=0 (defined in <a class="el" href="classPdfEngine.html">PdfEngine</a>)</td><td class="entry"><a class="el" href="classPdfEngine.html">PdfEngine</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>fillPage</b>(int index, const PdfPage *page)=0 (defined in <a class="el" href="classPdfEngine.html">PdfEngine</a>)</td><td class="entry"><a class="el" href="classPdfEngine.html">PdfEngine</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>fillDocument</b>(PdfDocument *document)=0 (defined in <a class="el" href="classPdfEngine.html">PdfEngine</a>)</td><td class="entry"><a class="el" href="classPdfEngine.html">PdfEngine</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>fillPage</b>(int index, PdfPage *page)=0 (defined in <a class="el" href="classPdfEngine.html">PdfEngine</a>)</td><td class="entry"><a class="el" href="classPdfEngine.html">PdfEngine</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>isThreadSafe</b>() (defined in <a class="el" href="classPdfEngine.html">PdfEngine</a>)</td><td class="entry"><a class="el" href="classPdfEngine.html">PdfEngine</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>openFromData</b>(char *data, size_t length)=0 (defined in <a class="el" href="classPdfEngine.html">PdfEngine</a>)</td><td class="entry"><a class="el" href="classPdfEngine.html">PdfEngine</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>openFromFd</b>(int fd)=0 (defined in <a class="el" href="classPdfEngine.html">PdfEngine</a>)</td><td class="entry"><a class="el" href="classPdfEngine.html">PdfEngine</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>openFromPath</b>(char *src)=0 (defined in <a class="el" href="classPdfEngine.html">PdfEngine</a>)</td><td class="entry"><a class="el" href="classPdfEngine.html">PdfEngine</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>password</b>() (defined in <a class="el" href="classPdfEngine.html">PdfEngine</a>)</td><td class="entry"><a class="el" href="classPdfEngine.html">PdfEngine</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>PdfEngine</b>() (defined in <a class="el" href="classPdfEngine.html">PdfEngine</a>)</td><td class="entry"><a class="el" href="classPdfEngine.html">PdfEngine</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>setPassword</b>(const char *password) (defined in <a class="el" href="classPdfEngine.html">PdfEngine</a>)</td><td class="entry"><a class="el" href="classPdfEngine.html">PdfEngine</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
@@ -102,7 +102,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 25 2014 15:25:39 for node-pdfutils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 27 2014 01:44:05 for node-pdfutils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

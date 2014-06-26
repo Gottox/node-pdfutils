@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['jsreader',['JsReader',['../classJsReader.html#a6a6a409f6521c282c1cf00d9f7a8e9bc',1,'JsReader']]]
+  ['author',['author',['../classPdfDocument.html#a825b663b33a1b2582e3ce78c76cec458',1,'PdfDocument']]]
 ];
