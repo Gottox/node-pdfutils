@@ -17,6 +17,7 @@ PdfEngine *n ## _newInstance() { \
 	return new cls (); \
 } \
 void n ## _init__(v8::Handle<v8::Object> exports) { \
+	cls ::Init(); \
 	new PdfEngineFactory(exports, #n, n ## _newInstance, __VA_ARGS__); \
 } \
 NODE_MODULE(n ## Engine, n ## _init__)

@@ -10,6 +10,11 @@
 #include <gio/gunixinputstream.h>
 #include <cstring>
 
+void
+PopplerEngine::Init() {
+	g_type_init();
+}
+
 PopplerEngine::PopplerEngine() : PdfEngine() {
 
 }
