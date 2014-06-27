@@ -6,7 +6,7 @@ before_install:
   - sudo apt-get install -y libpoppler-glib-dev
   - dpkg -l libglib2.0-dev
 notifications:
-  irc:
-    channels:
-      - "chat.freenode.net#pdfutils"
-    use_notice: true
+    irc:
+        channels:
+            - "chat.freenode.net#pdfutils"
+        use_notice: true
