@@ -11,7 +11,9 @@
 
 void
 PopplerEngine::Init() {
+#if !GLIB_CHECK_VERSION(2, 36, 0)
 	g_type_init();
+#endif
 }
 
 PopplerEngine::PopplerEngine() : PdfEngine() {
