@@ -10,6 +10,7 @@
 
 #include <v8.h>
 #include <node.h>
+#include <node_object_wrap.h>
 
 #define JS_SHIM_H \
 public: \
