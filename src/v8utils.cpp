@@ -26,6 +26,13 @@ int v8ToInt(v8::Local<v8::Value> value, int fallback) {
 	return fallback;
 }
 
+double v8ToDouble(v8::Local<v8::Value> value, int fallback) {
+	if (value->IsNumber()) {
+		return value->NumberValue();
+	}
+	return fallback;
+}
+
 v8::Handle<v8::Value> charToV8(const char *value) {
 	if(value == NULL)
 		return v8::Null();

@@ -24,6 +24,8 @@ char *v8ToChar(v8::Local<v8::Value> value);
 
 int v8ToInt(v8::Local<v8::Value> value, int fallback = -1);
 
+double v8ToDouble(v8::Local<v8::Value> value, double fallback = 0.0);
+
 v8::Handle<v8::Value> charToV8(const char *value);
 
 #endif /* !V8UTILS_H */
