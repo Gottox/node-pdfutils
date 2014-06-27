@@ -7,6 +7,6 @@ before_install:
   - dpkg -l libglib2.0-dev
 notifications:
   irc:
-      channels:
-          - "chat.freenode.net#pdfutils"
-      use_notice: true
+    channels:
+      - "chat.freenode.net#pdfutils"
+    use_notice: true
