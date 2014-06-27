@@ -9,6 +9,7 @@ var searchData=
   ['setindex',['setIndex',['../classPdfPage.html#a2b8bd7e835fec5898abb6eff672c6fa2',1,'PdfPage']]],
   ['setkeywords',['setKeywords',['../classPdfDocument.html#ae914a297b4aa2afc5b6e717e9a89386d',1,'PdfDocument']]],
   ['setlabel',['setLabel',['../classPdfPage.html#afa2cfa2a5e5648233323324e6c023ac5',1,'PdfPage']]],
+  ['setlength',['setLength',['../classPdfDocument.html#a9c3d6c0a4e4a7142c461a2486396177a',1,'PdfDocument']]],
   ['setlinearized',['setLinearized',['../classPdfDocument.html#a16c44fd57134742113afded1b59c4490',1,'PdfDocument']]],
   ['setmetadata',['setMetadata',['../classPdfDocument.html#a5f2b32f5b81190b0a03f1628b6c1ff2b',1,'PdfDocument']]],
   ['setmoddate',['setModDate',['../classPdfDocument.html#a0f5a9c255714590d9ab4d80c43ffbfbd',1,'PdfDocument']]],

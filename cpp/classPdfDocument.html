@@ -104,10 +104,22 @@ Inheritance diagram for PdfDocument:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:acbf6f7968ff2e7df19080c4ee23e463d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acbf6f7968ff2e7df19080c4ee23e463d"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPdfDocument.html#acbf6f7968ff2e7df19080c4ee23e463d">toJs</a> (v8::Handle&lt; v8::Object &gt; &amp;obj)</td></tr>
+<tr class="memdesc:acbf6f7968ff2e7df19080c4ee23e463d"><td class="mdescLeft">&#160;</td><td class="mdescRight">writes state of this object to a JS-Object <br /></td></tr>
+<tr class="separator:acbf6f7968ff2e7df19080c4ee23e463d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7b3005044fd57d1407fb1f06486aad9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae7b3005044fd57d1407fb1f06486aad9"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPdfDocument.html#ae7b3005044fd57d1407fb1f06486aad9">fromJs</a> (v8::Handle&lt; v8::Object &gt; &amp;obj)</td></tr>
+<tr class="memdesc:ae7b3005044fd57d1407fb1f06486aad9"><td class="mdescLeft">&#160;</td><td class="mdescRight">reads state of this object from a JS-Object <br /></td></tr>
+<tr class="separator:ae7b3005044fd57d1407fb1f06486aad9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac274b071aa903d15cebd7f257882a5a3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac274b071aa903d15cebd7f257882a5a3"></a>
 <a class="el" href="classPdfEngine.html">PdfEngine</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPdfDocument.html#ac274b071aa903d15cebd7f257882a5a3">engine</a> ()</td></tr>
 <tr class="memdesc:ac274b071aa903d15cebd7f257882a5a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">engine which is used for this document <br /></td></tr>
 <tr class="separator:ac274b071aa903d15cebd7f257882a5a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51542dc9dc18040ab21da46af078cedc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a51542dc9dc18040ab21da46af078cedc"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPdfDocument.html#a51542dc9dc18040ab21da46af078cedc">length</a> ()</td></tr>
+<tr class="memdesc:a51542dc9dc18040ab21da46af078cedc"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of pages in this document <br /></td></tr>
+<tr class="separator:a51542dc9dc18040ab21da46af078cedc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a825b663b33a1b2582e3ce78c76cec458"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a825b663b33a1b2582e3ce78c76cec458"></a>
 const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPdfDocument.html#a825b663b33a1b2582e3ce78c76cec458">author</a> ()</td></tr>
 <tr class="memdesc:a825b663b33a1b2582e3ce78c76cec458"><td class="mdescLeft">&#160;</td><td class="mdescRight">author of this document <br /></td></tr>
@@ -168,6 +180,10 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPdfDocument.html#ae953c2fee6b506e7eebc061f27bbb9a7">setEngine</a> (<a class="el" href="classPdfEngine.html">PdfEngine</a> *<a class="el" href="classPdfDocument.html#ac274b071aa903d15cebd7f257882a5a3">engine</a>)</td></tr>
 <tr class="memdesc:ae953c2fee6b506e7eebc061f27bbb9a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets engine which is used for this document <br /></td></tr>
 <tr class="separator:ae953c2fee6b506e7eebc061f27bbb9a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c3d6c0a4e4a7142c461a2486396177a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9c3d6c0a4e4a7142c461a2486396177a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPdfDocument.html#a9c3d6c0a4e4a7142c461a2486396177a">setLength</a> (const int <a class="el" href="classPdfDocument.html#a51542dc9dc18040ab21da46af078cedc">length</a>)</td></tr>
+<tr class="memdesc:a9c3d6c0a4e4a7142c461a2486396177a"><td class="mdescLeft">&#160;</td><td class="mdescRight">set number of pages in this document <br /></td></tr>
+<tr class="separator:a9c3d6c0a4e4a7142c461a2486396177a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8968c19c1585c50df38695498230ba2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8968c19c1585c50df38695498230ba2"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPdfDocument.html#ae8968c19c1585c50df38695498230ba2">setAuthor</a> (const char *<a class="el" href="classPdfDocument.html#a825b663b33a1b2582e3ce78c76cec458">author</a>)</td></tr>
 <tr class="memdesc:ae8968c19c1585c50df38695498230ba2"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets author of this document <br /></td></tr>
@@ -235,7 +251,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Jun 27 2014 01:44:05 for node-pdfutils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 27 2014 23:28:49 for node-pdfutils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>
