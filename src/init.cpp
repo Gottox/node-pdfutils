@@ -27,21 +27,35 @@ Handle<Value> Method(const Arguments& args) {
  * fd - file descriptor
  */
 Handle<Value> openFromPath(const Arguments& args) {
+	int i;
 	char *error;
 	HandleScope scope;
 	v8::Local<v8::Object> jsDoc = args[0]->ToObject();
+	v8::Local<v8::Function> pdfPageFactory = v8::Function::Cast(*args[1]);
 	PdfDocument *doc = node::ObjectWrap::Unwrap<PdfDocument>(jsDoc);
 	v8::Local<v8::Object> jsEngine = jsDoc->Get(v8::String::NewSymbol("_engine"))->ToObject();
 
 	PdfEngineFactory *factory = node::ObjectWrap::Unwrap<PdfEngineFactory>(jsEngine);
 	PdfEngine *engine = factory->newInstance();
-	engine->setPassword(v8ToChar(args[1]));
+	engine->setPassword(v8ToChar(args[2]));
+	doc->setEngine(engine);
 
-	char *src = v8ToChar(args[2]);
+	char *src = v8ToChar(args[3]);
 	if((error = engine->openFromPath(src))) {
 		THROW_FREE(Error, error);
 	}
 	engine->fillDocument(doc);
+	doc->toJs(jsDoc);
+
+	Handle< Value > argv[] = { jsDoc, v8::Integer::New(doc->length()) };
+	pdfPageFactory->Call(v8::Context::GetCurrent()->Global(), 2, argv);
+
+	for(i = 0; i < doc->length(); i++) {
+		v8::Local<v8::Object> jsPage = jsDoc->Get(i)->ToObject();
+		PdfPage *page = node::ObjectWrap::Unwrap<PdfPage>(jsPage);
+		engine->fillPage(i, page);
+		page->toJs(jsPage);
+	}
 
 	return scope.Close(jsDoc);
 }

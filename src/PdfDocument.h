@@ -10,7 +10,7 @@
 
 #include "PdfPage.h"
 #include "PdfEngine.h"
-#include "jsShim.h"
+#include "JsShim.h"
 #include <node.h>
 #include <v8.h>
  
@@ -31,6 +31,7 @@ private:
 	PdfDocument(const v8::Arguments& args);
 
 	PdfEngine *_engine;
+	int _length;
 	const char *_author;
 	int _creationDate;
 	const char *_creator;
@@ -48,9 +49,21 @@ private:
 
 public:
 	/**
+	 * @brief writes state of this object to a JS-Object
+	 */
+	virtual void toJs(v8::Handle<v8::Object> &obj);
+	/**
+	 * @brief reads state of this object from a JS-Object
+	 */
+	virtual void fromJs(v8::Handle<v8::Object> &obj);
+	/**
 	 * @brief engine which is used for this document
 	 */
 	PdfEngine *engine();
+	/**
+	 * @brief number of pages in this document
+	 */
+	int length();
 	/**
 	 * @brief author of this document
 	 */
@@ -112,6 +125,10 @@ public:
 	 * @brief sets engine which is used for this document
 	 */
 	void setEngine(PdfEngine *engine);
+	/**
+	 * @brief set number of pages in this document
+	 */
+	void setLength(const int length);
 	/**
 	 * @brief sets author of this document
 	 */

@@ -56,6 +56,7 @@ PopplerEngine::openFromPath(char *src) {
 
 void
 PopplerEngine::fillDocument(PdfDocument *document) {
+	document->setLength(poppler_document_get_n_pages(this->doc));
 	document->setAuthor(poppler_document_get_author(this->doc));
 	document->setCreationDate(poppler_document_get_creation_date(this->doc));
 	document->setCreator(poppler_document_get_creator(this->doc));

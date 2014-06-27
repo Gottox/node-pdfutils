@@ -10,7 +10,7 @@
 
 #include "pdfutils.h"
 #include "PdfEngine.h"
-#include "jsShim.h"
+#include "JsShim.h"
 #include <v8.h>
 #include <node.h>
 
@@ -20,13 +20,11 @@ class PdfEngine;
  *
  * This class should be filled from a PDFEngine
  */
-class PdfPage : public node::ObjectWrap {
+class PdfPage : public JsShim {
 	JS_SHIM_H
 
 private:
-	PdfPage(const v8::Arguments &args) {
-		
-	}
+	PdfPage(const v8::Arguments &args);
 	PdfEngine *_engine;
 	int _index;
 	const char *_label;
@@ -34,6 +32,14 @@ private:
 	double _height;
 
 public:
+	/**
+	 * @brief writes state of this object to a JS-Object
+	 */
+	virtual void toJs(v8::Handle<v8::Object> &obj);
+	/**
+	 * @brief reads state of this object from a JS-Object
+	 */
+	virtual void fromJs(v8::Handle<v8::Object> &obj);
 	/**
 	 * @brief engine used to create this page
 	 */

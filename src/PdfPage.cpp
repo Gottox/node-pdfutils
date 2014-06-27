@@ -9,6 +9,16 @@
 
 JS_SHIM(PdfPage)
 
+PdfPage::PdfPage(const v8::Arguments &args) : JsShim(args) {
+
+}
+
+void PdfPage::toJs(v8::Handle<v8::Object> &obj) {
+}
+
+void PdfPage::fromJs(v8::Handle<v8::Object> &obj) {
+}
+
 PdfEngine *PdfPage::engine(){
 	return _engine;
 }

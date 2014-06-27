@@ -6,14 +6,52 @@
  */
 
 #include "PdfDocument.h"
+#include "v8utils.h"
 
 JS_SHIM(PdfDocument)
 
 PdfDocument::PdfDocument(const v8::Arguments& args) {
 
 }
+void PdfDocument::toJs(v8::Handle<v8::Object> &obj) {
+	obj->Set(v8::String::NewSymbol("length"), v8::Integer::New(this->length()));
+	obj->Set(v8::String::NewSymbol("author"), charToV8(this->author()));
+	obj->Set(v8::String::NewSymbol("creation_date"), v8::Integer::New(this->creationDate()));
+	obj->Set(v8::String::NewSymbol("creator"), charToV8(this->creator()));
+	//obj->Set(v8::String::NewSymbol("format"), charToV8(this->format()));
+	obj->Set(v8::String::NewSymbol("keywords"), charToV8(this->keywords()));
+	obj->Set(v8::String::NewSymbol("linearized"), v8::Boolean::New(this->linearized()));
+	obj->Set(v8::String::NewSymbol("metadata"), charToV8(this->metadata()));
+	obj->Set(v8::String::NewSymbol("modification_date"), v8::Integer::New(this->modDate()));
+	//obj->Set(v8::String::NewSymbol("pageLayout"), charToV8(this->pageLayout()));
+	//obj->Set(v8::String::NewSymbol("pageMode"), charToV8(this->pageMode()));
+	//obj->Set(v8::String::NewSymbol("permissions"), charToV8(this->permissions()));
+	obj->Set(v8::String::NewSymbol("producer"), charToV8(this->producer()));
+	obj->Set(v8::String::NewSymbol("subject"), charToV8(this->subject()));
+	obj->Set(v8::String::NewSymbol("title"), charToV8(this->title()));
+}
+void PdfDocument::fromJs(v8::Handle<v8::Object> &obj) {
+	this->setModDate(v8ToInt(obj->Get(v8::String::NewSymbol("length"))));
+	this->setAuthor(v8ToChar(obj->Get(v8::String::NewSymbol("author"))));
+	this->setCreationDate(v8ToInt(obj->Get(v8::String::NewSymbol("creation_date"))));
+	this->setCreator(v8ToChar(obj->Get(v8::String::NewSymbol("creator"))));
+	//this->setFormat(v8ToChar(obj->Get(v8::String::NewSymbol(""))));
+	this->setKeywords(v8ToChar(obj->Get(v8::String::NewSymbol("keywords"))));
+	this->setLinearized(v8ToChar(obj->Get(v8::String::NewSymbol("linearized"))));
+	this->setMetadata(v8ToChar(obj->Get(v8::String::NewSymbol("metadata"))));
+	this->setModDate(v8ToInt(obj->Get(v8::String::NewSymbol("modification_date"))));
+	//this->setPageLayout(v8ToChar(obj->Get(v8::String::NewSymbol(""))));
+	//this->setPageMode(v8ToChar(obj->Get(v8::String::NewSymbol(""))));
+	//this->setPermissions(v8ToChar(obj->Get(v8::String::NewSymbol(""))));
+	this->setProducer(v8ToChar(obj->Get(v8::String::NewSymbol("producer"))));
+	this->setSubject(v8ToChar(obj->Get(v8::String::NewSymbol("subject"))));
+	this->setTitle(v8ToChar(obj->Get(v8::String::NewSymbol("title"))));
+}
 PdfEngine *PdfDocument::engine() {
 	return _engine;
+}
+int PdfDocument::length() {
+	return _length;
 }
 const char *PdfDocument::author() {
 	return _author;
@@ -60,6 +98,9 @@ const char *PdfDocument::title() {
 
 void PdfDocument::setEngine(PdfEngine *engine) {
 	_engine = engine;
+}
+void PdfDocument::setLength(const int length) {
+	_length = length;
 }
 void PdfDocument::setAuthor(const char *author) {
 	_author = author;

@@ -8,6 +8,9 @@
 #ifndef JSSHIM_H
 #define JSSHIM_H
 
+#include <v8.h>
+#include <node.h>
+
 #define JS_SHIM_H \
 public: \
 	static void Init(v8::Handle<v8::Object> exports); \
@@ -40,5 +43,13 @@ v8::Handle<v8::Value> cls::New(const v8::Arguments& args) { \
 	super->Call(args.This(), args.Length(), argv); \
 	return scope.Close(args.This()); \
 }
+
+class JsShim : public node::ObjectWrap {
+protected:
+	JsShim(const v8::Arguments& args) {}
+public:
+	virtual void toJs(v8::Handle<v8::Object> &obj) = 0;
+	virtual void fromJs(v8::Handle<v8::Object> &obj) = 0;
+};
 
 #endif /* !JSSHIM_H */
