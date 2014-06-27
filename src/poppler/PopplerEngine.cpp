@@ -11,9 +11,7 @@
 
 void
 PopplerEngine::Init() {
-#if GLIB_MAJOR_VERSION < 2 && GLIB_MINOR_VERSION < 36
 	g_type_init();
-#endif
 }
 
 PopplerEngine::PopplerEngine() : PdfEngine() {
