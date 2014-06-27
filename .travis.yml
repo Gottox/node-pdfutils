@@ -4,6 +4,7 @@ node_js:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libpoppler-glib-dev
+  - dpkg -l libglib2.0-dev
 notifications:
   irc:
       channels:
