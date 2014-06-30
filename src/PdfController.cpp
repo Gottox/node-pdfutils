@@ -12,11 +12,11 @@ v8::Persistent<v8::Function> PdfController::constructor;
 
 void PdfController::Init(v8::Handle<v8::Object> exports) {
 	v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(New);
-	tpl->SetClassName(v8::String::NewSymbol("PdfController"));
+	tpl->SetClassName(v8::String::NewSymbol("PdfDocument"));
 	tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
 	constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
-	exports->Set(v8::String::NewSymbol("PdfController"), constructor);
+	exports->Set(v8::String::NewSymbol("PdfDocument"), constructor);
 }
 
 v8::Handle<v8::Value> PdfController::New(const v8::Arguments& args) {
