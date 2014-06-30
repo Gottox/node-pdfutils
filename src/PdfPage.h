@@ -9,8 +9,6 @@
 #define PDFPAGE_H
 
 #include "pdfutils.h"
-#include "PdfEngine.h"
-#include "JsShim.h"
 #include <v8.h>
 #include <node.h>
 

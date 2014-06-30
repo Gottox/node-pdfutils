@@ -9,7 +9,6 @@
 #define PDFCONTROLLER_H
 
 #include "PdfEngine.h"
-#include "JsShim.h"
 #include <node.h>
 #include <v8.h>
 
