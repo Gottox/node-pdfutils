@@ -1,5 +1,5 @@
 /*
- * PdfDocument.h
+ * PdfController.h
  * Copyright (C) 2014 tox <tox@rootkit>
  *
  * Distributed under terms of the MIT license.
@@ -16,11 +16,11 @@
  
 class PdfEngine;
 /**
- * @brief Class representation of a PDF-Document.
+ * @brief Class representation of a PDF-Controller.
  *
  * This class should be filled from a PDFEngine
  */
-class PdfDocument : public node::ObjectWrap {
+class PdfController : public node::ObjectWrap {
 	JS_SHIM_H
 
 private:
@@ -28,7 +28,7 @@ private:
 	 * @brief Constructor for v8.
 	 * @param args arguments from Javascript. Currently not used
 	 */
-	PdfDocument(const v8::Arguments& args);
+	PdfController(const v8::Arguments& args);
 
 	PdfEngine *_engine;
 	int _length;

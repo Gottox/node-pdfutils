@@ -10,7 +10,7 @@
 #include <v8.h>
 #include "PdfEngine.h"
 #include "PdfEngineFactory.h"
-#include "PdfDocument.h"
+#include "PdfController.h"
 #include "PdfPage.h"
 #include "v8utils.h"
 
@@ -22,7 +22,7 @@ Handle<Value> Method(const Arguments& args) {
 
 /**
  * @brief opens PDF from an FD with specified engine
- * doc - PdfDocument
+ * doc - PdfController
  * password - String
  * fd - file descriptor
  */
@@ -32,7 +32,7 @@ Handle<Value> openFromPath(const Arguments& args) {
 	HandleScope scope;
 	v8::Local<v8::Object> jsDoc = args[0]->ToObject();
 	v8::Local<v8::Function> pdfPageFactory = v8::Function::Cast(*args[1]);
-	PdfDocument *doc = node::ObjectWrap::Unwrap<PdfDocument>(jsDoc);
+	PdfController *doc = node::ObjectWrap::Unwrap<PdfController>(jsDoc);
 	v8::Local<v8::Object> jsEngine = jsDoc->Get(v8::String::NewSymbol("_engine"))->ToObject();
 
 	PdfEngineFactory *factory = node::ObjectWrap::Unwrap<PdfEngineFactory>(jsEngine);
@@ -65,7 +65,7 @@ void init(Handle<Object> exports) {
 			FunctionTemplate::New(openFromPath)->GetFunction());
 
 	PdfPage::Init(exports);
-	PdfDocument::Init(exports);
+	PdfController::Init(exports);
 }
 
 NODE_MODULE(pdfutils, init)

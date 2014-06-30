@@ -13,10 +13,10 @@
 #include <vector>
 #include "pdfutils.h"
 #include "PdfPage.h"
-#include "PdfDocument.h"
+#include "PdfController.h"
 
 class PdfPage;
-class PdfDocument;
+class PdfController;
 /**
  * @brief Base Class for interaction with a PDF-Engine such as Poppler
  *
@@ -49,7 +49,7 @@ public:
 	virtual char* openFromData(char *data, size_t length) = 0;
 	virtual char* openFromPath(char *src) = 0;
 
-	virtual void fillDocument(PdfDocument *document) = 0;
+	virtual void fillDocument(PdfController *document) = 0;
 	virtual void fillPage(int index, PdfPage *page) = 0;
 
 	virtual void close() = 0;
