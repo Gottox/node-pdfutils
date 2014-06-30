@@ -37,7 +37,7 @@ public:
 	 */
 	static void Init(v8::Handle<v8::Object> exports);
 	/**
-	 * @brief generates new class from v8
+	 * @brief generates new object from v8
 	 */
 	static v8::Handle<v8::Value> New(const v8::Arguments& args);
 	/**
