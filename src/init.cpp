@@ -53,7 +53,7 @@ Handle<Value> openFromPath(const Arguments& args) {
 	for(i = 0; i < doc->document()->length(); i++) {
 		v8::Local<v8::Object> jsPage = jsDoc->Get(i)->ToObject();
 		PdfPageController *page = node::ObjectWrap::Unwrap<PdfPageController>(jsPage);
-		engine->fillPage(i, page);
+		engine->fillPage(i, page->page());
 		page->toJs(jsPage);
 	}
 

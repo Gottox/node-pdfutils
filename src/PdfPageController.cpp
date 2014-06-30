@@ -6,6 +6,7 @@
  */
 
 #include "PdfPageController.h"
+#include "PdfPage.h"
 #include "v8utils.h"
 
 v8::Persistent<v8::Function> PdfPageController::constructor;
@@ -27,6 +28,7 @@ v8::Handle<v8::Value> PdfPageController::New(const v8::Arguments& args) {
 
 PdfPageController::PdfPageController(const v8::Arguments &args) {
 	this->Wrap(args.This());
+	setPage(new PdfPage());
 	v8Super(args);
 }
 
@@ -45,6 +47,9 @@ void PdfPageController::fromJs(v8::Handle<v8::Object> &obj) {
 PdfEngine *PdfPageController::engine(){
 	return _engine;
 }
+PdfPage *PdfPageController::page(){
+	return _page;
+}
 
 int PdfPageController::index(){
 	return _index;
@@ -61,6 +66,9 @@ double PdfPageController::height(){
 
 void PdfPageController::setEngine(PdfEngine *engine){
 	_engine = engine;
+}
+void PdfPageController::setPage(PdfPage *page){
+	_page = page;
 }
 void PdfPageController::setIndex(const int index){
 	_index = index;

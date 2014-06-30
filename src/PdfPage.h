@@ -1,12 +1,12 @@
 /*
- * PdfPageController.h
+ * PdfPage.h
  * Copyright (C) 2014 tox <tox@rootkit>
  *
  * Distributed under terms of the MIT license.
  */
 
-#ifndef PDFPAGECONTROLLER_H
-#define PDFPAGECONTROLLER_H
+#ifndef PDFPAGE_H
+#define PDFPAGE_H
 
 #include "pdfutils.h"
 #include "PdfEngine.h"
@@ -20,12 +20,9 @@ class PdfEngine;
  *
  * This class should be filled from a PDFEngine
  */
-class PdfPageController : public node::ObjectWrap {
+class PdfPage {
 private:
-	static v8::Persistent<v8::Function> constructor;
-	PdfPageController(const v8::Arguments &args);
 	PdfEngine *_engine;
-	PdfPage *_page;
 	int _index;
 	const char *_label;
 	double _width;
@@ -33,29 +30,9 @@ private:
 
 public:
 	/**
-	 * @brief exports this class to v8
+	 * @brief constructor
 	 */
-	static void Init(v8::Handle<v8::Object> exports);
-	/**
-	 * @brief generates new object from v8
-	 */
-	static v8::Handle<v8::Value> New(const v8::Arguments& args);
-	/**
-	 * @brief writes state of this object to a JS-Object
-	 */
-	virtual void toJs(v8::Handle<v8::Object> &obj);
-	/**
-	 * @brief reads state of this object from a JS-Object
-	 */
-	virtual void fromJs(v8::Handle<v8::Object> &obj);
-	/**
-	 * @brief engine used to create this page
-	 */
-	PdfEngine *engine();
-	/**
-	 * @brief page
-	 */
-	PdfPage *page();
+	PdfPage();
 	/**
 	 * @brief index of this page
 	 */
@@ -74,14 +51,6 @@ public:
 	double height();
 
 	/**
-	 * @brief sets engine of this page
-	 */
-	void setEngine(PdfEngine *);
-	/**
-	 * @brief sets engine of this page
-	 */
-	void setPage(PdfPage *);
-	/**
 	 * @brief sets index of this page
 	 */
 	void setIndex(const int indext);
@@ -99,4 +68,4 @@ public:
 	void setHeight(const double height);
 };
 
-#endif /* !PDFPAGECONTROLLER_H */
+#endif /* !PDFPAGE_H */
