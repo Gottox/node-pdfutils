@@ -21,9 +21,8 @@ class PdfEngine;
  * This class should be filled from a PDFEngine
  */
 class PdfController : public node::ObjectWrap {
-	JS_SHIM_H
-
 private:
+	static v8::Persistent<v8::Function> constructor;
 	/**
 	 * @brief Constructor for v8.
 	 * @param args arguments from Javascript. Currently not used
@@ -48,6 +47,14 @@ private:
 	const char *_title;
 
 public:
+	/**
+	 * @brief exports this class to v8
+	 */
+	static void Init(v8::Handle<v8::Object> exports);
+	/**
+	 * @brief generates new class from v8
+	 */
+	static v8::Handle<v8::Value> New(const v8::Arguments& args);
 	/**
 	 * @brief writes state of this object to a JS-Object
 	 */

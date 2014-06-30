@@ -8,10 +8,27 @@
 #include "PdfController.h"
 #include "v8utils.h"
 
-JS_SHIM(PdfController)
+v8::Persistent<v8::Function> PdfController::constructor;
+
+void PdfController::Init(v8::Handle<v8::Object> exports) {
+	v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(New);
+	tpl->SetClassName(v8::String::NewSymbol("PdfController"));
+	tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+	constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
+	exports->Set(v8::String::NewSymbol("PdfController"), constructor);
+}
+
+v8::Handle<v8::Value> PdfController::New(const v8::Arguments& args) {
+	v8::HandleScope scope;
+
+	PdfController* obj = new PdfController(args);
+	return scope.Close(args.This());
+}
 
 PdfController::PdfController(const v8::Arguments& args) {
-
+	this->Wrap(args.This());
+	v8Super(args);
 }
 void PdfController::toJs(v8::Handle<v8::Object> &obj) {
 	obj->Set(v8::String::NewSymbol("length"), v8::Integer::New(this->length()));

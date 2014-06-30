@@ -38,3 +38,13 @@ v8::Handle<v8::Value> charToV8(const char *value) {
 		return v8::Null();
 	return v8::String::New(value);
 }
+
+void v8Super(v8::Arguments args) {
+	int i = 0;
+
+	v8::Local<v8::Function> super = v8::Local<v8::Function>::Cast(args.Callee()->Get(v8::String::NewSymbol("super_")));
+	v8::Local<v8::Value> argv[args.Length()];
+	for(i = 0; i < args.Length(); i++)
+		argv[i] = args[i];
+	super->Call(args.This(), args.Length(), argv);
+}
