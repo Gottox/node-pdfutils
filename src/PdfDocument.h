@@ -8,9 +8,8 @@
 #ifndef PDFDOCUMENT_H
 #define PDFDOCUMENT_H
 
-#include "PdfPage.h"
 #include "PdfEngine.h"
- 
+
 class PdfEngine;
 /**
  * @brief Class representation of a PDF-Document.

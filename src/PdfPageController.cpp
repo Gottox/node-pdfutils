@@ -1,60 +1,60 @@
 /*
- * PdfPage.cpp
+ * PdfPageController.cpp
  * Copyright (C) 2014 tox <tox@rootkit>
  *
  * Distributed under terms of the MIT license.
  */
 
-#include "PdfPage.h"
+#include "PdfPageController.h"
 #include "v8utils.h"
 
-JS_SHIM(PdfPage)
+JS_SHIM(PdfPageController)
 
-PdfPage::PdfPage(const v8::Arguments &args) : JsShim(args) {
+PdfPageController::PdfPageController(const v8::Arguments &args) : JsShim(args) {
 
 }
 
-void PdfPage::toJs(v8::Handle<v8::Object> &obj) {
+void PdfPageController::toJs(v8::Handle<v8::Object> &obj) {
 	obj->Set(v8::String::NewSymbol("label"), charToV8(this->label()));
 	obj->Set(v8::String::NewSymbol("width"), v8::Number::New(this->width()));
 	obj->Set(v8::String::NewSymbol("height"), v8::Number::New(this->height()));
 }
 
-void PdfPage::fromJs(v8::Handle<v8::Object> &obj) {
+void PdfPageController::fromJs(v8::Handle<v8::Object> &obj) {
 	this->setLabel(v8ToChar(obj->Get(v8::String::NewSymbol("label"))));
 	this->setWidth(v8ToDouble(obj->Get(v8::String::NewSymbol("width"))));
 	this->setHeight(v8ToDouble(obj->Get(v8::String::NewSymbol("height"))));
 }
 
-PdfEngine *PdfPage::engine(){
+PdfEngine *PdfPageController::engine(){
 	return _engine;
 }
 
-int PdfPage::index(){
+int PdfPageController::index(){
 	return _index;
 }
-const char *PdfPage::label(){
+const char *PdfPageController::label(){
 	return _label;
 }
-double PdfPage::width(){
+double PdfPageController::width(){
 	return _width;
 }
-double PdfPage::height(){
+double PdfPageController::height(){
 	return _height;
 }
 
-void PdfPage::setEngine(PdfEngine *engine){
+void PdfPageController::setEngine(PdfEngine *engine){
 	_engine = engine;
 }
-void PdfPage::setIndex(const int index){
+void PdfPageController::setIndex(const int index){
 	_index = index;
 }
-void PdfPage::setLabel(const char *label){
+void PdfPageController::setLabel(const char *label){
 	_label = label;
 }
-void PdfPage::setWidth(const double width){
+void PdfPageController::setWidth(const double width){
 	_width = width;
 }
-void PdfPage::setHeight(const double height){
+void PdfPageController::setHeight(const double height){
 	_height = height;
 }

@@ -75,7 +75,7 @@ PopplerEngine::fillDocument(PdfDocument *document) {
 	document->setTitle(poppler_document_get_title(this->doc));
 }
 
-void PopplerEngine::fillPage(int index, PdfPage *page) {
+void PopplerEngine::fillPage(int index, PdfPageController *page) {
 	double width, height;
 	PopplerPage *pg = poppler_document_get_page(this->doc, index);
 	page->setLabel(poppler_page_get_label(pg));

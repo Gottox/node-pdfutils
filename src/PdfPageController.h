@@ -1,5 +1,5 @@
 /*
- * PdfPage.h
+ * PdfPageController.h
  * Copyright (C) 2014 tox <tox@rootkit>
  *
  * Distributed under terms of the MIT license.
@@ -20,11 +20,11 @@ class PdfEngine;
  *
  * This class should be filled from a PDFEngine
  */
-class PdfPage : public JsShim {
+class PdfPageController : public JsShim {
 	JS_SHIM_H
 
 private:
-	PdfPage(const v8::Arguments &args);
+	PdfPageController(const v8::Arguments &args);
 	PdfEngine *_engine;
 	int _index;
 	const char *_label;

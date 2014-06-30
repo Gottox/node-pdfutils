@@ -11,7 +11,7 @@
 #include "PdfEngine.h"
 #include "PdfEngineFactory.h"
 #include "PdfController.h"
-#include "PdfPage.h"
+#include "PdfPageController.h"
 #include "v8utils.h"
 
 using namespace v8;
@@ -52,7 +52,7 @@ Handle<Value> openFromPath(const Arguments& args) {
 
 	for(i = 0; i < doc->document()->length(); i++) {
 		v8::Local<v8::Object> jsPage = jsDoc->Get(i)->ToObject();
-		PdfPage *page = node::ObjectWrap::Unwrap<PdfPage>(jsPage);
+		PdfPageController *page = node::ObjectWrap::Unwrap<PdfPageController>(jsPage);
 		engine->fillPage(i, page);
 		page->toJs(jsPage);
 	}
@@ -64,7 +64,7 @@ void init(Handle<Object> exports) {
 	exports->Set(String::NewSymbol("openFromPath"),
 			FunctionTemplate::New(openFromPath)->GetFunction());
 
-	PdfPage::Init(exports);
+	PdfPageController::Init(exports);
 	PdfController::Init(exports);
 }
 
