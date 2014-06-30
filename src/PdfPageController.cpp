@@ -8,10 +8,26 @@
 #include "PdfPageController.h"
 #include "v8utils.h"
 
-JS_SHIM(PdfPageController)
+v8::Persistent<v8::Function> PdfPageController::constructor;
 
-PdfPageController::PdfPageController(const v8::Arguments &args) : JsShim(args) {
+void PdfPageController::Init(v8::Handle<v8::Object> exports) {
+	v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(New);
+	tpl->SetClassName(v8::String::NewSymbol("PdfPage"));
+	tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
+	constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
+	exports->Set(v8::String::NewSymbol("PdfPage"), constructor);
+}
+
+v8::Handle<v8::Value> PdfPageController::New(const v8::Arguments& args) {
+	v8::HandleScope scope;
+	new PdfPageController(args);
+	return scope.Close(args.This());
+}
+
+PdfPageController::PdfPageController(const v8::Arguments &args) {
+	this->Wrap(args.This());
+	v8Super(args);
 }
 
 void PdfPageController::toJs(v8::Handle<v8::Object> &obj) {

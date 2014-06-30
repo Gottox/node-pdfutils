@@ -20,10 +20,9 @@ class PdfEngine;
  *
  * This class should be filled from a PDFEngine
  */
-class PdfPageController : public JsShim {
-	JS_SHIM_H
-
+class PdfPageController : public node::ObjectWrap {
 private:
+	static v8::Persistent<v8::Function> constructor;
 	PdfPageController(const v8::Arguments &args);
 	PdfEngine *_engine;
 	int _index;
@@ -32,6 +31,14 @@ private:
 	double _height;
 
 public:
+	/**
+	 * @brief exports this class to v8
+	 */
+	static void Init(v8::Handle<v8::Object> exports);
+	/**
+	 * @brief generates new object from v8
+	 */
+	static v8::Handle<v8::Value> New(const v8::Arguments& args);
 	/**
 	 * @brief writes state of this object to a JS-Object
 	 */
