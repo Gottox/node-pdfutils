@@ -44,13 +44,13 @@ Handle<Value> openFromPath(const Arguments& args) {
 	if((error = engine->openFromPath(src))) {
 		THROW_FREE(Error, error);
 	}
-	engine->fillDocument(doc);
+	engine->fillDocument(doc->document());
 	doc->toJs(jsDoc);
 
-	Handle< Value > argv[] = { jsDoc, v8::Integer::New(doc->length()) };
+	Handle< Value > argv[] = { jsDoc, v8::Integer::New(doc->document()->length()) };
 	pdfPageFactory->Call(v8::Context::GetCurrent()->Global(), 2, argv);
 
-	for(i = 0; i < doc->length(); i++) {
+	for(i = 0; i < doc->document()->length(); i++) {
 		v8::Local<v8::Object> jsPage = jsDoc->Get(i)->ToObject();
 		PdfPage *page = node::ObjectWrap::Unwrap<PdfPage>(jsPage);
 		engine->fillPage(i, page);

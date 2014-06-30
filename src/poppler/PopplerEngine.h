@@ -24,7 +24,7 @@ public:
 
 	virtual char *openFromData(char *data, size_t length);
 	virtual char *openFromPath(char *src);
-	virtual void fillDocument(PdfController *document);
+	virtual void fillDocument(PdfDocument *document);
 	virtual void fillPage(int index, PdfPage *page);
 	virtual void close();
 

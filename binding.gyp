@@ -3,6 +3,7 @@
 		"target_name": "pdfutils",
 		"sources": [
 			"src/PdfController.cpp",
+			"src/PdfDocument.cpp",
 			"src/PdfEngine.cpp",
 			"src/PdfEngineFactory.cpp",
 			"src/PdfPage.cpp",
@@ -15,7 +16,7 @@
 	}, {
 		"target_name": "popplerEngine",
 		"sources": [
-			"src/PdfController.cpp",
+			"src/PdfDocument.cpp",
 			"src/PdfEngine.cpp",
 			"src/PdfEngineFactory.cpp",
 			"src/PdfPage.cpp",

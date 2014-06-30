@@ -21,143 +21,61 @@ void PdfController::Init(v8::Handle<v8::Object> exports) {
 
 v8::Handle<v8::Value> PdfController::New(const v8::Arguments& args) {
 	v8::HandleScope scope;
-
-	PdfController* obj = new PdfController(args);
+	new PdfController(args);
 	return scope.Close(args.This());
 }
 
 PdfController::PdfController(const v8::Arguments& args) {
 	this->Wrap(args.This());
+	setDocument(new PdfDocument());
 	v8Super(args);
 }
 void PdfController::toJs(v8::Handle<v8::Object> &obj) {
-	obj->Set(v8::String::NewSymbol("length"), v8::Integer::New(this->length()));
-	obj->Set(v8::String::NewSymbol("author"), charToV8(this->author()));
-	obj->Set(v8::String::NewSymbol("creation_date"), v8::Integer::New(this->creationDate()));
-	obj->Set(v8::String::NewSymbol("creator"), charToV8(this->creator()));
-	//obj->Set(v8::String::NewSymbol("format"), charToV8(this->format()));
-	obj->Set(v8::String::NewSymbol("keywords"), charToV8(this->keywords()));
-	obj->Set(v8::String::NewSymbol("linearized"), v8::Boolean::New(this->linearized()));
-	obj->Set(v8::String::NewSymbol("metadata"), charToV8(this->metadata()));
-	obj->Set(v8::String::NewSymbol("modification_date"), v8::Integer::New(this->modDate()));
-	//obj->Set(v8::String::NewSymbol("pageLayout"), charToV8(this->pageLayout()));
-	//obj->Set(v8::String::NewSymbol("pageMode"), charToV8(this->pageMode()));
-	//obj->Set(v8::String::NewSymbol("permissions"), charToV8(this->permissions()));
-	obj->Set(v8::String::NewSymbol("producer"), charToV8(this->producer()));
-	obj->Set(v8::String::NewSymbol("subject"), charToV8(this->subject()));
-	obj->Set(v8::String::NewSymbol("title"), charToV8(this->title()));
+	PdfDocument *doc = this->document();
+	obj->Set(v8::String::NewSymbol("length"), v8::Integer::New(doc->length()));
+	obj->Set(v8::String::NewSymbol("author"), charToV8(doc->author()));
+	obj->Set(v8::String::NewSymbol("creation_date"), v8::Integer::New(doc->creationDate()));
+	obj->Set(v8::String::NewSymbol("creator"), charToV8(doc->creator()));
+	//obj->Set(v8::String::NewSymbol("format"), charToV8(doc->format()));
+	obj->Set(v8::String::NewSymbol("keywords"), charToV8(doc->keywords()));
+	obj->Set(v8::String::NewSymbol("linearized"), v8::Boolean::New(doc->linearized()));
+	obj->Set(v8::String::NewSymbol("metadata"), charToV8(doc->metadata()));
+	obj->Set(v8::String::NewSymbol("modification_date"), v8::Integer::New(doc->modDate()));
+	//obj->Set(v8::String::NewSymbol("pageLayout"), charToV8(doc->pageLayout()));
+	//obj->Set(v8::String::NewSymbol("pageMode"), charToV8(doc->pageMode()));
+	//obj->Set(v8::String::NewSymbol("permissions"), charToV8(doc->permissions()));
+	obj->Set(v8::String::NewSymbol("producer"), charToV8(doc->producer()));
+	obj->Set(v8::String::NewSymbol("subject"), charToV8(doc->subject()));
+	obj->Set(v8::String::NewSymbol("title"), charToV8(doc->title()));
 }
 void PdfController::fromJs(v8::Handle<v8::Object> &obj) {
-	this->setModDate(v8ToInt(obj->Get(v8::String::NewSymbol("length"))));
-	this->setAuthor(v8ToChar(obj->Get(v8::String::NewSymbol("author"))));
-	this->setCreationDate(v8ToInt(obj->Get(v8::String::NewSymbol("creation_date"))));
-	this->setCreator(v8ToChar(obj->Get(v8::String::NewSymbol("creator"))));
-	//this->setFormat(v8ToChar(obj->Get(v8::String::NewSymbol(""))));
-	this->setKeywords(v8ToChar(obj->Get(v8::String::NewSymbol("keywords"))));
-	this->setLinearized(v8ToChar(obj->Get(v8::String::NewSymbol("linearized"))));
-	this->setMetadata(v8ToChar(obj->Get(v8::String::NewSymbol("metadata"))));
-	this->setModDate(v8ToInt(obj->Get(v8::String::NewSymbol("modification_date"))));
-	//this->setPageLayout(v8ToChar(obj->Get(v8::String::NewSymbol(""))));
-	//this->setPageMode(v8ToChar(obj->Get(v8::String::NewSymbol(""))));
-	//this->setPermissions(v8ToChar(obj->Get(v8::String::NewSymbol(""))));
-	this->setProducer(v8ToChar(obj->Get(v8::String::NewSymbol("producer"))));
-	this->setSubject(v8ToChar(obj->Get(v8::String::NewSymbol("subject"))));
-	this->setTitle(v8ToChar(obj->Get(v8::String::NewSymbol("title"))));
+	PdfDocument *doc = this->document();
+	doc->setModDate(v8ToInt(obj->Get(v8::String::NewSymbol("length"))));
+	doc->setAuthor(v8ToChar(obj->Get(v8::String::NewSymbol("author"))));
+	doc->setCreationDate(v8ToInt(obj->Get(v8::String::NewSymbol("creation_date"))));
+	doc->setCreator(v8ToChar(obj->Get(v8::String::NewSymbol("creator"))));
+	//doc->setFormat(v8ToChar(obj->Get(v8::String::NewSymbol(""))));
+	doc->setKeywords(v8ToChar(obj->Get(v8::String::NewSymbol("keywords"))));
+	doc->setLinearized(v8ToChar(obj->Get(v8::String::NewSymbol("linearized"))));
+	doc->setMetadata(v8ToChar(obj->Get(v8::String::NewSymbol("metadata"))));
+	doc->setModDate(v8ToInt(obj->Get(v8::String::NewSymbol("modification_date"))));
+	//doc->setPageLayout(v8ToChar(obj->Get(v8::String::NewSymbol(""))));
+	//doc->setPageMode(v8ToChar(obj->Get(v8::String::NewSymbol(""))));
+	//doc->setPermissions(v8ToChar(obj->Get(v8::String::NewSymbol(""))));
+	doc->setProducer(v8ToChar(obj->Get(v8::String::NewSymbol("producer"))));
+	doc->setSubject(v8ToChar(obj->Get(v8::String::NewSymbol("subject"))));
+	doc->setTitle(v8ToChar(obj->Get(v8::String::NewSymbol("title"))));
 }
 PdfEngine *PdfController::engine() {
 	return _engine;
 }
-int PdfController::length() {
-	return _length;
-}
-const char *PdfController::author() {
-	return _author;
-}
-int PdfController::creationDate() {
-	return _creationDate;
-}
-const char *PdfController::creator() {
-	return _creator;
-}
-const char *PdfController::format() {
-	return _format;
-}
-const char * PdfController::keywords() {
-	return _keywords;
-}
-bool PdfController::linearized() {
-	return _linearized;
-}
-const char *PdfController::metadata() {
-	return _metadata;
-}
-int PdfController::modDate() {
-	return _modDate;
-}
-enum PageLayout PdfController::pageLayout() {
-	return _pageLayout;
-}
-enum PageMode PdfController::pageMode() {
-	return _pageMode;
-}
-enum Permission PdfController::permissions() {
-	return _permissions;
-}
-const char *PdfController::producer() {
-	return _producer;
-}
-const char *PdfController::subject() {
-	return _subject;
-}
-const char *PdfController::title() {
-	return _title;
+PdfDocument *PdfController::document() {
+	return _document;
 }
 
 void PdfController::setEngine(PdfEngine *engine) {
 	_engine = engine;
 }
-void PdfController::setLength(const int length) {
-	_length = length;
-}
-void PdfController::setAuthor(const char *author) {
-	_author = author;
-}
-void PdfController::setCreationDate(const int creationDate) {
-	_creationDate = creationDate;
-}
-void PdfController::setCreator(const char *creator) {
-	_creator = creator;
-}
-void PdfController::setFormat(const char *format) {
-	_format = format;
-}
-void PdfController::setKeywords(const char *keywords) {
-	_keywords = keywords;
-}
-void PdfController::setLinearized(const bool linearized) {
-	_linearized = linearized;
-}
-void PdfController::setMetadata(const char *metadata) {
-	_metadata = metadata;
-}
-void PdfController::setModDate(const int modDate) {
-	_modDate = modDate;
-}
-void PdfController::setPageLayout(const enum PageLayout pageLayout) {
-	_pageLayout = pageLayout;
-}
-void PdfController::setPageMode(const enum PageMode pageMode) {
-	_pageMode = pageMode;
-}
-void PdfController::setPermissions(const enum Permission permissions) {
-	_permissions = permissions;
-}
-void PdfController::setProducer(const char *producer) {
-	_producer = producer;
-}
-void PdfController::setSubject(const char *subject) {
-	_subject = subject;
-}
-void PdfController::setTitle(const char *title) {
-	_title = title;
+void PdfController::setDocument(PdfDocument *document) {
+	_document = document;
 }
