@@ -10,24 +10,44 @@
 #include <cstring>
 
 
-const enum PdfPageLayout pageLayout[] = {
-	[POPPLER_PAGE_LAYOUT_UNSET] = PAGE_LAYOUT_UNSET,
-	[POPPLER_PAGE_LAYOUT_SINGLE_PAGE] = PAGE_LAYOUT_SINGLE_PAGE,
-	[POPPLER_PAGE_LAYOUT_ONE_COLUMN] = PAGE_LAYOUT_ONE_COLUMN,
-	[POPPLER_PAGE_LAYOUT_TWO_COLUMN_LEFT] = PAGE_LAYOUT_TWO_COLUMN_LEFT,
-	[POPPLER_PAGE_LAYOUT_TWO_COLUMN_RIGHT] = PAGE_LAYOUT_TWO_COLUMN_RIGHT,
-	[POPPLER_PAGE_LAYOUT_TWO_PAGE_LEFT] = PAGE_LAYOUT_TWO_PAGE_LEFT,
-	[POPPLER_PAGE_LAYOUT_TWO_PAGE_RIGHT] = PAGE_LAYOUT_TWO_PAGE_RIGHT
+enum PdfPageLayout getPageLayout(PopplerPageLayout layout) {
+	switch(layout) {
+		case POPPLER_PAGE_LAYOUT_UNSET:
+			return PAGE_LAYOUT_UNSET;
+		case POPPLER_PAGE_LAYOUT_SINGLE_PAGE:
+			return PAGE_LAYOUT_SINGLE_PAGE;
+		case POPPLER_PAGE_LAYOUT_ONE_COLUMN:
+			return PAGE_LAYOUT_ONE_COLUMN;
+		case POPPLER_PAGE_LAYOUT_TWO_COLUMN_LEFT:
+			return PAGE_LAYOUT_TWO_COLUMN_LEFT;
+		case POPPLER_PAGE_LAYOUT_TWO_COLUMN_RIGHT:
+			return PAGE_LAYOUT_TWO_COLUMN_RIGHT;
+		case POPPLER_PAGE_LAYOUT_TWO_PAGE_LEFT:
+			return PAGE_LAYOUT_TWO_PAGE_LEFT;
+		case POPPLER_PAGE_LAYOUT_TWO_PAGE_RIGHT:
+			return PAGE_LAYOUT_TWO_PAGE_RIGHT;
+	}
+	return PAGE_LAYOUT_UNSET;
 };
 
-const enum PdfPageMode pageMode[] = {
-	[POPPLER_PAGE_MODE_UNSET] = PAGE_MODE_UNSET,
-	[POPPLER_PAGE_MODE_NONE] = PAGE_MODE_NONE,
-	[POPPLER_PAGE_MODE_USE_OUTLINES] = PAGE_MODE_USE_OUTLINES,
-	[POPPLER_PAGE_MODE_USE_THUMBS] = PAGE_MODE_USE_THUMBS,
-	[POPPLER_PAGE_MODE_FULL_SCREEN] = PAGE_MODE_FULL_SCREEN,
-	[POPPLER_PAGE_MODE_USE_OC] = PAGE_MODE_USE_OC,
-	[POPPLER_PAGE_MODE_USE_ATTACHMENTS] = PAGE_MODE_USE_ATTACHMENTS
+enum PdfPageMode getPageMode(PopplerPageMode mode) {
+	switch(mode) {
+	case POPPLER_PAGE_MODE_UNSET:
+		return PAGE_MODE_UNSET;
+	case POPPLER_PAGE_MODE_NONE:
+		return PAGE_MODE_NONE;
+	case POPPLER_PAGE_MODE_USE_OUTLINES:
+		return PAGE_MODE_USE_OUTLINES;
+	case POPPLER_PAGE_MODE_USE_THUMBS:
+		return PAGE_MODE_USE_THUMBS;
+	case POPPLER_PAGE_MODE_FULL_SCREEN:
+		return PAGE_MODE_FULL_SCREEN;
+	case POPPLER_PAGE_MODE_USE_OC:
+		return PAGE_MODE_USE_OC;
+	case POPPLER_PAGE_MODE_USE_ATTACHMENTS:
+		return PAGE_MODE_USE_ATTACHMENTS;
+	}
+	return PAGE_MODE_UNSET;
 };
 
 void
@@ -89,8 +109,8 @@ PopplerEngine::fillDocument(PdfDocument *document) {
 	document->setLinearized(poppler_document_is_linearized(this->doc));
 	document->setMetadata(poppler_document_get_metadata(this->doc));
 	document->setModDate(poppler_document_get_modification_date(this->doc));
-	document->setPageLayout(pageLayout[poppler_document_get_page_layout(this->doc)]);
-	document->setPageMode(pageMode[poppler_document_get_page_mode(this->doc)]);
+	document->setPageLayout(getPageLayout(poppler_document_get_page_layout(this->doc)));
+	document->setPageMode(getPageMode(poppler_document_get_page_mode(this->doc)));
 	perm = poppler_document_get_permissions(this->doc);
 	document->setPermissions(
 			(perm & POPPLER_PERMISSIONS_OK_TO_PRINT ? 1 << PERMISSIONS_PRINT : 0) |

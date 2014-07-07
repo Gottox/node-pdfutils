@@ -26,11 +26,11 @@
 		],
 		"xcode_settings": {
 			"OTHER_CFLAGS": [
-				"<!@(pkg-config --cflags poppler-glib) -std=c++0x"
+				"<!@(pkg-config --cflags poppler-glib)"
 			],
 		},
 		"cflags": [
-			"<!@(pkg-config --cflags poppler-glib) -fPIC -std=c++0x"
+			"<!@(pkg-config --cflags poppler-glib) -fPIC"
 		],
 		"ldflags": [
 			"<!@(pkg-config --libs poppler-glib)"

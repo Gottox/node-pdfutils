@@ -8,35 +8,69 @@
 #include "PdfController.h"
 #include "v8utils.h"
 
-const char *pageLayouts[] = {
-	[PAGE_LAYOUT_UNSET] = NULL,
-	[PAGE_LAYOUT_SINGLE_PAGE] = "singlePage",
-	[PAGE_LAYOUT_ONE_COLUMN] = "oneColumn",
-	[PAGE_LAYOUT_TWO_COLUMN_LEFT] = "columnLeft",
-	[PAGE_LAYOUT_TWO_COLUMN_RIGHT] = "columnRight",
-	[PAGE_LAYOUT_TWO_PAGE_LEFT] = "twoPageLeft",
-	[PAGE_LAYOUT_TWO_PAGE_RIGHT] = "twoPageRight"
-};
+inline const char *getPageLayout(enum PdfPageLayout layout) {
+	switch(layout) {
+		case PAGE_LAYOUT_UNSET:
+		case PAGE_LAYOUT_LAST:
+			return NULL;
+		case PAGE_LAYOUT_SINGLE_PAGE:
+			return "singlePage";
+		case PAGE_LAYOUT_ONE_COLUMN:
+			return "oneColumn";
+		case PAGE_LAYOUT_TWO_COLUMN_LEFT:
+			return "columnLeft";
+		case PAGE_LAYOUT_TWO_COLUMN_RIGHT:
+			return "columnRight";
+		case PAGE_LAYOUT_TWO_PAGE_LEFT:
+			return "twoPageLeft";
+		case PAGE_LAYOUT_TWO_PAGE_RIGHT:
+			return "twoPageRight";
+	}
+	return NULL;
+}
 
-const char *pageModes[] = {
-	[PAGE_MODE_UNSET] = NULL,
-	[PAGE_MODE_NONE] = "none",
-	[PAGE_MODE_USE_OUTLINES] = "outlines",
-	[PAGE_MODE_USE_THUMBS] = "thumbs",
-	[PAGE_MODE_FULL_SCREEN] = "fullscreen",
-	[PAGE_MODE_USE_OC] = "oc",
-	[PAGE_MODE_USE_ATTACHMENTS] = "attachments"
-};
-const char *permissions[] = {
-	[PERMISSIONS_PRINT] = "print",
-	[PERMISSIONS_MODIFY] = "modify",
-	[PERMISSIONS_COPY] = "copy",
-	[PERMISSIONS_ADD_NOTES] = "addNotes",
-	[PERMISSIONS_FILL_FORM] = "fillForm",
-	[PERMISSIONS_EXTRACT_CONTENTS] = "extractContents",
-	[PERMISSIONS_ASSEMBLE] = "assemble",
-	[PERMISSIONS_PRINT_HIGH_RESOLUTION] = "printHighResolution"
-};
+inline const char *getPageMode(enum PdfPageMode mode) {
+	switch(mode) {
+		case PAGE_MODE_UNSET:
+		case PAGE_MODE_LAST:
+			return NULL;
+		case PAGE_MODE_NONE:
+			return "none";
+		case PAGE_MODE_USE_OUTLINES:
+			return "outlines";
+		case PAGE_MODE_USE_THUMBS:
+			return "thumbs";
+		case PAGE_MODE_FULL_SCREEN:
+			return "fullscreen";
+		case PAGE_MODE_USE_OC:
+			return "oc";
+		case PAGE_MODE_USE_ATTACHMENTS:
+			return "attachments";
+	}
+	return NULL;
+}
+inline const char *getPermission(enum PdfPermission permission) {
+	switch(permission) {
+		case PERMISSIONS_PRINT:
+		case PERMISSIONS_LAST:
+			return "print";
+		case PERMISSIONS_MODIFY:
+			return "modify";
+		case PERMISSIONS_COPY:
+			return "copy";
+		case PERMISSIONS_ADD_NOTES:
+			return "addNotes";
+		case PERMISSIONS_FILL_FORM:
+			return "fillForm";
+		case PERMISSIONS_EXTRACT_CONTENTS:
+			return "extractContents";
+		case PERMISSIONS_ASSEMBLE:
+			return "assemble";
+		case PERMISSIONS_PRINT_HIGH_RESOLUTION:
+			return "printHighResolution";
+	}
+	return NULL;
+}
 
 v8::Persistent<v8::Function> PdfController::constructor;
 
@@ -77,12 +111,12 @@ void PdfController::toJs(v8::Handle<v8::Object> &obj) {
 	obj->Set(v8::String::NewSymbol("metadata"), charToV8(doc->metadata()));
 	obj->Set(v8::String::NewSymbol("modification_date"), v8::Integer::New(doc->modDate()));
 	obj->Set(v8::String::NewSymbol("pageLayout"),
-			charToV8(pageLayouts[doc->pageLayout() < PAGE_LAYOUT_LAST ? doc->pageLayout() : 0]));
+			charToV8(getPageLayout(doc->pageLayout() < PAGE_LAYOUT_LAST ? doc->pageLayout() : (PdfPageLayout)0)));
 	obj->Set(v8::String::NewSymbol("pageMode"),
-			charToV8(pageModes[doc->pageMode() < PAGE_MODE_LAST ? doc->pageMode() : 0]));
+			charToV8(getPageMode(doc->pageMode() < PAGE_MODE_LAST ? doc->pageMode() : (PdfPageMode)0)));
 
 	for(i = 0; i < PERMISSIONS_LAST; i++) {
-		permissionsObj->Set(v8::String::NewSymbol(permissions[i]), v8::Boolean::New(doc->permissions() & i));
+		permissionsObj->Set(v8::String::NewSymbol(getPermission((PdfPermission)i)), v8::Boolean::New(doc->permissions() & i));
 	}
 	obj->Set(v8::String::NewSymbol("permissions"), permissionsObj);
 	obj->Set(v8::String::NewSymbol("producer"), charToV8(doc->producer()));
