@@ -11,9 +11,20 @@
 #include <v8.h>
 #include <node.h>
 #include <vector>
-#include "pdfutils.h"
 #include "PdfPage.h"
 #include "PdfDocument.h"
+#include "PdfWriter.h"
+
+#define ERROR_RENDER_NOT_SUPPORTED ""
+#define ERROR_RENDER_NOT_SUPPORTED ""
+
+enum PdfRenderFormat {
+	RENDER_SVG,
+	RENDER_PNG,
+	RENDER_GIF,
+	RENDER_PDF,
+	RENDER_TEXT
+};
 
 class PdfPage;
 class PdfDocument;
@@ -40,14 +51,12 @@ public:
 		return _password;
 	}
 
-	inline void error(char *msg) {
-	
-	}
-
 	virtual bool isThreadSafe();
 
 	virtual char* openFromData(char *data, size_t length) = 0;
 	virtual char* openFromPath(char *src) = 0;
+	virtual char* renderPage(int index, PdfRenderFormat format, PdfWriter &writer) = 0;
+	virtual char* savePdf(PdfPage *pages, PdfWriter &writer) = 0;
 
 	virtual void fillDocument(PdfDocument *document) = 0;
 	virtual void fillPage(int index, PdfPage *page) = 0;

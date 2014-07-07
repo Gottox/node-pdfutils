@@ -35,13 +35,13 @@ const char *PdfDocument::metadata() {
 int PdfDocument::modDate() {
 	return _modDate;
 }
-enum PageLayout PdfDocument::pageLayout() {
+enum PdfPageLayout PdfDocument::pageLayout() {
 	return _pageLayout;
 }
-enum PageMode PdfDocument::pageMode() {
+enum PdfPageMode PdfDocument::pageMode() {
 	return _pageMode;
 }
-enum Permission PdfDocument::permissions() {
+int PdfDocument::permissions() {
 	return _permissions;
 }
 const char *PdfDocument::producer() {
@@ -81,13 +81,13 @@ void PdfDocument::setMetadata(const char *metadata) {
 void PdfDocument::setModDate(const int modDate) {
 	_modDate = modDate;
 }
-void PdfDocument::setPageLayout(const enum PageLayout pageLayout) {
+void PdfDocument::setPageLayout(const enum PdfPageLayout pageLayout) {
 	_pageLayout = pageLayout;
 }
-void PdfDocument::setPageMode(const enum PageMode pageMode) {
+void PdfDocument::setPageMode(const enum PdfPageMode pageMode) {
 	_pageMode = pageMode;
 }
-void PdfDocument::setPermissions(const enum Permission permissions) {
+void PdfDocument::setPermissions(const int permissions) {
 	_permissions = permissions;
 }
 void PdfDocument::setProducer(const char *producer) {

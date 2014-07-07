@@ -11,6 +11,7 @@
 #include "PdfEngine.h"
 #include <node.h>
 #include <v8.h>
+#include "PdfDocument.h"
 
 class PdfEngine;
 /**
@@ -42,17 +43,17 @@ public:
 	/**
 	 * @brief writes state of this object to a JS-Object
 	 */
-	virtual void toJs(v8::Handle<v8::Object> &obj);
+	void toJs(v8::Handle<v8::Object> &obj);
 	/**
 	 * @brief reads state of this object from a JS-Object
 	 */
-	virtual void fromJs(v8::Handle<v8::Object> &obj);
+	void fromJs(v8::Handle<v8::Object> &obj);
 	/**
 	 * @brief engine which is used for this document
 	 */
 	PdfEngine *engine();
 	/**
-	 * @brief  the document model object
+	 * @brief the document model object
 	 */
 	PdfDocument *document();
 

@@ -8,7 +8,6 @@
 #ifndef PDFPAGECONTROLLER_H
 #define PDFPAGECONTROLLER_H
 
-#include "pdfutils.h"
 #include "PdfPage.h"
 #include <v8.h>
 #include <node.h>

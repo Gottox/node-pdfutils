@@ -10,6 +10,40 @@
 
 #include "PdfEngine.h"
 
+enum PdfPageLayout {
+	PAGE_LAYOUT_UNSET,
+	PAGE_LAYOUT_SINGLE_PAGE,
+	PAGE_LAYOUT_ONE_COLUMN,
+	PAGE_LAYOUT_TWO_COLUMN_LEFT,
+	PAGE_LAYOUT_TWO_COLUMN_RIGHT,
+	PAGE_LAYOUT_TWO_PAGE_LEFT,
+	PAGE_LAYOUT_TWO_PAGE_RIGHT,
+	PAGE_LAYOUT_LAST
+};
+
+enum PdfPageMode {
+	PAGE_MODE_UNSET,
+	PAGE_MODE_NONE,
+	PAGE_MODE_USE_OUTLINES,
+	PAGE_MODE_USE_THUMBS,
+	PAGE_MODE_FULL_SCREEN,
+	PAGE_MODE_USE_OC,
+	PAGE_MODE_USE_ATTACHMENTS,
+	PAGE_MODE_LAST
+};
+
+enum PdfPermission {
+	PERMISSIONS_PRINT,
+	PERMISSIONS_MODIFY,
+	PERMISSIONS_COPY,
+	PERMISSIONS_ADD_NOTES,
+	PERMISSIONS_FILL_FORM,
+	PERMISSIONS_EXTRACT_CONTENTS,
+	PERMISSIONS_ASSEMBLE,
+	PERMISSIONS_PRINT_HIGH_RESOLUTION,
+	PERMISSIONS_LAST
+};
+
 class PdfEngine;
 /**
  * @brief Class representation of a PDF-Document.
@@ -27,9 +61,9 @@ private:
 	bool _linearized;
 	const char *_metadata;
 	int _modDate;
-	enum PageLayout _pageLayout;
-	enum PageMode _pageMode;
-	enum Permission _permissions;
+	enum PdfPageLayout _pageLayout;
+	enum PdfPageMode _pageMode;
+	int _permissions;
 	const char *_producer;
 	const char *_subject;
 	const char *_title;
@@ -74,15 +108,15 @@ public:
 	/**
 	 * @brief page layout of this document
 	 */
-	enum PageLayout pageLayout();
+	enum PdfPageLayout pageLayout();
 	/**
 	 * @brief page mode of this document
 	 */
-	enum PageMode pageMode();
+	enum PdfPageMode pageMode();
 	/**
 	 * @brief permissions of this document
 	 */
-	enum Permission permissions();
+	int permissions();
 	/**
 	 * @brief producer of this document
 	 */
@@ -135,15 +169,15 @@ public:
 	/**
 	 * @brief sets page layout of this document
 	 */
-	void setPageLayout(const enum PageLayout pageLayout);
+	void setPageLayout(const enum PdfPageLayout pageLayout);
 	/**
 	 * @brief sets page mode of this document
 	 */
-	void setPageMode(const enum PageMode pageMode);
+	void setPageMode(const enum PdfPageMode pageMode);
 	/**
 	 * @brief sets permissions of this document
 	 */
-	void setPermissions(const enum Permission permissions);
+	void setPermissions(const int permissions);
 	/**
 	 * @brief sets producer of this document
 	 */

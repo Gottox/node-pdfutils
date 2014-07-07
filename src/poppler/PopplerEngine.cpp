@@ -9,6 +9,27 @@
 #include <glib.h>
 #include <cstring>
 
+
+const enum PdfPageLayout pageLayout[] = {
+	[POPPLER_PAGE_LAYOUT_UNSET] = PAGE_LAYOUT_UNSET,
+	[POPPLER_PAGE_LAYOUT_SINGLE_PAGE] = PAGE_LAYOUT_SINGLE_PAGE,
+	[POPPLER_PAGE_LAYOUT_ONE_COLUMN] = PAGE_LAYOUT_ONE_COLUMN,
+	[POPPLER_PAGE_LAYOUT_TWO_COLUMN_LEFT] = PAGE_LAYOUT_TWO_COLUMN_LEFT,
+	[POPPLER_PAGE_LAYOUT_TWO_COLUMN_RIGHT] = PAGE_LAYOUT_TWO_COLUMN_RIGHT,
+	[POPPLER_PAGE_LAYOUT_TWO_PAGE_LEFT] = PAGE_LAYOUT_TWO_PAGE_LEFT,
+	[POPPLER_PAGE_LAYOUT_TWO_PAGE_RIGHT] = PAGE_LAYOUT_TWO_PAGE_RIGHT
+};
+
+const enum PdfPageMode pageMode[] = {
+	[POPPLER_PAGE_MODE_UNSET] = PAGE_MODE_UNSET,
+	[POPPLER_PAGE_MODE_NONE] = PAGE_MODE_NONE,
+	[POPPLER_PAGE_MODE_USE_OUTLINES] = PAGE_MODE_USE_OUTLINES,
+	[POPPLER_PAGE_MODE_USE_THUMBS] = PAGE_MODE_USE_THUMBS,
+	[POPPLER_PAGE_MODE_FULL_SCREEN] = PAGE_MODE_FULL_SCREEN,
+	[POPPLER_PAGE_MODE_USE_OC] = PAGE_MODE_USE_OC,
+	[POPPLER_PAGE_MODE_USE_ATTACHMENTS] = PAGE_MODE_USE_ATTACHMENTS
+};
+
 void
 PopplerEngine::Init() {
 #if !GLIB_CHECK_VERSION(2, 36, 0)
@@ -58,6 +79,7 @@ PopplerEngine::openFromPath(char *src) {
 
 void
 PopplerEngine::fillDocument(PdfDocument *document) {
+	int perm;
 	document->setLength(poppler_document_get_n_pages(this->doc));
 	document->setAuthor(poppler_document_get_author(this->doc));
 	document->setCreationDate(poppler_document_get_creation_date(this->doc));
@@ -67,9 +89,19 @@ PopplerEngine::fillDocument(PdfDocument *document) {
 	document->setLinearized(poppler_document_is_linearized(this->doc));
 	document->setMetadata(poppler_document_get_metadata(this->doc));
 	document->setModDate(poppler_document_get_modification_date(this->doc));
-	//document->setPageLayout(poppler_document_get_(this->doc));
-	//document->setPageMode(poppler_document_get(this->doc));
-	//document->setPermissions(poppler_document_get(this->doc));
+	document->setPageLayout(pageLayout[poppler_document_get_page_layout(this->doc)]);
+	document->setPageMode(pageMode[poppler_document_get_page_mode(this->doc)]);
+	perm = poppler_document_get_permissions(this->doc);
+	document->setPermissions(
+			(perm & POPPLER_PERMISSIONS_OK_TO_PRINT ? 1 << PERMISSIONS_PRINT : 0) |
+			(perm & POPPLER_PERMISSIONS_OK_TO_MODIFY ? 1 << PERMISSIONS_MODIFY : 0) |
+			(perm & POPPLER_PERMISSIONS_OK_TO_COPY ? 1 << PERMISSIONS_COPY : 0) |
+			(perm & POPPLER_PERMISSIONS_OK_TO_ADD_NOTES ? 1 << PERMISSIONS_ADD_NOTES : 0) |
+			(perm & POPPLER_PERMISSIONS_OK_TO_FILL_FORM ? 1 << PERMISSIONS_FILL_FORM : 0) |
+			(perm & POPPLER_PERMISSIONS_OK_TO_EXTRACT_CONTENTS ? 1 << PERMISSIONS_EXTRACT_CONTENTS : 0) |
+			(perm & POPPLER_PERMISSIONS_OK_TO_ASSEMBLE ? 1 << PERMISSIONS_ASSEMBLE : 0) |
+			(perm & POPPLER_PERMISSIONS_OK_TO_PRINT_HIGH_RESOLUTION ? 1 << PERMISSIONS_PRINT_HIGH_RESOLUTION : 0)
+			);
 	document->setProducer(poppler_document_get_producer(this->doc));
 	document->setSubject(poppler_document_get_subject(this->doc));
 	document->setTitle(poppler_document_get_title(this->doc));
@@ -86,5 +118,16 @@ void PopplerEngine::fillPage(int index, PdfPage *page) {
 
 void PopplerEngine::close() {
 }
+
+char*
+PopplerEngine::renderPage(int index, PdfRenderFormat format, PdfWriter &writer) {
+	return (char *)"Rendering pages is not supported";
+}
+
+char*
+PopplerEngine::savePdf(PdfPage *pages, PdfWriter &writer) {
+	return (char *)"Saving a Document is not supported";
+}
+
 
 PDF_ENGINE(poppler, PopplerEngine, "gpl")

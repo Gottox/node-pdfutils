@@ -7,6 +7,29 @@ describe('pdfutils', function() {
 	it("can load PDF File synchronously", function() {
 		var pdf = pdfutils(__dirname + "/pdfs/testfile1.pdf");
 		expect(pdf).to.be.an(Object);
+		expect(pdf._engine.name).to.be('poppler');
+		expect(pdf.length).to.be.greaterThan(0);
+		expect(pdf).to.have.property('author');
+		expect(pdf).to.have.property('creation_date');
+		expect(pdf).to.have.property('keywords');
+		expect(pdf).to.have.property('linearized');
+		expect(pdf).to.have.property('metadata');
+		expect(pdf).to.have.property('modification_date');
+		expect(pdf).to.have.property('pageLayout');
+		expect(pdf).to.have.property('pageMode');
+		expect(pdf).to.have.property('producer');
+		expect(pdf).to.have.property('subject');
+		expect(pdf).to.have.property('title');
+		expect(pdf.permissions).to.only.have.keys(
+				'print',
+				'modify',
+				'copy',
+				'addNotes',
+				'fillForm',
+				'extractContents',
+				'assemble',
+				'printHighResolution'
+		);
 	});
 
 	/*it("can load PDF File asynchronously", function(done) {
