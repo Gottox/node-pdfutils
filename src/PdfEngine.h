@@ -15,8 +15,8 @@
 #include "PdfDocument.h"
 #include "PdfWriter.h"
 
-#define ERROR_RENDER_NOT_SUPPORTED ""
-#define ERROR_RENDER_NOT_SUPPORTED ""
+#define ERROR_RENDER_NOT_SUPPORTED ((char *)"Rendering pages is not supported")
+#define ERROR_SAVE_NOT_SUPPORTED ((char *)"Saving a Document is not supported")
 
 enum PdfRenderFormat {
 	RENDER_SVG,

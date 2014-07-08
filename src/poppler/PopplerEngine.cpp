@@ -141,12 +141,12 @@ void PopplerEngine::close() {
 
 char*
 PopplerEngine::renderPage(int index, PdfRenderFormat format, PdfWriter &writer) {
-	return (char *)"Rendering pages is not supported";
+	return ERROR_RENDER_NOT_SUPPORTED;
 }
 
 char*
 PopplerEngine::savePdf(PdfPage *pages, PdfWriter &writer) {
-	return (char *)"Saving a Document is not supported";
+	return ERROR_SAVE_NOT_SUPPORTED;
 }
 
 
