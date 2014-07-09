@@ -1,3 +1,5 @@
+var fs = require("fs");
+
 describe('pdfutils', function() {
 	it("can be initialized", function() {
 		pdfutils();
@@ -31,6 +33,11 @@ describe('pdfutils', function() {
 				'printHighResolution'
 		);
 	});
+
+	it("can load PDF File synchronously from data", function() {
+		var pdf = pdfutils(fs.readFileSync(__dirname + "/pdfs/testfile1.pdf"));
+		expect(pdf).to.be.an(Object);
+	})
 
 	/*it("can load PDF File asynchronously", function(done) {
 		var pdf = pdfutils(__dirname + "/pdfs/testfile1.pdf", function(err, pdf) {

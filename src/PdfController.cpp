@@ -105,7 +105,7 @@ void PdfController::toJs(v8::Handle<v8::Object> &obj) {
 	obj->Set(v8::String::NewSymbol("author"), charToV8(doc->author()));
 	obj->Set(v8::String::NewSymbol("creation_date"), v8::Integer::New(doc->creationDate()));
 	obj->Set(v8::String::NewSymbol("creator"), charToV8(doc->creator()));
-	//obj->Set(v8::String::NewSymbol("format"), charToV8(doc->format()));
+	obj->Set(v8::String::NewSymbol("format"), charToV8(doc->format()));
 	obj->Set(v8::String::NewSymbol("keywords"), charToV8(doc->keywords()));
 	obj->Set(v8::String::NewSymbol("linearized"), v8::Boolean::New(doc->linearized()));
 	obj->Set(v8::String::NewSymbol("metadata"), charToV8(doc->metadata()));
@@ -129,7 +129,7 @@ void PdfController::fromJs(v8::Handle<v8::Object> &obj) {
 	doc->setAuthor(v8ToChar(obj->Get(v8::String::NewSymbol("author"))));
 	doc->setCreationDate(v8ToInt(obj->Get(v8::String::NewSymbol("creation_date"))));
 	doc->setCreator(v8ToChar(obj->Get(v8::String::NewSymbol("creator"))));
-	//doc->setFormat(v8ToChar(obj->Get(v8::String::NewSymbol(""))));
+	doc->setFormat(v8ToChar(obj->Get(v8::String::NewSymbol("format"))));
 	doc->setKeywords(v8ToChar(obj->Get(v8::String::NewSymbol("keywords"))));
 	doc->setLinearized(v8ToChar(obj->Get(v8::String::NewSymbol("linearized"))));
 	doc->setMetadata(v8ToChar(obj->Get(v8::String::NewSymbol("metadata"))));

@@ -6,7 +6,6 @@
  */
 
 #include "PdfDocument.h"
-#include "v8utils.h"
 
 int PdfDocument::length() {
 	return _length;

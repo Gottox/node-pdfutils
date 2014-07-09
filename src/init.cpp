@@ -60,9 +60,52 @@ Handle<Value> openFromPath(const Arguments& args) {
 	return scope.Close(jsDoc);
 }
 
+/**
+ * @brief opens PDF from an FD with specified engine
+ * doc - PdfController
+ * password - String
+ * fd - file descriptor
+ */
+Handle<Value> openFromData(const Arguments& args) {
+	int i;
+	char *error;
+	HandleScope scope;
+	v8::Local<v8::Object> jsDoc = args[0]->ToObject();
+	v8::Local<v8::Function> pdfPageFactory = v8::Function::Cast(*args[1]);
+	PdfController *doc = node::ObjectWrap::Unwrap<PdfController>(jsDoc);
+	v8::Local<v8::Object> jsEngine = jsDoc->Get(v8::String::NewSymbol("_engine"))->ToObject();
+
+	PdfEngineFactory *factory = node::ObjectWrap::Unwrap<PdfEngineFactory>(jsEngine);
+	PdfEngine *engine = factory->newInstance();
+	engine->setPassword(v8ToChar(args[2]));
+	doc->setEngine(engine);
+
+	char *data = node::Buffer::Data(args[3]);
+	int len = node::Buffer::Length(args[3]);
+	if((error = engine->openFromData(data, len))) {
+		THROW_FREE(Error, error);
+	}
+	engine->fillDocument(doc->document());
+	doc->toJs(jsDoc);
+
+	Handle< Value > argv[] = { jsDoc, v8::Integer::New(doc->document()->length()) };
+	pdfPageFactory->Call(v8::Context::GetCurrent()->Global(), 2, argv);
+
+	for(i = 0; i < doc->document()->length(); i++) {
+		v8::Local<v8::Object> jsPage = jsDoc->Get(i)->ToObject();
+		PdfPageController *page = node::ObjectWrap::Unwrap<PdfPageController>(jsPage);
+		engine->fillPage(i, page->page());
+		page->toJs(jsPage);
+	}
+
+	return scope.Close(jsDoc);
+}
+
 void init(Handle<Object> exports) {
 	exports->Set(String::NewSymbol("openFromPath"),
 			FunctionTemplate::New(openFromPath)->GetFunction());
+	exports->Set(String::NewSymbol("openFromData"),
+			FunctionTemplate::New(openFromData)->GetFunction());
 
 	PdfPageController::Init(exports);
 	PdfController::Init(exports);
