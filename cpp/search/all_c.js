@@ -1,5 +1,26 @@
 var searchData=
 [
-  ['title',['title',['../classPdfDocument.html#a62694d86972f8659221cf8b808729ee8',1,'PdfDocument']]],
-  ['tojs',['toJs',['../classPdfDocument.html#acbf6f7968ff2e7df19080c4ee23e463d',1,'PdfDocument::toJs()'],['../classPdfPage.html#a72062e976197071af06a8fce7d2435fe',1,'PdfPage::toJs()']]]
+  ['setauthor',['setAuthor',['../classPdfDocument.html#ae8968c19c1585c50df38695498230ba2',1,'PdfDocument']]],
+  ['setcreationdate',['setCreationDate',['../classPdfDocument.html#a83d22e575f7213c9aeb033bbce656ebe',1,'PdfDocument']]],
+  ['setcreator',['setCreator',['../classPdfDocument.html#ad90947d2c53b0d37922543c03ee823c6',1,'PdfDocument']]],
+  ['setdocument',['setDocument',['../classPdfController.html#a5efcd1489abd1196e5f046bc1887e8ea',1,'PdfController']]],
+  ['setengine',['setEngine',['../classPdfController.html#af098e20c77010858db02fa9d1bdcc321',1,'PdfController::setEngine()'],['../classPdfPageController.html#a67b83bfca6c35f2ad779cffbfc061cd7',1,'PdfPageController::setEngine()']]],
+  ['setformat',['setFormat',['../classPdfDocument.html#a4716d5d6ee383860e560d84244142334',1,'PdfDocument']]],
+  ['setheight',['setHeight',['../classPdfPage.html#a29d4e2cff39c78d23926119647142a73',1,'PdfPage']]],
+  ['setindex',['setIndex',['../classPdfPage.html#a2b8bd7e835fec5898abb6eff672c6fa2',1,'PdfPage']]],
+  ['setkeywords',['setKeywords',['../classPdfDocument.html#ae914a297b4aa2afc5b6e717e9a89386d',1,'PdfDocument']]],
+  ['setlabel',['setLabel',['../classPdfPage.html#afa2cfa2a5e5648233323324e6c023ac5',1,'PdfPage']]],
+  ['setlength',['setLength',['../classPdfDocument.html#a9c3d6c0a4e4a7142c461a2486396177a',1,'PdfDocument']]],
+  ['setlinearized',['setLinearized',['../classPdfDocument.html#a16c44fd57134742113afded1b59c4490',1,'PdfDocument']]],
+  ['setmetadata',['setMetadata',['../classPdfDocument.html#a5f2b32f5b81190b0a03f1628b6c1ff2b',1,'PdfDocument']]],
+  ['setmoddate',['setModDate',['../classPdfDocument.html#a0f5a9c255714590d9ab4d80c43ffbfbd',1,'PdfDocument']]],
+  ['setpage',['setPage',['../classPdfPageController.html#a1efd4c7b303fa672b93b45fcf0bd07e3',1,'PdfPageController']]],
+  ['setpagelayout',['setPageLayout',['../classPdfDocument.html#abf0b90b34a3462b28726e80c77cdcaad',1,'PdfDocument']]],
+  ['setpagemode',['setPageMode',['../classPdfDocument.html#a6e8b333a7be6a436cd36d9e9ebb2c2e1',1,'PdfDocument']]],
+  ['setpermissions',['setPermissions',['../classPdfDocument.html#ac5aab6ddb031aac2178fb21e9cd4eb1d',1,'PdfDocument']]],
+  ['setproducer',['setProducer',['../classPdfDocument.html#a885ff1553fadb520b8d6e603e66f10ad',1,'PdfDocument']]],
+  ['setsubject',['setSubject',['../classPdfDocument.html#a5ab95b74cd125ee88415eb6cd2145251',1,'PdfDocument']]],
+  ['settitle',['setTitle',['../classPdfDocument.html#a07f0a1bdb83633c63ea8bcc7c172d0bb',1,'PdfDocument']]],
+  ['setwidth',['setWidth',['../classPdfPage.html#a568edb3abb055969ed950462e9e6908a',1,'PdfPage']]],
+  ['subject',['subject',['../classPdfDocument.html#ac58cb8d3af99d0341f4c4a45ede3b886',1,'PdfDocument']]]
 ];

@@ -111,9 +111,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setPassword</b> (cons
 <tr class="memitem:aeeeb67ab3e608471a098b83809b591a0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeeeb67ab3e608471a098b83809b591a0"></a>
 const char *&#160;</td><td class="memItemRight" valign="bottom"><b>password</b> ()</td></tr>
 <tr class="separator:aeeeb67ab3e608471a098b83809b591a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69eb01c94ea43c61ab077613d874acbe"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69eb01c94ea43c61ab077613d874acbe"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>error</b> (char *msg)</td></tr>
-<tr class="separator:a69eb01c94ea43c61ab077613d874acbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa23ebd7d06ecd9bef118b0b841d27d13"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa23ebd7d06ecd9bef118b0b841d27d13"></a>
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>isThreadSafe</b> ()</td></tr>
 <tr class="separator:aa23ebd7d06ecd9bef118b0b841d27d13"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -123,6 +120,12 @@ virtual char *&#160;</td><td class="memItemRight" valign="bottom"><b>openFromDat
 <tr class="memitem:a717b08db6d9eb9d6a4aa283c0b7c1a78"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a717b08db6d9eb9d6a4aa283c0b7c1a78"></a>
 virtual char *&#160;</td><td class="memItemRight" valign="bottom"><b>openFromPath</b> (char *src)=0</td></tr>
 <tr class="separator:a717b08db6d9eb9d6a4aa283c0b7c1a78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a2424708be2a8d52ff41c5fb38af579"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3a2424708be2a8d52ff41c5fb38af579"></a>
+virtual char *&#160;</td><td class="memItemRight" valign="bottom"><b>renderPage</b> (int index, PdfRenderFormat format, <a class="el" href="classPdfWriter.html">PdfWriter</a> &amp;writer)=0</td></tr>
+<tr class="separator:a3a2424708be2a8d52ff41c5fb38af579"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af34f8afcc9925dd590b3a9052d17290e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af34f8afcc9925dd590b3a9052d17290e"></a>
+virtual char *&#160;</td><td class="memItemRight" valign="bottom"><b>savePdf</b> (<a class="el" href="classPdfPage.html">PdfPage</a> *pages, <a class="el" href="classPdfWriter.html">PdfWriter</a> &amp;writer)=0</td></tr>
+<tr class="separator:af34f8afcc9925dd590b3a9052d17290e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdf1352ecb26a3eeb10562b84cf7c3d3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acdf1352ecb26a3eeb10562b84cf7c3d3"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>fillDocument</b> (<a class="el" href="classPdfDocument.html">PdfDocument</a> *document)=0</td></tr>
 <tr class="separator:acdf1352ecb26a3eeb10562b84cf7c3d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -143,7 +146,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> ()=
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Jun 27 2014 23:28:49 for node-pdfutils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jul 10 2014 07:23:08 for node-pdfutils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['width',['width',['../classPdfPage.html#a6f790f5b64753195ee8b7c2b7eea81ea',1,'PdfPage']]]
+  ['title',['title',['../classPdfDocument.html#a62694d86972f8659221cf8b808729ee8',1,'PdfDocument']]],
+  ['tojs',['toJs',['../classPdfController.html#acf46efd8ae1770f47b84b369eb5e4cda',1,'PdfController::toJs()'],['../classPdfPageController.html#ab10d3d6f1c7c437ed66cf1d588ef3546',1,'PdfPageController::toJs()']]]
 ];
