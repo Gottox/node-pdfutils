@@ -1,7 +1,6 @@
 [![Build Status](https://travis-ci.org/Gottox/node-pdfutils.svg?branch=rewrite-0.4)](https://travis-ci.org/Gottox/node-pdfutils)
 
-![node-pdfutils](https://raw.githubusercontent.com/Gottox/node-pdfutils/rewrite-0.4/pdfutils.png)
-=============
+# ![node-pdfutils](https://raw.githubusercontent.com/Gottox/node-pdfutils/rewrite-0.4/pdfutils.png)
 
 Rewrite in progress...
 
