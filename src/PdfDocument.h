@@ -8,8 +8,6 @@
 #ifndef PDFDOCUMENT_H
 #define PDFDOCUMENT_H
 
-#include "PdfEngine.h"
-
 enum PdfPageLayout {
 	PAGE_LAYOUT_UNSET,
 	PAGE_LAYOUT_SINGLE_PAGE,
