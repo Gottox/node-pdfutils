@@ -21,7 +21,7 @@ void PdfPageController::Init(v8::Handle<v8::Object> exports) {
 	exports->Set(v8::String::NewSymbol("PdfPage"), constructor);
 }
 
-v8::Handle<v8::Value> PdfPageController::New(const v8::Arguments& args) {
+NAN_METHOD(PdfPageController::New) {
 	NanScope();
 	new PdfPageController(args);
 	NanReturnValue(args.This());
