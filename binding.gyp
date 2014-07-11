@@ -11,8 +11,8 @@
 			"src/init.cpp",
 			"src/v8utils.cpp",
 		],
-		"cflags": [
-			"-fPIC"
+		"include_dirs" : [
+			"<!(node -e \"require('nan')\")"
 		],
 	}, {
 		"target_name": "popplerEngine",
@@ -24,11 +24,8 @@
 			"src/poppler/PopplerEngine.cpp",
 			"src/v8utils.cpp",
 		],
-		"include_dirs" : [
-			"<!(node -e \"require('nan')\")"
-		],
 		"cflags": [
-			"<!@(pkg-config --cflags poppler-glib) -fPIC"
+			"<!@(pkg-config --cflags poppler-glib)"
 		],
 		"libraries": [
 			"<!@(pkg-config --libs poppler-glib)"

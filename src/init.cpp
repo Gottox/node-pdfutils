@@ -7,18 +7,12 @@
 
 #include <node.h>
 #include <node_buffer.h>
-#include <v8.h>
+#include <nan.h>
 #include "PdfEngine.h"
 #include "PdfEngineFactory.h"
 #include "PdfController.h"
 #include "PdfPageController.h"
 #include "v8utils.h"
-
-using namespace v8;
-Handle<Value> Method(const Arguments& args) {
-	HandleScope scope;
-	return scope.Close(String::New("world"));
-}
 
 /**
  * @brief opens PDF from an FD with specified engine
@@ -26,10 +20,10 @@ Handle<Value> Method(const Arguments& args) {
  * password - String
  * fd - file descriptor
  */
-Handle<Value> openFromPath(const Arguments& args) {
+NAN_METHOD(openFromPath) {
 	int i;
 	char *error;
-	HandleScope scope;
+	NanScope();
 	v8::Local<v8::Object> jsDoc = args[0]->ToObject();
 	v8::Local<v8::Function> pdfPageFactory = v8::Function::Cast(*args[1]);
 	PdfController *doc = node::ObjectWrap::Unwrap<PdfController>(jsDoc);
@@ -47,7 +41,7 @@ Handle<Value> openFromPath(const Arguments& args) {
 	engine->fillDocument(doc->document());
 	doc->toJs(jsDoc);
 
-	Handle< Value > argv[] = { jsDoc, v8::Integer::New(doc->document()->length()) };
+	v8::Handle<v8::Value> argv[] = { jsDoc, v8::Integer::New(doc->document()->length()) };
 	pdfPageFactory->Call(v8::Context::GetCurrent()->Global(), 2, argv);
 
 	for(i = 0; i < doc->document()->length(); i++) {
@@ -57,7 +51,7 @@ Handle<Value> openFromPath(const Arguments& args) {
 		page->toJs(jsPage);
 	}
 
-	return scope.Close(jsDoc);
+	NanReturnValue(jsDoc);
 }
 
 /**
@@ -66,10 +60,10 @@ Handle<Value> openFromPath(const Arguments& args) {
  * password - String
  * fd - file descriptor
  */
-Handle<Value> openFromData(const Arguments& args) {
+NAN_METHOD(openFromData) {
 	int i;
 	char *error;
-	HandleScope scope;
+	NanScope();
 	v8::Local<v8::Object> jsDoc = args[0]->ToObject();
 	v8::Local<v8::Function> pdfPageFactory = v8::Function::Cast(*args[1]);
 	PdfController *doc = node::ObjectWrap::Unwrap<PdfController>(jsDoc);
@@ -88,7 +82,7 @@ Handle<Value> openFromData(const Arguments& args) {
 	engine->fillDocument(doc->document());
 	doc->toJs(jsDoc);
 
-	Handle< Value > argv[] = { jsDoc, v8::Integer::New(doc->document()->length()) };
+	v8::Handle<v8::Value> argv[] = { jsDoc, v8::Integer::New(doc->document()->length()) };
 	pdfPageFactory->Call(v8::Context::GetCurrent()->Global(), 2, argv);
 
 	for(i = 0; i < doc->document()->length(); i++) {
@@ -98,14 +92,14 @@ Handle<Value> openFromData(const Arguments& args) {
 		page->toJs(jsPage);
 	}
 
-	return scope.Close(jsDoc);
+	NanReturnValue(jsDoc);
 }
 
-void init(Handle<Object> exports) {
-	exports->Set(String::NewSymbol("openFromPath"),
-			FunctionTemplate::New(openFromPath)->GetFunction());
-	exports->Set(String::NewSymbol("openFromData"),
-			FunctionTemplate::New(openFromData)->GetFunction());
+void init(v8::Handle<v8::Object> exports) {
+	exports->Set(NanNew<v8::String>("openFromPath"),
+			NanNew<v8::FunctionTemplate>(openFromPath)->GetFunction());
+	exports->Set(NanNew<v8::String>("openFromData"),
+			NanNew<v8::FunctionTemplate>(openFromData)->GetFunction());
 
 	PdfPageController::Init(exports);
 	PdfController::Init(exports);
