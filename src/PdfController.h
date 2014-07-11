@@ -21,51 +21,38 @@ class PdfEngine;
  * This class should be filled from a PDFEngine
  */
 class PdfController : public node::ObjectWrap {
-private:
-	static v8::Persistent<v8::Function> constructor;
+protected:
 	/**
 	 * @brief Constructor for v8.
-	 * @param args arguments from Javascript. Currently not used
 	 */
-	PdfController(const v8::Arguments& args);
+	PdfController() {};
 
+	void set(v8::Handle<v8::Object> obj, const char key[], const char* value);
+	void set(v8::Handle<v8::Object> obj, const char key[], const int value);
+	void set(v8::Handle<v8::Object> obj, const char key[], const double value);
+	void set(v8::Handle<v8::Object> obj, const char key[], const bool value);
+
+private:
 	PdfEngine *_engine;
-	PdfDocument *_document;
 
 public:
 	/**
-	 * @brief exports this class to v8
-	 */
-	static void Init(v8::Handle<v8::Object> exports);
-	/**
-	 * @brief generates new object from v8
-	 */
-	static NAN_METHOD(New);
-	/**
 	 * @brief writes state of this object to a JS-Object
 	 */
-	void toJs(v8::Handle<v8::Object> &obj);
+	virtual void toJs(v8::Handle<v8::Object> &obj) = 0;
 	/**
 	 * @brief reads state of this object from a JS-Object
 	 */
-	void fromJs(v8::Handle<v8::Object> &obj);
+	virtual void fromJs(v8::Handle<v8::Object> &obj) = 0;
 	/**
 	 * @brief engine which is used for this document
 	 */
 	PdfEngine *engine();
-	/**
-	 * @brief the document model object
-	 */
-	PdfDocument *document();
 
 	/**
 	 * @brief sets engine which is used for this document
 	 */
 	void setEngine(PdfEngine *engine);
-	/**
-	 * @brief sets the document model object
-	 */
-	void setDocument(PdfDocument *document);
 };
 
 #endif /* !PDFCONTROLLER_H */

@@ -17,9 +17,10 @@ PdfEngineFactory::PdfEngineFactory(v8::Handle<v8::Object> &exports,
 	v8::Local<v8::Object> jsobj = tpl->NewInstance();
 	this->init = pdfInit;
 	this->Wrap(jsobj);
-	jsobj->Set(v8::String::NewSymbol("license"), v8::String::New(license));
-	jsobj->Set(v8::String::NewSymbol("name"), v8::String::New(name));
-	exports->Set(v8::String::NewSymbol("engine"), jsobj);
+	jsobj->Set(NanNew<v8::String>("license"), NanNew<v8::String>(license));
+	jsobj->Set(NanNew<v8::String>("name"), NanNew<v8::String>(name));
+
+	exports->Set(NanNew<v8::String>("engine"), jsobj);
 }
 
 PdfEngine *PdfEngineFactory::newInstance() {

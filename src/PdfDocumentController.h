@@ -1,29 +1,35 @@
 /*
- * PdfPageController.h
+ * PdfController.h
  * Copyright (C) 2014 tox <tox@rootkit>
  *
  * Distributed under terms of the MIT license.
  */
 
-#ifndef PDFPAGECONTROLLER_H
-#define PDFPAGECONTROLLER_H
+#ifndef PDFDOCUMENTCONTROLLER_H
+#define PDFDOCUMENTCONTROLLER_H
 
-#include <v8.h>
+#include "PdfEngine.h"
 #include <node.h>
 #include <nan.h>
+#include <v8.h>
 #include "PdfController.h"
-#include "PdfPage.h"
+#include "PdfDocument.h"
 
 class PdfEngine;
 /**
- * @brief Class representation of a PDF-Page.
+ * @brief Class representation of a PDF-Controller.
  *
  * This class should be filled from a PDFEngine
  */
-class PdfPageController : public PdfController {
+class PdfDocumentController : public PdfController {
 private:
-	PdfPageController() : PdfController() {};
-	PdfPage *_page;
+	/**
+	 * @brief Constructor for v8.
+	 * @param args arguments from Javascript. Currently not used
+	 */
+	PdfDocumentController() : PdfController() {};
+
+	PdfDocument *_document;
 
 public:
 	/**
@@ -42,14 +48,15 @@ public:
 	 * @brief reads state of this object from a JS-Object
 	 */
 	virtual void fromJs(v8::Handle<v8::Object> &obj);
+
 	/**
-	 * @brief page
+	 * @brief the document model object
 	 */
-	PdfPage *page();
+	PdfDocument *document();
 	/**
-	 * @brief sets model of this page
+	 * @brief sets the document model object
 	 */
-	void setPage(PdfPage *);
+	void setDocument(PdfDocument *document);
 };
 
-#endif /* !PDFPAGECONTROLLER_H */
+#endif /* !PDFCONTROLLER_H */

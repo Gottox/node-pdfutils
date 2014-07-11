@@ -10,39 +10,44 @@
 #include <nan.h>
 #include "PdfEngine.h"
 #include "PdfEngineFactory.h"
-#include "PdfController.h"
+#include "PdfDocumentController.h"
 #include "PdfPageController.h"
 #include "v8utils.h"
 
 /**
  * @brief opens PDF from an FD with specified engine
- * doc - PdfController
+ * doc - PdfDocumentController
  * password - String
  * fd - file descriptor
  */
 NAN_METHOD(openFromPath) {
 	int i;
+	size_t count;
 	char *error;
 	NanScope();
 	v8::Local<v8::Object> jsDoc = args[0]->ToObject();
-	v8::Local<v8::Function> pdfPageFactory = v8::Function::Cast(*args[1]);
-	PdfController *doc = node::ObjectWrap::Unwrap<PdfController>(jsDoc);
-	v8::Local<v8::Object> jsEngine = jsDoc->Get(v8::String::NewSymbol("_engine"))->ToObject();
+	v8::Local<v8::Function> pdfPageFactory = args[1].As<v8::Function>();
+	PdfDocumentController *doc = node::ObjectWrap::Unwrap<PdfDocumentController>(jsDoc);
+	v8::Local<v8::Object> jsEngine = jsDoc->Get(NanNew<v8::String>("_engine"))->ToObject();
 
 	PdfEngineFactory *factory = node::ObjectWrap::Unwrap<PdfEngineFactory>(jsEngine);
 	PdfEngine *engine = factory->newInstance();
-	engine->setPassword(v8ToChar(args[2]));
+	if(args[2]->IsString())
+		engine->setPassword(NanCString(args[2], &count));
 	doc->setEngine(engine);
 
-	char *src = v8ToChar(args[3]);
+	char *src = NanCString(args[3], &count);
 	if((error = engine->openFromPath(src))) {
-		THROW_FREE(Error, error);
+		// TODO: Make sure we do this right
+		NanThrowError(error);
+		delete error;
+		NanReturnNull();
 	}
 	engine->fillDocument(doc->document());
 	doc->toJs(jsDoc);
 
-	v8::Handle<v8::Value> argv[] = { jsDoc, v8::Integer::New(doc->document()->length()) };
-	pdfPageFactory->Call(v8::Context::GetCurrent()->Global(), 2, argv);
+	v8::Handle<v8::Value> argv[] = { jsDoc, NanNew<v8::Integer>(doc->document()->length()) };
+	pdfPageFactory->Call(jsDoc, 2, argv);
 
 	for(i = 0; i < doc->document()->length(); i++) {
 		v8::Local<v8::Object> jsPage = jsDoc->Get(i)->ToObject();
@@ -56,34 +61,39 @@ NAN_METHOD(openFromPath) {
 
 /**
  * @brief opens PDF from an FD with specified engine
- * doc - PdfController
+ * doc - PdfDocumentController
  * password - String
  * fd - file descriptor
  */
 NAN_METHOD(openFromData) {
 	int i;
+	size_t count;
 	char *error;
 	NanScope();
 	v8::Local<v8::Object> jsDoc = args[0]->ToObject();
-	v8::Local<v8::Function> pdfPageFactory = v8::Function::Cast(*args[1]);
-	PdfController *doc = node::ObjectWrap::Unwrap<PdfController>(jsDoc);
-	v8::Local<v8::Object> jsEngine = jsDoc->Get(v8::String::NewSymbol("_engine"))->ToObject();
+	v8::Local<v8::Function> pdfPageFactory = args[1].As<v8::Function>();
+	PdfDocumentController *doc = node::ObjectWrap::Unwrap<PdfDocumentController>(jsDoc);
+	v8::Local<v8::Object> jsEngine = jsDoc->Get(NanNew<v8::String>("_engine"))->ToObject();
 
 	PdfEngineFactory *factory = node::ObjectWrap::Unwrap<PdfEngineFactory>(jsEngine);
 	PdfEngine *engine = factory->newInstance();
-	engine->setPassword(v8ToChar(args[2]));
+	if(args[2]->IsString())
+		engine->setPassword(NanCString(args[2], &count));
 	doc->setEngine(engine);
 
 	char *data = node::Buffer::Data(args[3]);
 	int len = node::Buffer::Length(args[3]);
 	if((error = engine->openFromData(data, len))) {
-		THROW_FREE(Error, error);
+		// TODO: Make sure we do this right
+		NanThrowError(error);
+		delete error;
+		NanReturnNull();
 	}
 	engine->fillDocument(doc->document());
 	doc->toJs(jsDoc);
 
-	v8::Handle<v8::Value> argv[] = { jsDoc, v8::Integer::New(doc->document()->length()) };
-	pdfPageFactory->Call(v8::Context::GetCurrent()->Global(), 2, argv);
+	v8::Handle<v8::Value> argv[] = { jsDoc, NanNew<v8::Integer>(doc->document()->length()) };
+	pdfPageFactory->Call(jsDoc, 2, argv);
 
 	for(i = 0; i < doc->document()->length(); i++) {
 		v8::Local<v8::Object> jsPage = jsDoc->Get(i)->ToObject();
@@ -102,7 +112,7 @@ void init(v8::Handle<v8::Object> exports) {
 			NanNew<v8::FunctionTemplate>(openFromData)->GetFunction());
 
 	PdfPageController::Init(exports);
-	PdfController::Init(exports);
+	PdfDocumentController::Init(exports);
 }
 
 NODE_MODULE(pdfutils, init)

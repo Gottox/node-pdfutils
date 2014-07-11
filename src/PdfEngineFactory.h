@@ -9,7 +9,9 @@
 #define PDFENGINEFACTORY_H
 
 #include <v8.h>
+#include <nan.h>
 #include <node.h>
+#include <node_object_wrap.h>
 #include "PdfEngine.h"
 
 #define PDF_ENGINE(n, cls, ...) \
