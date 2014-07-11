@@ -10,6 +10,7 @@
 
 #include "PdfEngine.h"
 #include <node.h>
+#include <nan.h>
 #include <v8.h>
 #include "PdfDocument.h"
 
@@ -39,7 +40,7 @@ public:
 	/**
 	 * @brief generates new object from v8
 	 */
-	static v8::Handle<v8::Value> New(const v8::Arguments& args);
+	static NAN_METHOD(New);
 	/**
 	 * @brief writes state of this object to a JS-Object
 	 */

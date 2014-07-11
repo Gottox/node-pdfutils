@@ -8,9 +8,6 @@
 #ifndef PDFPAGE_H
 #define PDFPAGE_H
 
-#include <v8.h>
-#include <node.h>
-
 class PdfEngine;
 /**
  * @brief Class representation of a PDF-Page.

@@ -5,6 +5,7 @@
  * Distributed under terms of the MIT license.
  */
 
+#include <nan.h>
 #include "PdfPageController.h"
 #include "PdfPage.h"
 #include "v8utils.h"
@@ -21,9 +22,9 @@ void PdfPageController::Init(v8::Handle<v8::Object> exports) {
 }
 
 v8::Handle<v8::Value> PdfPageController::New(const v8::Arguments& args) {
-	v8::HandleScope scope;
+	NanScope();
 	new PdfPageController(args);
-	return scope.Close(args.This());
+	NanReturnValue(args.This());
 }
 
 PdfPageController::PdfPageController(const v8::Arguments &args) {
@@ -34,16 +35,18 @@ PdfPageController::PdfPageController(const v8::Arguments &args) {
 
 void PdfPageController::toJs(v8::Handle<v8::Object> &obj) {
 	PdfPage *page = this->page();
-	obj->Set(v8::String::NewSymbol("label"), charToV8(page->label()));
-	obj->Set(v8::String::NewSymbol("width"), v8::Number::New(page->width()));
-	obj->Set(v8::String::NewSymbol("height"), v8::Number::New(page->height()));
+	obj->Set(NanNew<v8::String>("label"), NanNew<v8::String>(page->label()));
+	obj->Set(NanNew<v8::String>("width"), NanNew<v8::Number>(page->width()));
+	obj->Set(NanNew<v8::String>("height"), NanNew<v8::Number>(page->height()));
 }
 
 void PdfPageController::fromJs(v8::Handle<v8::Object> &obj) {
 	PdfPage *page = this->page();
-	page->setLabel(v8ToChar(obj->Get(v8::String::NewSymbol("label"))));
-	page->setWidth(v8ToDouble(obj->Get(v8::String::NewSymbol("width"))));
-	page->setHeight(v8ToDouble(obj->Get(v8::String::NewSymbol("height"))));
+	size_t count;
+	page->setLabel(NanCString(obj->Get(NanNew<v8::String>("label")), &count));
+	page->setWidth(v8ToDouble(obj->Get(NanNew<v8::String>("width"))));
+	page->setHeight(v8ToDouble(obj->Get(NanNew<v8::String>("height"))));
+
 }
 
 PdfEngine *PdfPageController::engine() {
