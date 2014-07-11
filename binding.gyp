@@ -24,16 +24,11 @@
 			"src/poppler/PopplerEngine.cpp",
 			"src/v8utils.cpp",
 		],
-		"xcode_settings": {
-			"OTHER_CFLAGS": [
-				"<!@(pkg-config --cflags poppler-glib)"
-			],
-		},
+		"include_dirs" : [
+			"<!(node -e \"require('nan')\")"
+		],
 		"cflags": [
 			"<!@(pkg-config --cflags poppler-glib) -fPIC"
-		],
-		"ldflags": [
-			"<!@(pkg-config --libs poppler-glib)"
 		],
 		"libraries": [
 			"<!@(pkg-config --libs poppler-glib)"

@@ -26,7 +26,8 @@
     "mocha": "*"
   },
   "dependencies": {
-    "extend": "^1.3.0"
+    "extend": "^1.3.0",
+    "nan": "^1.2.0"
   },
   "repository": {
     "type": "git",
