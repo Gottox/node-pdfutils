@@ -10,6 +10,7 @@ notifications:
         channels:
             - "chat.freenode.net#pdfutils"
         use_notice: true
+        skip_join: true
         on_success: always
         on_failure: always
 
