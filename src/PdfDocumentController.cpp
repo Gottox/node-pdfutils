@@ -13,6 +13,7 @@
 #include "PdfPageController.h"
 
 class PdfOpenWorker : public PdfWorker<PdfDocumentController> {
+	friend PdfDocumentController;
 public:
 	PdfOpenWorker(PdfDocumentController *controller, NanCallback *callback)
 		: PdfWorker(controller, callback) {}
@@ -21,7 +22,8 @@ public:
 		NanScope();
 		v8::Local<v8::Value> argv[] = { };
 		controller()->toJs();
-		callback->Call(0, argv);
+		if(callback)
+			callback->Call(0, argv);
 	}
 };
 
@@ -36,7 +38,13 @@ public:
 		}
 
 	void Execute () {
-		SetErrorMessage(controller()->engine()->openFromPath(_src));
+		PdfEngine *engine = controller()->engine();
+		char *error = engine->openFromPath(_src);
+		if(error) {
+			SetErrorMessage(error);
+			return;
+		}
+		engine->fillDocument(controller()->document());
 	}
 };
 
@@ -53,7 +61,13 @@ public:
 		}
 
 	void Execute () {
-		SetErrorMessage(controller()->engine()->openFromData(_data, _length));
+		PdfEngine *engine = controller()->engine();
+		char *error = engine->openFromData(_data, _length);
+		if(error) {
+			SetErrorMessage(error);
+			return;
+		}
+		engine->fillDocument(controller()->document());
 	}
 };
 
@@ -146,21 +160,22 @@ NAN_METHOD(PdfDocumentController::New) {
 }
 
 NAN_METHOD(PdfDocumentController::Load) {
-	int i;
 	size_t count;
-	char *error = NULL;
+	const char *error;
+	PdfOpenWorker *worker;
 	NanScope();
 
 	// get JS-Objects
 	v8::Local<v8::Object> jsSelf = args.This();
 	v8::Local<v8::Value> jsSrc = args[0];
-	v8::Local<v8::Function> jsPageFactory = args[1].As<v8::Function>();
-	v8::Local<v8::Object> jsOptions = args[2].As<v8::Object>();
+	v8::Local<v8::Object> jsOptions = args[1].As<v8::Object>();
+	v8::Local<v8::Function> jsCallback = args[2].As<v8::Function>();
 	v8::Local<v8::Object> jsEngine = jsOptions->Get(NanNew<v8::String>("engine")).As<v8::Object>();
 
 	// get C++-Objects from JS
 	PdfDocumentController *self = node::ObjectWrap::Unwrap<PdfDocumentController>(jsSelf);
 	PdfEngineFactory *factory = node::ObjectWrap::Unwrap<PdfEngineFactory>(jsEngine);
+	NanCallback *callback = jsCallback->IsFunction() ? new NanCallback(jsCallback) : NULL;
 
 	// set options on the engine
 	PdfEngine *engine = factory->newInstance();
@@ -168,37 +183,35 @@ NAN_METHOD(PdfDocumentController::Load) {
 		engine->setPassword(NanCString(jsOptions->Get(NanNew<v8::String>("password")), &count));
 	self->setEngine(engine);
 
-	// load pdf synchronous
+	// Init workers
 	if(jsSrc->IsString()) {
 		char *src = NanCString(jsSrc, &count);
-		error = engine->openFromPath(src);
+		worker = new PdfOpenFileWorker(self, src, callback);
 	}
 	else {
 		char *data = node::Buffer::Data(jsSrc);
 		int len = node::Buffer::Length(jsSrc);
-		error = engine->openFromData(data, len);
+		worker = new PdfOpenDataWorker(self, data, len, callback);
 	}
-	if(error) {
-		// TODO: Make sure we do this right
-		NanThrowError(error);
-		delete error;
-		NanReturnNull();
+	// async worker
+	if(callback) {
+		NanAsyncQueueWorker(worker);
+		NanReturnValue(NanFalse());
 	}
-
-	engine->fillDocument(self->document());
-	self->toJs();
-
-	v8::Handle<v8::Value> argv[] = { jsSelf, NanNew<v8::Integer>(self->document()->length()) };
-	jsPageFactory->Call(jsSelf, 2, argv);
-
-	for(i = 0; i < self->document()->length(); i++) {
-		v8::Local<v8::Object> jsPage = jsSelf->Get(i)->ToObject();
-		PdfPageController *page = node::ObjectWrap::Unwrap<PdfPageController>(jsPage);
-		engine->fillPage(i, page->page());
-		page->toJs();
+	// sync worker
+	else {
+		worker->Execute();
+		error = worker->ErrorMessage();
+		if(error != NULL) {
+			v8::Handle<v8::String> jsError = NanNew<v8::String>(error);
+			delete[] error;
+			NanThrowError(jsError);
+		}
+		else {
+			worker->HandleOKCallback();
+		}
 	}
-
-	NanReturnValue(jsSelf);
+	NanReturnValue(NanTrue());
 }
 
 NAN_METHOD(PdfDocumentController::ToStream) {

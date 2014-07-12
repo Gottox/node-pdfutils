@@ -4,7 +4,7 @@
  *
  * Distributed under terms of the MIT license.
  */
-var REPORTER="dot";
+var REPORTER="spec";
 var SRC = [ "lib/**/*.js", "index.js" ];
 
 module.exports = function(grunt) {

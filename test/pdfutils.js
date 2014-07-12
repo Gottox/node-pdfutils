@@ -6,6 +6,7 @@ describe('pdfutils', function() {
 		expect(pdfutils.PdfDocument).to.be.an(Function);
 		new pdfutils.PdfDocument()
 	});
+
 	it("can load PDF File synchronously", function() {
 		var pdf = pdfutils(__dirname + "/pdfs/testfile1.pdf");
 		expect(pdf).to.be.an(Object);
@@ -33,19 +34,18 @@ describe('pdfutils', function() {
 		);
 	});
 
-	it("can load PDF File synchronously from data", function() {
+	it("can load PDF Data synchronously", function() {
 		var pdf = pdfutils(fs.readFileSync(__dirname + "/pdfs/testfile1.pdf"));
 		expect(pdf).to.be.an(Object);
 	})
 
-	/*it("can load PDF File asynchronously", function(done) {
+	it("can load PDF File asynchronously", function(done) {
 		var pdf = pdfutils(__dirname + "/pdfs/testfile1.pdf", function(err, pdf) {
-			expect(pdf).to.be(null)
 			expect(pdf).to.be.an(Object)
 			done();
 		});
 		expect(pdf).to.be(undefined);
-	});*/
+	});
 
 	it("should throw on nonexistent file", function() {
 		try {
