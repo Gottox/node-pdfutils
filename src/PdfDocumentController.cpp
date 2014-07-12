@@ -13,7 +13,7 @@
 #include "PdfPageController.h"
 
 class PdfOpenWorker : public PdfWorker<PdfDocumentController> {
-	friend PdfDocumentController;
+	friend class PdfDocumentController;
 public:
 	PdfOpenWorker(PdfDocumentController *controller, NanCallback *callback)
 		: PdfWorker(controller, callback) {}
