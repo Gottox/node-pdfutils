@@ -39,11 +39,11 @@ public:
 	/**
 	 * @brief writes state of this object to a JS-Object
 	 */
-	virtual void toJs(v8::Handle<v8::Object> &obj) = 0;
+	virtual void toJs() = 0;
 	/**
 	 * @brief reads state of this object from a JS-Object
 	 */
-	virtual void fromJs(v8::Handle<v8::Object> &obj) = 0;
+	virtual void fromJs() = 0;
 	/**
 	 * @brief engine which is used for this document
 	 */

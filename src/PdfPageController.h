@@ -35,13 +35,17 @@ public:
 	 */
 	static NAN_METHOD(New);
 	/**
+	 * @brief converts this page to format
+	 */
+	static NAN_METHOD(ToStream);
+	/**
 	 * @brief writes state of this object to a JS-Object
 	 */
-	virtual void toJs(v8::Handle<v8::Object> &obj);
+	virtual void toJs();
 	/**
 	 * @brief reads state of this object from a JS-Object
 	 */
-	virtual void fromJs(v8::Handle<v8::Object> &obj);
+	virtual void fromJs();
 	/**
 	 * @brief page
 	 */

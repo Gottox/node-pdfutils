@@ -9,7 +9,6 @@ describe('pdfutils', function() {
 	it("can load PDF File synchronously", function() {
 		var pdf = pdfutils(__dirname + "/pdfs/testfile1.pdf");
 		expect(pdf).to.be.an(Object);
-		expect(pdf._engine.name).to.be('poppler');
 		expect(pdf.length).to.be.greaterThan(0);
 		expect(pdf).to.have.property('author');
 		expect(pdf).to.have.property('creation_date');

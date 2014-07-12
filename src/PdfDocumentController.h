@@ -41,13 +41,21 @@ public:
 	 */
 	static NAN_METHOD(New);
 	/**
+	 * @brief generates new object from v8
+	 */
+	static NAN_METHOD(Load);
+	/**
+	 * @brief generates new object from v8
+	 */
+	static NAN_METHOD(ToStream);
+	/**
 	 * @brief writes state of this object to a JS-Object
 	 */
-	virtual void toJs(v8::Handle<v8::Object> &obj);
+	virtual void toJs();
 	/**
 	 * @brief reads state of this object from a JS-Object
 	 */
-	virtual void fromJs(v8::Handle<v8::Object> &obj);
+	virtual void fromJs();
 
 	/**
 	 * @brief the document model object

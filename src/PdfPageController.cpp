@@ -10,11 +10,18 @@
 #include "PdfPage.h"
 
 void PdfPageController::Init(v8::Handle<v8::Object> exports) {
-	v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
-	tpl->SetClassName(NanNew<v8::String>("PdfPage"));
-	tpl->InstanceTemplate()->SetInternalFieldCount(1);
+	// Public
+	v8::Local<v8::FunctionTemplate> pub = NanNew<v8::FunctionTemplate>(New);
+	pub->SetClassName(NanNew<v8::String>("PdfPage"));
+	pub->InstanceTemplate()->SetInternalFieldCount(1);
 
-	exports->Set(NanNew<v8::String>("PdfPage"), tpl->GetFunction());
+	// Private
+	v8::Local<v8::Object> prv = NanNew<v8::Object>();
+	prv->Set(NanNew<v8::String>("toStream"),
+				NanNew<v8::FunctionTemplate>(PdfPageController::ToStream)->GetFunction());
+
+	exports->Set(NanNew<v8::String>("PdfPage"), pub->GetFunction());
+	exports->Set(NanNew<v8::String>("_page"), prv);
 }
 
 NAN_METHOD(PdfPageController::New) {
@@ -25,16 +32,23 @@ NAN_METHOD(PdfPageController::New) {
 	NanReturnValue(args.This());
 }
 
-void PdfPageController::toJs(v8::Handle<v8::Object> &obj) {
+NAN_METHOD(PdfPageController::ToStream) {
+	NanScope();
+	NanReturnUndefined();
+}
+
+void PdfPageController::toJs() {
 	PdfPage *page = this->page();
+	v8::Local<v8::Object> obj = NanObjectWrapHandle(this);
 	this->set(obj, "label", page->label());
 	this->set(obj, "width", page->width());
 	this->set(obj, "height", page->height());
 }
 
-void PdfPageController::fromJs(v8::Handle<v8::Object> &obj) {
+void PdfPageController::fromJs() {
 	PdfPage *page = this->page();
 	size_t count;
+	v8::Local<v8::Object> obj = NanObjectWrapHandle(this);
 	page->setLabel(NanCString(obj->Get(NanNew<v8::String>("label")), &count));
 	page->setWidth(obj->Get(NanNew<v8::String>("width"))->NumberValue());
 	page->setHeight(obj->Get(NanNew<v8::String>("height"))->NumberValue());

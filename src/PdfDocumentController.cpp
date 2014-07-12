@@ -7,6 +7,56 @@
 
 #include "PdfDocumentController.h"
 
+#include "PdfWorker.h"
+#include "PdfEngine.h"
+#include "PdfEngineFactory.h"
+#include "PdfPageController.h"
+
+class PdfOpenWorker : public PdfWorker<PdfDocumentController> {
+public:
+	PdfOpenWorker(PdfDocumentController *controller, NanCallback *callback)
+		: PdfWorker(controller, callback) {}
+
+	void HandleOKCallback () {
+		NanScope();
+		v8::Local<v8::Value> argv[] = { };
+		controller()->toJs();
+		callback->Call(0, argv);
+	}
+};
+
+class PdfOpenFileWorker : public PdfOpenWorker {
+private:
+	char *_src;
+
+public:
+	PdfOpenFileWorker(PdfDocumentController *controller, char *src, NanCallback *callback)
+		: PdfOpenWorker(controller, callback) {
+			_src = src;
+		}
+
+	void Execute () {
+		SetErrorMessage(controller()->engine()->openFromPath(_src));
+	}
+};
+
+class PdfOpenDataWorker : public PdfOpenWorker {
+private:
+	char *_data;
+	size_t _length;
+
+public:
+	PdfOpenDataWorker(PdfDocumentController *controller, char *data, size_t length, NanCallback *callback)
+		: PdfOpenWorker(controller, callback) {
+			_data = data;
+			_length = length;
+		}
+
+	void Execute () {
+		SetErrorMessage(controller()->engine()->openFromData(_data, _length));
+	}
+};
+
 inline const char *getPageLayout(enum PdfPageLayout layout) {
 	switch(layout) {
 		case PAGE_LAYOUT_UNSET:
@@ -72,12 +122,19 @@ inline const char *getPermission(enum PdfPermission permission) {
 }
 
 void PdfDocumentController::Init(v8::Handle<v8::Object> exports) {
-	v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
-	tpl->SetClassName(NanNew<v8::String>("PdfDocument"));
-	v8::Local<v8::ObjectTemplate> instanceTpl = tpl->InstanceTemplate();
-	instanceTpl->SetInternalFieldCount(1);
+	// Public
+	v8::Local<v8::FunctionTemplate> pub = NanNew<v8::FunctionTemplate>(New);
+	pub->SetClassName(NanNew<v8::String>("PdfDocument"));
+	pub->InstanceTemplate()->SetInternalFieldCount(1);
 
-	exports->Set(NanNew<v8::String>("PdfDocument"), tpl->GetFunction());
+	// Private
+	v8::Local<v8::Object> prv = NanNew<v8::Object>();
+	prv->Set(NanNew<v8::String>("load"),
+				NanNew<v8::FunctionTemplate>(PdfDocumentController::Load)->GetFunction());
+	prv->Set(NanNew<v8::String>("toStream"),
+				NanNew<v8::FunctionTemplate>(PdfDocumentController::ToStream)->GetFunction());
+	exports->Set(NanNew<v8::String>("PdfDocument"), pub->GetFunction());
+	exports->Set(NanNew<v8::String>("_document"), prv);
 }
 
 NAN_METHOD(PdfDocumentController::New) {
@@ -88,9 +145,71 @@ NAN_METHOD(PdfDocumentController::New) {
 	NanReturnValue(args.This());
 }
 
-void PdfDocumentController::toJs(v8::Handle<v8::Object> &obj) {
+NAN_METHOD(PdfDocumentController::Load) {
+	int i;
+	size_t count;
+	char *error = NULL;
+	NanScope();
+
+	// get JS-Objects
+	v8::Local<v8::Object> jsSelf = args.This();
+	v8::Local<v8::Value> jsSrc = args[0];
+	v8::Local<v8::Function> jsPageFactory = args[1].As<v8::Function>();
+	v8::Local<v8::Object> jsOptions = args[2].As<v8::Object>();
+	v8::Local<v8::Object> jsEngine = jsOptions->Get(NanNew<v8::String>("engine")).As<v8::Object>();
+
+	// get C++-Objects from JS
+	PdfDocumentController *self = node::ObjectWrap::Unwrap<PdfDocumentController>(jsSelf);
+	PdfEngineFactory *factory = node::ObjectWrap::Unwrap<PdfEngineFactory>(jsEngine);
+
+	// set options on the engine
+	PdfEngine *engine = factory->newInstance();
+	if(jsOptions->Has(NanNew<v8::String>("password")))
+		engine->setPassword(NanCString(jsOptions->Get(NanNew<v8::String>("password")), &count));
+	self->setEngine(engine);
+
+	// load pdf synchronous
+	if(jsSrc->IsString()) {
+		char *src = NanCString(jsSrc, &count);
+		error = engine->openFromPath(src);
+	}
+	else {
+		char *data = node::Buffer::Data(jsSrc);
+		int len = node::Buffer::Length(jsSrc);
+		error = engine->openFromData(data, len);
+	}
+	if(error) {
+		// TODO: Make sure we do this right
+		NanThrowError(error);
+		delete error;
+		NanReturnNull();
+	}
+
+	engine->fillDocument(self->document());
+	self->toJs();
+
+	v8::Handle<v8::Value> argv[] = { jsSelf, NanNew<v8::Integer>(self->document()->length()) };
+	jsPageFactory->Call(jsSelf, 2, argv);
+
+	for(i = 0; i < self->document()->length(); i++) {
+		v8::Local<v8::Object> jsPage = jsSelf->Get(i)->ToObject();
+		PdfPageController *page = node::ObjectWrap::Unwrap<PdfPageController>(jsPage);
+		engine->fillPage(i, page->page());
+		page->toJs();
+	}
+
+	NanReturnValue(jsSelf);
+}
+
+NAN_METHOD(PdfDocumentController::ToStream) {
+	NanScope();
+	NanReturnValue(args.This());
+}
+
+void PdfDocumentController::toJs() {
 	int i;
 	PdfDocument *doc = this->document();
+	v8::Local<v8::Object> obj = NanObjectWrapHandle(this);
 	v8::Local<v8::Object> permissionsObj = NanNew<v8::Object>();
 
 	this->set(obj, (char *)"length", doc->length());
@@ -115,8 +234,9 @@ void PdfDocumentController::toJs(v8::Handle<v8::Object> &obj) {
 	this->set(obj, (char *)"subject", doc->subject());
 	this->set(obj, (char *)"title", doc->title());
 }
-void PdfDocumentController::fromJs(v8::Handle<v8::Object> &obj) {
+void PdfDocumentController::fromJs() {
 	PdfDocument *doc = this->document();
+	v8::Local<v8::Object> obj = NanObjectWrapHandle(this);
 	size_t count;
 	doc->setModDate(obj->Get(NanNew<v8::String>("length"))->IntegerValue());
 	doc->setAuthor(NanCString(obj->Get(NanNew<v8::String>("author")), &count));
