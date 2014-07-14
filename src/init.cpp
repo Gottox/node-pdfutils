@@ -12,7 +12,6 @@
 #include "PdfEngineFactory.h"
 #include "PdfDocumentController.h"
 #include "PdfPageController.h"
-#include "v8utils.h"
 
 void init(v8::Handle<v8::Object> exports) {
 	PdfPageController::Init(exports);

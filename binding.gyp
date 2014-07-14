@@ -10,7 +10,6 @@
 			"src/PdfPage.cpp",
 			"src/PdfPageController.cpp",
 			"src/init.cpp",
-			"src/v8utils.cpp",
 		],
 		"include_dirs" : [
 			"<!(node -e \"require('nan')\")"
@@ -23,7 +22,6 @@
 			"src/PdfEngineFactory.cpp",
 			"src/PdfPage.cpp",
 			"src/poppler/PopplerEngine.cpp",
-			"src/v8utils.cpp",
 		],
 		"include_dirs" : [
 			"<!(node -e \"require('nan')\")"
