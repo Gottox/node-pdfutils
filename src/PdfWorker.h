@@ -12,6 +12,11 @@
 #include <uv.h>
 #include <list>
 #include "PdfController.h"
+#if (NODE_MODULE_VERSION > 0x000B)
+#	define UV_ASYNC_STATUS
+#else
+#	define UV_ASYNC_STATUS , int status
+#endif
 
 
 template <class T>
@@ -23,7 +28,7 @@ private:
 	std::list<void *> intermediate;
 
 
-	static void handleIntermediate(uv_async_t *handle, int status /*UNUSED*/) {
+	static void handleIntermediate(uv_async_t *handle UV_ASYNC_STATUS) {
 		PdfWorker *self = (PdfWorker *)handle->data;
 		void *data;
 
