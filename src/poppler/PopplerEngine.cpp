@@ -140,12 +140,12 @@ void PopplerEngine::close() {
 }
 
 char*
-PopplerEngine::renderPage(int index, PdfRenderFormat format, PdfWriter &writer) {
+PopplerEngine::renderPage(int index, PdfRenderFormat format, PdfExportPageWorker &writer) {
 	return ERROR_RENDER_NOT_SUPPORTED;
 }
 
 char*
-PopplerEngine::savePdf(PdfPage *pages, PdfWriter &writer) {
+PopplerEngine::savePdf(PdfPage *pages, PdfExportPageWorker &writer) {
 	return ERROR_SAVE_NOT_SUPPORTED;
 }
 

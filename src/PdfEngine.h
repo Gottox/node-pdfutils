@@ -13,7 +13,6 @@
 #include <vector>
 #include "PdfPage.h"
 #include "PdfDocument.h"
-#include "PdfWriter.h"
 
 #define ERROR_RENDER_NOT_SUPPORTED ((char *)"Rendering pages is not supported")
 #define ERROR_SAVE_NOT_SUPPORTED ((char *)"Saving a Document is not supported")
@@ -28,6 +27,7 @@ enum PdfRenderFormat {
 
 class PdfPage;
 class PdfDocument;
+class PdfExportPageWorker;
 /**
  * @brief Base Class for interaction with a PDF-Engine such as Poppler
  *
@@ -55,8 +55,8 @@ public:
 
 	virtual char* openFromData(char *data, size_t length) = 0;
 	virtual char* openFromPath(char *src) = 0;
-	virtual char* renderPage(int index, PdfRenderFormat format, PdfWriter &writer) = 0;
-	virtual char* savePdf(PdfPage *pages, PdfWriter &writer) = 0;
+	virtual char* renderPage(int index, PdfRenderFormat format, PdfExportPageWorker &writer) = 0;
+	virtual char* savePdf(PdfPage *pages, PdfExportPageWorker &writer) = 0;
 
 	virtual void fillDocument(PdfDocument *document) = 0;
 	virtual void fillPage(int index, PdfPage *page) = 0;

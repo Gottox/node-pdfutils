@@ -8,6 +8,8 @@
 #include <nan.h>
 #include "PdfPageController.h"
 #include "PdfPage.h"
+#include "PdfWorker.h"
+#include "PdfExportPageWorker.h"
 
 void PdfPageController::Init(v8::Handle<v8::Object> exports) {
 	// Public
@@ -17,8 +19,8 @@ void PdfPageController::Init(v8::Handle<v8::Object> exports) {
 
 	// Private
 	v8::Local<v8::Object> prv = NanNew<v8::Object>();
-	prv->Set(NanNew<v8::String>("toStream"),
-				NanNew<v8::FunctionTemplate>(PdfPageController::ToStream)->GetFunction());
+	prv->Set(NanNew<v8::String>("as"),
+				NanNew<v8::FunctionTemplate>(PdfPageController::As)->GetFunction());
 
 	exports->Set(NanNew<v8::String>("PdfPage"), pub->GetFunction());
 	exports->Set(NanNew<v8::String>("_page"), prv);
@@ -32,7 +34,7 @@ NAN_METHOD(PdfPageController::New) {
 	NanReturnValue(args.This());
 }
 
-NAN_METHOD(PdfPageController::ToStream) {
+NAN_METHOD(PdfPageController::As) {
 	NanScope();
 	NanReturnUndefined();
 }

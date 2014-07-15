@@ -66,9 +66,9 @@ public:
 	}
 
 	void CallIntermediate(void *data) {
-		uv_mutex_lock(this->mutex);
+		uv_mutex_lock(&this->mutex);
 		intermediate.push_back(data);
-		uv_mutex_unlock(this->mutex);
+		uv_mutex_unlock(&this->mutex);
 	}
 
 	virtual void HandleIntermediate(void *data) {}

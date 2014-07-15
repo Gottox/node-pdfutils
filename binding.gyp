@@ -9,6 +9,7 @@
 			"src/PdfEngineFactory.cpp",
 			"src/PdfPage.cpp",
 			"src/PdfPageController.cpp",
+			"src/PdfExportPageWorker.cpp",
 			"src/init.cpp",
 		],
 		"include_dirs" : [

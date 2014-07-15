@@ -37,7 +37,7 @@ public:
 	/**
 	 * @brief converts this page to format
 	 */
-	static NAN_METHOD(ToStream);
+	static NAN_METHOD(As);
 	/**
 	 * @brief writes state of this object to a JS-Object
 	 */
