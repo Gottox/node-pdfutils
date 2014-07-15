@@ -13,6 +13,3 @@ notifications:
         skip_join: true
         on_success: always
         on_failure: always
-cache:
-    directories:
-        - node_modules
