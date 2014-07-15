@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['new',['New',['../classPdfController.html#a0e6a0f0cfdcadf657aa6d558284f1927',1,'PdfController::New()'],['../classPdfPageController.html#ab036feec8ecdb15c45ce4ffd15deb02c',1,'PdfPageController::New()']]]
+  ['nan_5fmethod',['NAN_METHOD',['../classPdfDocumentController.html#ab0e5e5ce9948f50a7fc32783a0fea079',1,'PdfDocumentController::NAN_METHOD(New)'],['../classPdfDocumentController.html#aec0006dd1500713aac8446a0a99aa563',1,'PdfDocumentController::NAN_METHOD(Load)'],['../classPdfDocumentController.html#aa5da86854af8c5761c55a8c390007a23',1,'PdfDocumentController::NAN_METHOD(As)'],['../classPdfPageController.html#af449b16d9a03ab6bf9489cfd591f8968',1,'PdfPageController::NAN_METHOD(New)'],['../classPdfPageController.html#a4b190d29bb8c0b567c47a6b24ffffc27',1,'PdfPageController::NAN_METHOD(ToStream)']]]
 ];

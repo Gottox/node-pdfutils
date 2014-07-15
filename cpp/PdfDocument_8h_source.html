@@ -96,102 +96,100 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#ifndef PDFDOCUMENT_H</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#define PDFDOCUMENT_H</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;PdfEngine.h&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">enum</span> PdfPageLayout {</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    PAGE_LAYOUT_UNSET,</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    PAGE_LAYOUT_SINGLE_PAGE,</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    PAGE_LAYOUT_ONE_COLUMN,</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    PAGE_LAYOUT_TWO_COLUMN_LEFT,</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    PAGE_LAYOUT_TWO_COLUMN_RIGHT,</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    PAGE_LAYOUT_TWO_PAGE_LEFT,</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    PAGE_LAYOUT_TWO_PAGE_RIGHT,</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    PAGE_LAYOUT_LAST</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;};</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">enum</span> PdfPageMode {</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    PAGE_MODE_UNSET,</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    PAGE_MODE_NONE,</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    PAGE_MODE_USE_OUTLINES,</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    PAGE_MODE_USE_THUMBS,</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    PAGE_MODE_FULL_SCREEN,</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    PAGE_MODE_USE_OC,</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    PAGE_MODE_USE_ATTACHMENTS,</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    PAGE_MODE_LAST</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;};</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">enum</span> PdfPermission {</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    PERMISSIONS_PRINT,</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    PERMISSIONS_MODIFY,</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    PERMISSIONS_COPY,</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    PERMISSIONS_ADD_NOTES,</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    PERMISSIONS_FILL_FORM,</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    PERMISSIONS_EXTRACT_CONTENTS,</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    PERMISSIONS_ASSEMBLE,</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    PERMISSIONS_PRINT_HIGH_RESOLUTION,</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    PERMISSIONS_LAST</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;};</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">class </span><a class="code" href="classPdfEngine.html">PdfEngine</a>;</div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classPdfDocument.html">   53</a></span>&#160;<span class="keyword">class </span><a class="code" href="classPdfDocument.html">PdfDocument</a> {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">int</span> _length;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_author;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">int</span> _creationDate;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_creator;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_format;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> * _keywords;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">bool</span> _linearized;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_metadata;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">int</span> _modDate;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keyword">enum</span> PdfPageLayout _pageLayout;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keyword">enum</span> PdfPageMode _pageMode;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">int</span> _permissions;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_producer;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_subject;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_title;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classPdfDocument.html#a51542dc9dc18040ab21da46af078cedc">length</a>();</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#a825b663b33a1b2582e3ce78c76cec458">author</a>();</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classPdfDocument.html#a34189afe05a0c59f350e9000db8b970d">creationDate</a>();</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#a83469a38be2e8f4a7fb8c3d27f04fb01">creator</a>();</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#af5c47c02502079a3bb3bdf4458ddeba2">format</a>();</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#ae3ad3d7a3c12f401d5015764b25a7395">keywords</a>();</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classPdfDocument.html#a5b6def4240758563bcccc1d4690a81d9">linearized</a>();</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#a2436f4077fbda04566c3205a828ee9e9">metadata</a>();</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classPdfDocument.html#a9a560872adbe12c6a0169d7fb977624c">modDate</a>();</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keyword">enum</span> PdfPageLayout <a class="code" href="classPdfDocument.html#aeb04b7e560ac6f44eac50db2cbfd567c">pageLayout</a>();</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keyword">enum</span> PdfPageMode <a class="code" href="classPdfDocument.html#a07421c1915ef91ec5697b16bc26f8e09">pageMode</a>();</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classPdfDocument.html#adb99ab1b503cf0b9c813631e0efe1aea">permissions</a>();</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#aa2b291bb94d5af402da0c93ef0c0a354">producer</a>();</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#ac58cb8d3af99d0341f4c4a45ede3b886">subject</a>();</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#a62694d86972f8659221cf8b808729ee8">title</a>();</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a9c3d6c0a4e4a7142c461a2486396177a">setLength</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> length);</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#ae8968c19c1585c50df38695498230ba2">setAuthor</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *author);</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a83d22e575f7213c9aeb033bbce656ebe">setCreationDate</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> creationDate);</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#ad90947d2c53b0d37922543c03ee823c6">setCreator</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *creator);</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a4716d5d6ee383860e560d84244142334">setFormat</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *format);</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#ae914a297b4aa2afc5b6e717e9a89386d">setKeywords</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> * keywords);</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a16c44fd57134742113afded1b59c4490">setLinearized</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> linearized);</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a5f2b32f5b81190b0a03f1628b6c1ff2b">setMetadata</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *metadata);</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a0f5a9c255714590d9ab4d80c43ffbfbd">setModDate</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> modDate);</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#abf0b90b34a3462b28726e80c77cdcaad">setPageLayout</a>(<span class="keyword">const</span> <span class="keyword">enum</span> PdfPageLayout pageLayout);</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a6e8b333a7be6a436cd36d9e9ebb2c2e1">setPageMode</a>(<span class="keyword">const</span> <span class="keyword">enum</span> PdfPageMode pageMode);</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#ac5aab6ddb031aac2178fb21e9cd4eb1d">setPermissions</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> permissions);</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a885ff1553fadb520b8d6e603e66f10ad">setProducer</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *producer);</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a5ab95b74cd125ee88415eb6cd2145251">setSubject</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *subject);</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a07f0a1bdb83633c63ea8bcc7c172d0bb">setTitle</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *title);</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;};</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* !PDFDOCUMENT_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">enum</span> PdfPageLayout {</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    PAGE_LAYOUT_UNSET,</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    PAGE_LAYOUT_SINGLE_PAGE,</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    PAGE_LAYOUT_ONE_COLUMN,</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    PAGE_LAYOUT_TWO_COLUMN_LEFT,</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    PAGE_LAYOUT_TWO_COLUMN_RIGHT,</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    PAGE_LAYOUT_TWO_PAGE_LEFT,</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    PAGE_LAYOUT_TWO_PAGE_RIGHT,</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    PAGE_LAYOUT_LAST</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;};</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">enum</span> PdfPageMode {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    PAGE_MODE_UNSET,</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    PAGE_MODE_NONE,</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    PAGE_MODE_USE_OUTLINES,</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    PAGE_MODE_USE_THUMBS,</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    PAGE_MODE_FULL_SCREEN,</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    PAGE_MODE_USE_OC,</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    PAGE_MODE_USE_ATTACHMENTS,</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    PAGE_MODE_LAST</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;};</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">enum</span> PdfPermission {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    PERMISSIONS_PRINT,</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    PERMISSIONS_MODIFY,</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    PERMISSIONS_COPY,</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    PERMISSIONS_ADD_NOTES,</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    PERMISSIONS_FILL_FORM,</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    PERMISSIONS_EXTRACT_CONTENTS,</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    PERMISSIONS_ASSEMBLE,</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    PERMISSIONS_PRINT_HIGH_RESOLUTION,</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    PERMISSIONS_LAST</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;};</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keyword">class </span><a class="code" href="classPdfEngine.html">PdfEngine</a>;</div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classPdfDocument.html">   51</a></span>&#160;<span class="keyword">class </span><a class="code" href="classPdfDocument.html">PdfDocument</a> {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">int</span> _length;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_author;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">int</span> _creationDate;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_creator;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_format;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> * _keywords;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">bool</span> _linearized;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_metadata;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">int</span> _modDate;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">enum</span> PdfPageLayout _pageLayout;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">enum</span> PdfPageMode _pageMode;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">int</span> _permissions;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_producer;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_subject;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_title;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classPdfDocument.html#a51542dc9dc18040ab21da46af078cedc">length</a>();</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#a825b663b33a1b2582e3ce78c76cec458">author</a>();</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classPdfDocument.html#a34189afe05a0c59f350e9000db8b970d">creationDate</a>();</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#a83469a38be2e8f4a7fb8c3d27f04fb01">creator</a>();</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#af5c47c02502079a3bb3bdf4458ddeba2">format</a>();</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#ae3ad3d7a3c12f401d5015764b25a7395">keywords</a>();</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classPdfDocument.html#a5b6def4240758563bcccc1d4690a81d9">linearized</a>();</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#a2436f4077fbda04566c3205a828ee9e9">metadata</a>();</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classPdfDocument.html#a9a560872adbe12c6a0169d7fb977624c">modDate</a>();</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keyword">enum</span> PdfPageLayout <a class="code" href="classPdfDocument.html#aeb04b7e560ac6f44eac50db2cbfd567c">pageLayout</a>();</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keyword">enum</span> PdfPageMode <a class="code" href="classPdfDocument.html#a07421c1915ef91ec5697b16bc26f8e09">pageMode</a>();</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classPdfDocument.html#adb99ab1b503cf0b9c813631e0efe1aea">permissions</a>();</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#aa2b291bb94d5af402da0c93ef0c0a354">producer</a>();</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#ac58cb8d3af99d0341f4c4a45ede3b886">subject</a>();</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfDocument.html#a62694d86972f8659221cf8b808729ee8">title</a>();</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a9c3d6c0a4e4a7142c461a2486396177a">setLength</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> length);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#ae8968c19c1585c50df38695498230ba2">setAuthor</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *author);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a83d22e575f7213c9aeb033bbce656ebe">setCreationDate</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> creationDate);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#ad90947d2c53b0d37922543c03ee823c6">setCreator</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *creator);</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a4716d5d6ee383860e560d84244142334">setFormat</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *format);</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#ae914a297b4aa2afc5b6e717e9a89386d">setKeywords</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> * keywords);</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a16c44fd57134742113afded1b59c4490">setLinearized</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> linearized);</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a5f2b32f5b81190b0a03f1628b6c1ff2b">setMetadata</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *metadata);</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a0f5a9c255714590d9ab4d80c43ffbfbd">setModDate</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> modDate);</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#abf0b90b34a3462b28726e80c77cdcaad">setPageLayout</a>(<span class="keyword">const</span> <span class="keyword">enum</span> PdfPageLayout pageLayout);</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a6e8b333a7be6a436cd36d9e9ebb2c2e1">setPageMode</a>(<span class="keyword">const</span> <span class="keyword">enum</span> PdfPageMode pageMode);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#ac5aab6ddb031aac2178fb21e9cd4eb1d">setPermissions</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> permissions);</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a885ff1553fadb520b8d6e603e66f10ad">setProducer</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *producer);</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a5ab95b74cd125ee88415eb6cd2145251">setSubject</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *subject);</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfDocument.html#a07f0a1bdb83633c63ea8bcc7c172d0bb">setTitle</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *title);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;};</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* !PDFDOCUMENT_H */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="classPdfDocument_html_ae914a297b4aa2afc5b6e717e9a89386d"><div class="ttname"><a href="classPdfDocument.html#ae914a297b4aa2afc5b6e717e9a89386d">PdfDocument::setKeywords</a></div><div class="ttdeci">void setKeywords(const char *keywords)</div><div class="ttdoc">sets keywords of this document </div><div class="ttdef"><b>Definition:</b> PdfDocument.cpp:71</div></div>
 <div class="ttc" id="classPdfDocument_html_adb99ab1b503cf0b9c813631e0efe1aea"><div class="ttname"><a href="classPdfDocument.html#adb99ab1b503cf0b9c813631e0efe1aea">PdfDocument::permissions</a></div><div class="ttdeci">int permissions()</div><div class="ttdoc">permissions of this document </div><div class="ttdef"><b>Definition:</b> PdfDocument.cpp:43</div></div>
 <div class="ttc" id="classPdfDocument_html_ae3ad3d7a3c12f401d5015764b25a7395"><div class="ttname"><a href="classPdfDocument.html#ae3ad3d7a3c12f401d5015764b25a7395">PdfDocument::keywords</a></div><div class="ttdeci">const char * keywords()</div><div class="ttdoc">keywords of this document </div><div class="ttdef"><b>Definition:</b> PdfDocument.cpp:25</div></div>
 <div class="ttc" id="classPdfDocument_html_a83d22e575f7213c9aeb033bbce656ebe"><div class="ttname"><a href="classPdfDocument.html#a83d22e575f7213c9aeb033bbce656ebe">PdfDocument::setCreationDate</a></div><div class="ttdeci">void setCreationDate(const int creationDate)</div><div class="ttdoc">sets creation date of this document </div><div class="ttdef"><b>Definition:</b> PdfDocument.cpp:62</div></div>
 <div class="ttc" id="classPdfDocument_html_af5c47c02502079a3bb3bdf4458ddeba2"><div class="ttname"><a href="classPdfDocument.html#af5c47c02502079a3bb3bdf4458ddeba2">PdfDocument::format</a></div><div class="ttdeci">const char * format()</div><div class="ttdoc">format of this document </div><div class="ttdef"><b>Definition:</b> PdfDocument.cpp:22</div></div>
-<div class="ttc" id="classPdfDocument_html"><div class="ttname"><a href="classPdfDocument.html">PdfDocument</a></div><div class="ttdoc">Class representation of a PDF-Document. </div><div class="ttdef"><b>Definition:</b> PdfDocument.h:53</div></div>
+<div class="ttc" id="classPdfDocument_html"><div class="ttname"><a href="classPdfDocument.html">PdfDocument</a></div><div class="ttdoc">Class representation of a PDF-Document. </div><div class="ttdef"><b>Definition:</b> PdfDocument.h:51</div></div>
 <div class="ttc" id="classPdfDocument_html_a62694d86972f8659221cf8b808729ee8"><div class="ttname"><a href="classPdfDocument.html#a62694d86972f8659221cf8b808729ee8">PdfDocument::title</a></div><div class="ttdeci">const char * title()</div><div class="ttdoc">title of this document </div><div class="ttdef"><b>Definition:</b> PdfDocument.cpp:52</div></div>
 <div class="ttc" id="classPdfDocument_html_ac58cb8d3af99d0341f4c4a45ede3b886"><div class="ttname"><a href="classPdfDocument.html#ac58cb8d3af99d0341f4c4a45ede3b886">PdfDocument::subject</a></div><div class="ttdeci">const char * subject()</div><div class="ttdoc">subject of this document </div><div class="ttdef"><b>Definition:</b> PdfDocument.cpp:49</div></div>
 <div class="ttc" id="classPdfDocument_html_ac5aab6ddb031aac2178fb21e9cd4eb1d"><div class="ttname"><a href="classPdfDocument.html#ac5aab6ddb031aac2178fb21e9cd4eb1d">PdfDocument::setPermissions</a></div><div class="ttdeci">void setPermissions(const int permissions)</div><div class="ttdoc">sets permissions of this document </div><div class="ttdef"><b>Definition:</b> PdfDocument.cpp:89</div></div>
@@ -221,7 +219,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jul 10 2014 07:23:41 for node-pdfutils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jul 15 2014 20:43:50 for node-pdfutils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

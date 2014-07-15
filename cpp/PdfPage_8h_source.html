@@ -96,32 +96,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#ifndef PDFPAGE_H</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#define PDFPAGE_H</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;v8.h&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;node.h&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">class </span><a class="code" href="classPdfEngine.html">PdfEngine</a>;</div>
-<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="classPdfPage.html">   20</a></span>&#160;<span class="keyword">class </span><a class="code" href="classPdfPage.html">PdfPage</a> {</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <a class="code" href="classPdfEngine.html">PdfEngine</a> *_engine;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordtype">int</span> _index;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_label;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordtype">double</span> _width;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">double</span> _height;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <a class="code" href="classPdfPage.html#a732db929efa3099897bb704675f111f8">PdfPage</a>();</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classPdfPage.html#af7d211a81fffce6680234f88681b99c0">index</a>();</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfPage.html#aafe3ed3abe5229da2053405c69a03c0f">label</a>();</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classPdfPage.html#a6f790f5b64753195ee8b7c2b7eea81ea">width</a>();</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classPdfPage.html#ab9c7e042e5dc1e02a95f2ff885d36e5f">height</a>();</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfPage.html#a2b8bd7e835fec5898abb6eff672c6fa2">setIndex</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> indext);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfPage.html#afa2cfa2a5e5648233323324e6c023ac5">setLabel</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *label);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfPage.html#a568edb3abb055969ed950462e9e6908a">setWidth</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> width);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfPage.html#a29d4e2cff39c78d23926119647142a73">setHeight</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> height);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;};</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* !PDFPAGE_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">class </span><a class="code" href="classPdfEngine.html">PdfEngine</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="classPdfPage.html">   17</a></span>&#160;<span class="keyword">class </span><a class="code" href="classPdfPage.html">PdfPage</a> {</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <a class="code" href="classPdfEngine.html">PdfEngine</a> *_engine;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keywordtype">int</span> _index;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *_label;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keywordtype">double</span> _width;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordtype">double</span> _height;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <a class="code" href="classPdfPage.html#a732db929efa3099897bb704675f111f8">PdfPage</a>();</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classPdfPage.html#af7d211a81fffce6680234f88681b99c0">index</a>();</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="classPdfPage.html#aafe3ed3abe5229da2053405c69a03c0f">label</a>();</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classPdfPage.html#a6f790f5b64753195ee8b7c2b7eea81ea">width</a>();</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classPdfPage.html#ab9c7e042e5dc1e02a95f2ff885d36e5f">height</a>();</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfPage.html#a2b8bd7e835fec5898abb6eff672c6fa2">setIndex</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> indext);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfPage.html#afa2cfa2a5e5648233323324e6c023ac5">setLabel</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *label);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfPage.html#a568edb3abb055969ed950462e9e6908a">setWidth</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> width);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classPdfPage.html#a29d4e2cff39c78d23926119647142a73">setHeight</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> height);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;};</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* !PDFPAGE_H */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="classPdfPage_html_aafe3ed3abe5229da2053405c69a03c0f"><div class="ttname"><a href="classPdfPage.html#aafe3ed3abe5229da2053405c69a03c0f">PdfPage::label</a></div><div class="ttdeci">const char * label()</div><div class="ttdoc">label of this page </div><div class="ttdef"><b>Definition:</b> PdfPage.cpp:17</div></div>
 <div class="ttc" id="classPdfPage_html_af7d211a81fffce6680234f88681b99c0"><div class="ttname"><a href="classPdfPage.html#af7d211a81fffce6680234f88681b99c0">PdfPage::index</a></div><div class="ttdeci">int index()</div><div class="ttdoc">index of this page </div><div class="ttdef"><b>Definition:</b> PdfPage.cpp:14</div></div>
 <div class="ttc" id="classPdfPage_html_a2b8bd7e835fec5898abb6eff672c6fa2"><div class="ttname"><a href="classPdfPage.html#a2b8bd7e835fec5898abb6eff672c6fa2">PdfPage::setIndex</a></div><div class="ttdeci">void setIndex(const int indext)</div><div class="ttdoc">sets index of this page </div><div class="ttdef"><b>Definition:</b> PdfPage.cpp:27</div></div>
@@ -129,14 +126,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="classPdfPage_html_afa2cfa2a5e5648233323324e6c023ac5"><div class="ttname"><a href="classPdfPage.html#afa2cfa2a5e5648233323324e6c023ac5">PdfPage::setLabel</a></div><div class="ttdeci">void setLabel(const char *label)</div><div class="ttdoc">sets label of this page </div><div class="ttdef"><b>Definition:</b> PdfPage.cpp:30</div></div>
 <div class="ttc" id="classPdfPage_html_a6f790f5b64753195ee8b7c2b7eea81ea"><div class="ttname"><a href="classPdfPage.html#a6f790f5b64753195ee8b7c2b7eea81ea">PdfPage::width</a></div><div class="ttdeci">double width()</div><div class="ttdoc">width of this page </div><div class="ttdef"><b>Definition:</b> PdfPage.cpp:20</div></div>
 <div class="ttc" id="classPdfPage_html_ab9c7e042e5dc1e02a95f2ff885d36e5f"><div class="ttname"><a href="classPdfPage.html#ab9c7e042e5dc1e02a95f2ff885d36e5f">PdfPage::height</a></div><div class="ttdeci">double height()</div><div class="ttdoc">height of this page </div><div class="ttdef"><b>Definition:</b> PdfPage.cpp:23</div></div>
-<div class="ttc" id="classPdfPage_html"><div class="ttname"><a href="classPdfPage.html">PdfPage</a></div><div class="ttdoc">Class representation of a PDF-Page. </div><div class="ttdef"><b>Definition:</b> PdfPage.h:20</div></div>
+<div class="ttc" id="classPdfPage_html"><div class="ttname"><a href="classPdfPage.html">PdfPage</a></div><div class="ttdoc">Class representation of a PDF-Page. </div><div class="ttdef"><b>Definition:</b> PdfPage.h:17</div></div>
 <div class="ttc" id="classPdfPage_html_a568edb3abb055969ed950462e9e6908a"><div class="ttname"><a href="classPdfPage.html#a568edb3abb055969ed950462e9e6908a">PdfPage::setWidth</a></div><div class="ttdeci">void setWidth(const double width)</div><div class="ttdoc">sets width of this page </div><div class="ttdef"><b>Definition:</b> PdfPage.cpp:33</div></div>
 <div class="ttc" id="classPdfEngine_html"><div class="ttname"><a href="classPdfEngine.html">PdfEngine</a></div><div class="ttdoc">Base Class for interaction with a PDF-Engine such as Poppler. </div><div class="ttdef"><b>Definition:</b> PdfEngine.h:37</div></div>
 <div class="ttc" id="classPdfPage_html_a29d4e2cff39c78d23926119647142a73"><div class="ttname"><a href="classPdfPage.html#a29d4e2cff39c78d23926119647142a73">PdfPage::setHeight</a></div><div class="ttdeci">void setHeight(const double height)</div><div class="ttdoc">sets height of this page </div><div class="ttdef"><b>Definition:</b> PdfPage.cpp:36</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jul 10 2014 07:23:41 for node-pdfutils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jul 15 2014 20:43:50 for node-pdfutils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>
