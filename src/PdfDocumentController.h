@@ -41,13 +41,13 @@ public:
 	 */
 	static NAN_METHOD(New);
 	/**
-	 * @brief generates new object from v8
+	 * @brief loads pdf document from file
 	 */
 	static NAN_METHOD(Load);
 	/**
-	 * @brief generates new object from v8
+	 * @brief creates stream to convert pdf to a specified format
 	 */
-	static NAN_METHOD(ToStream);
+	static NAN_METHOD(As);
 	/**
 	 * @brief writes state of this object to a JS-Object
 	 */

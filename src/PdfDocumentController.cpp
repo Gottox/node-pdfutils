@@ -146,7 +146,7 @@ void PdfDocumentController::Init(v8::Handle<v8::Object> exports) {
 	prv->Set(NanNew<v8::String>("load"),
 				NanNew<v8::FunctionTemplate>(PdfDocumentController::Load)->GetFunction());
 	prv->Set(NanNew<v8::String>("toStream"),
-				NanNew<v8::FunctionTemplate>(PdfDocumentController::ToStream)->GetFunction());
+				NanNew<v8::FunctionTemplate>(PdfDocumentController::As)->GetFunction());
 	exports->Set(NanNew<v8::String>("PdfDocument"), pub->GetFunction());
 	exports->Set(NanNew<v8::String>("_document"), prv);
 }
@@ -214,7 +214,7 @@ NAN_METHOD(PdfDocumentController::Load) {
 	NanReturnValue(NanTrue());
 }
 
-NAN_METHOD(PdfDocumentController::ToStream) {
+NAN_METHOD(PdfDocumentController::As) {
 	NanScope();
 	NanReturnValue(args.This());
 }
