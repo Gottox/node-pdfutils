@@ -23,10 +23,9 @@ template <class T>
 class PdfWorker : public NanAsyncWorker {
 private:
 	T *_controller;
-	uv_async_t async;
+	uv_async_t *async;
 	uv_mutex_t mutex;
 	std::list<void *> intermediate;
-
 
 	static void handleIntermediate(uv_async_t *handle UV_ASYNC_STATUS) {
 		PdfWorker *self = (PdfWorker *)handle->data;
@@ -46,18 +45,25 @@ private:
 		}
 	}
 
+	static void deleteAsync(uv_handle_t* handle) {
+		// handle points to the same location as this->async. but at this point
+		// the object is already freed, so we only dereference the handle here.
+		delete (uv_async_t *)handle;
+	}
+
 public:
 	PdfWorker(T *controller, NanCallback *callback) : NanAsyncWorker(callback) {
 		_controller = controller;
 
 		uv_loop_t *loop = uv_default_loop();
-		uv_async_init(loop, &async, handleIntermediate);
-		async.data = this;
+		this->async = new uv_async_t;
+		uv_async_init(loop, this->async, handleIntermediate);
+		this->async->data = this;
 		uv_mutex_init(&mutex);
 	}
 
 	virtual ~PdfWorker() {
-		uv_unref((uv_handle_t*)&this->async);
+		uv_close((uv_handle_t*)this->async, deleteAsync);
 		uv_mutex_destroy(&this->mutex);
 	}
 
