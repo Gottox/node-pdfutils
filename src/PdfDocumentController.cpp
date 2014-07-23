@@ -189,8 +189,8 @@ NAN_METHOD(PdfDocumentController::Load) {
 		worker = new PdfOpenFileWorker(self, src, callback);
 	}
 	else {
-		char *data = node::Buffer::Data(jsSrc);
-		int len = node::Buffer::Length(jsSrc);
+		char *data = node::Buffer::Data(jsSrc.As<v8::Object>());
+		int len = node::Buffer::Length(jsSrc.As<v8::Object>());
 		worker = new PdfOpenDataWorker(self, data, len, callback);
 	}
 	// async worker
