@@ -203,7 +203,7 @@ NAN_METHOD(PdfDocumentController::Load) {
 		worker->Execute();
 		error = worker->ErrorMessage();
 		if(error != NULL) {
-			v8::Handle<v8::String> jsError = NanNew<v8::String>(error);
+			v8::Handle<v8::Value> jsError = NanError(error);
 			delete[] error;
 			NanThrowError(jsError);
 		}
