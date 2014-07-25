@@ -1,25 +1,25 @@
 /*
- * PdfExportPageWorker.cpp
+ * PdfSaveWorker.cpp
  * Copyright (C) 2014 tox <tox@rootkit>
  *
  * Distributed under terms of the MIT license.
  */
 
-#include "PdfExportPageWorker.h"
-#include "PdfPageController.h"
+#include "PdfSaveWorker.h"
+#include "../PdfPageController.h"
 
 void
-PdfExportPageWorker::Execute() {
+PdfSaveWorker::Execute() {
 	CallIntermediate(NULL);
 }
 
 void
-PdfExportPageWorker::HandleIntermediate(void *data) {
+PdfSaveWorker::HandleIntermediate(void *data) {
 
 }
 
 void
-PdfExportPageWorker::HandleOKCallback () {
+PdfSaveWorker::HandleOKCallback () {
 	NanScope();
 	v8::Local<v8::Value> argv[] = { };
 	controller()->toJs();

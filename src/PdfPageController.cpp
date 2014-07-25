@@ -8,8 +8,8 @@
 #include <nan.h>
 #include "PdfPageController.h"
 #include "PdfPage.h"
-#include "PdfWorker.h"
-#include "PdfExportPageWorker.h"
+#include "worker/PdfWorker.h"
+#include "worker/PdfExportPageWorker.h"
 
 void PdfPageController::Init(v8::Handle<v8::Object> exports) {
 	// Public

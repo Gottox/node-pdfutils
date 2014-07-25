@@ -11,7 +11,7 @@
 #include <nan.h>
 #include <uv.h>
 #include <list>
-#include "PdfController.h"
+#include "../PdfController.h"
 #if (NODE_MODULE_VERSION > 0x000B)
 #	define UV_ASYNC_STATUS
 #else

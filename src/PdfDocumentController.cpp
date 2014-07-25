@@ -7,7 +7,7 @@
 
 #include "PdfDocumentController.h"
 
-#include "PdfWorker.h"
+#include "worker/PdfWorker.h"
 #include "PdfEngine.h"
 #include "PdfEngineFactory.h"
 #include "PdfPageController.h"
@@ -67,19 +67,6 @@ public:
 			return;
 		}
 		engine->fillDocument(controller()->document());
-	}
-};
-
-class PdfSaveWorker : public PdfWorker<PdfDocumentController> {
-	friend class PdfDocumentController;
-public:
-	PdfSaveWorker(PdfDocumentController *controller, NanCallback *callback)
-		: PdfWorker(controller, callback) {}
-
-	void HandleOKCallback () {
-		NanScope();
-		if(callback)
-			callback->Call(0, NULL);
 	}
 };
 

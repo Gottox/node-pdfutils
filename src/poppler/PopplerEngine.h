@@ -27,8 +27,8 @@ public:
 	virtual void fillDocument(PdfDocument *document);
 	virtual void fillPage(int index, PdfPage *page);
 	virtual void close();
-	virtual char* renderPage(int index, PdfRenderFormat format, PdfExportPageWorker &writer);
-	virtual char* savePdf(PdfPage *pages, PdfExportPageWorker &writer);
+	virtual char* renderPage(int index, PdfRenderFormat format, PdfExportPageWorker *writer);
+	virtual char* savePdf(PdfPage *pages, PdfSaveWorker *writer);
 
 
 

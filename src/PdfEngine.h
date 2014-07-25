@@ -28,6 +28,7 @@ enum PdfRenderFormat {
 class PdfPage;
 class PdfDocument;
 class PdfExportPageWorker;
+class PdfSaveWorker;
 /**
  * @brief Base Class for interaction with a PDF-Engine such as Poppler
  *
@@ -55,8 +56,8 @@ public:
 
 	virtual char* openFromData(char *data, size_t length) = 0;
 	virtual char* openFromPath(char *src) = 0;
-	virtual char* renderPage(int index, PdfRenderFormat format, PdfExportPageWorker &writer) = 0;
-	virtual char* savePdf(PdfPage *pages, PdfExportPageWorker &writer) = 0;
+	virtual char* renderPage(int index, PdfRenderFormat format, PdfExportPageWorker *writer) = 0;
+	virtual char* savePdf(PdfPage *pages, PdfSaveWorker *writer) = 0;
 
 	virtual void fillDocument(PdfDocument *document) = 0;
 	virtual void fillPage(int index, PdfPage *page) = 0;
