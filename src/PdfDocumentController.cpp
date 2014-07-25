@@ -20,10 +20,9 @@ public:
 
 	void HandleOKCallback () {
 		NanScope();
-		v8::Local<v8::Value> argv[] = { };
 		controller()->toJs();
 		if(callback)
-			callback->Call(0, argv);
+			callback->Call(0, NULL);
 	}
 };
 
@@ -68,6 +67,19 @@ public:
 			return;
 		}
 		engine->fillDocument(controller()->document());
+	}
+};
+
+class PdfSaveWorker : public PdfWorker<PdfDocumentController> {
+	friend class PdfDocumentController;
+public:
+	PdfSaveWorker(PdfDocumentController *controller, NanCallback *callback)
+		: PdfWorker(controller, callback) {}
+
+	void HandleOKCallback () {
+		NanScope();
+		if(callback)
+			callback->Call(0, NULL);
 	}
 };
 
@@ -183,22 +195,24 @@ NAN_METHOD(PdfDocumentController::Load) {
 		engine->setPassword(NanCString(jsOptions->Get(NanNew<v8::String>("password")), &count));
 	self->setEngine(engine);
 
-	// Init workers
+	// open from file
 	if(jsSrc->IsString()) {
 		char *src = NanCString(jsSrc, &count);
 		worker = new PdfOpenFileWorker(self, src, callback);
 	}
+	// open from data
 	else {
 		char *data = node::Buffer::Data(jsSrc.As<v8::Object>());
 		int len = node::Buffer::Length(jsSrc.As<v8::Object>());
 		worker = new PdfOpenDataWorker(self, data, len, callback);
 	}
-	// async worker
+
+	// asynchronous call
 	if(callback) {
 		NanAsyncQueueWorker(worker);
 		NanReturnValue(NanFalse());
 	}
-	// sync worker
+	// synchronous call
 	else {
 		worker->Execute();
 		error = worker->ErrorMessage();
@@ -210,8 +224,8 @@ NAN_METHOD(PdfDocumentController::Load) {
 		else {
 			worker->HandleOKCallback();
 		}
+		NanReturnValue(NanTrue());
 	}
-	NanReturnValue(NanTrue());
 }
 
 NAN_METHOD(PdfDocumentController::As) {
