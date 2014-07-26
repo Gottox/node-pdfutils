@@ -8,7 +8,8 @@
 #include "PdfController.h"
 
 PdfController::~PdfController() {
-	delete _engine;
+	if(_engine != NULL)
+		delete _engine;
 }
 
 PdfEngine *PdfController::engine() {
