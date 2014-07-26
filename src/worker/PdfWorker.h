@@ -55,16 +55,13 @@ public:
 	PdfWorker(T *controller, NanCallback *callback) : NanAsyncWorker(callback) {
 		_controller = controller;
 
-		uv_loop_t *loop = uv_default_loop();
-		this->async = new uv_async_t;
-		uv_async_init(loop, this->async, handleIntermediate);
-		this->async->data = this;
-		uv_mutex_init(&mutex);
-	}
-
-	virtual ~PdfWorker() {
-		uv_close((uv_handle_t*)this->async, deleteAsync);
-		uv_mutex_destroy(&this->mutex);
+		if(callback) {
+			uv_loop_t *loop = uv_default_loop();
+			this->async = new uv_async_t;
+			uv_async_init(loop, this->async, handleIntermediate);
+			this->async->data = this;
+			uv_mutex_init(&mutex);
+		}
 	}
 
 	T *controller() {
@@ -75,6 +72,15 @@ public:
 		uv_mutex_lock(&this->mutex);
 		intermediate.push_back(data);
 		uv_mutex_unlock(&this->mutex);
+	}
+
+	virtual void WorkComplete() {
+		if(this->callback == NULL)
+			return;
+		uv_close((uv_handle_t*)this->async, deleteAsync);
+		uv_mutex_destroy(&this->mutex);
+		this->async = NULL;
+		NanAsyncWorker::WorkComplete();
 	}
 
 	virtual void HandleIntermediate(void *data) {}

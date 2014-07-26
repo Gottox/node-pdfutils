@@ -17,6 +17,7 @@ class PopplerEngine : public PdfEngine {
 public:
 	static void Init();
 	PopplerEngine();
+	~PopplerEngine();
 
 	static PdfEngine *NewInstance() {
 		return new PopplerEngine();

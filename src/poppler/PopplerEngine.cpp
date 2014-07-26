@@ -58,7 +58,13 @@ PopplerEngine::Init() {
 }
 
 PopplerEngine::PopplerEngine() : PdfEngine() {
+	this->doc = NULL;
+}
 
+PopplerEngine::~PopplerEngine() {
+	puts("FOOOOO");
+	if(this->doc != NULL)
+		g_object_unref(this->doc);
 }
 
 char *

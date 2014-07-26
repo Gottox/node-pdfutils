@@ -7,6 +7,10 @@
 
 #include "PdfController.h"
 
+PdfController::~PdfController() {
+	delete _engine;
+}
+
 PdfEngine *PdfController::engine() {
 	return _engine;
 }

@@ -41,9 +41,9 @@ private:
 
 protected:
 	PdfEngine();
-	virtual ~PdfEngine();
 
 public:
+	virtual ~PdfEngine();
 	inline void setPassword(const char *password) {
 		_password = password;
 	}

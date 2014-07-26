@@ -42,7 +42,6 @@ enum PdfPermission {
 	PERMISSIONS_LAST
 };
 
-class PdfEngine;
 /**
  * @brief Class representation of a PDF-Document.
  *

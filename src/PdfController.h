@@ -26,6 +26,7 @@ protected:
 	 * @brief Constructor for v8.
 	 */
 	PdfController() {};
+	~PdfController();
 
 	void set(v8::Handle<v8::Object> obj, const char key[], const char* value);
 	void set(v8::Handle<v8::Object> obj, const char key[], const int value);

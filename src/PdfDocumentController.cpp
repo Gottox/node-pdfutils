@@ -111,6 +111,7 @@ inline const char *getPageMode(enum PdfPageMode mode) {
 	}
 	return NULL;
 }
+
 inline const char *getPermission(enum PdfPermission permission) {
 	switch(permission) {
 		case PERMISSIONS_PRINT:
@@ -132,6 +133,10 @@ inline const char *getPermission(enum PdfPermission permission) {
 			return "printHighResolution";
 	}
 	return NULL;
+}
+
+PdfDocumentController::~PdfDocumentController() {
+	delete this->_document;
 }
 
 void PdfDocumentController::Init(v8::Handle<v8::Object> exports) {
@@ -204,13 +209,12 @@ NAN_METHOD(PdfDocumentController::Load) {
 		worker->Execute();
 		error = worker->ErrorMessage();
 		if(error != NULL) {
-			v8::Handle<v8::Value> jsError = NanError(error);
-			delete[] error;
-			NanThrowError(jsError);
+			NanThrowError(error);
 		}
 		else {
 			worker->HandleOKCallback();
 		}
+		delete worker;
 		NanReturnValue(NanTrue());
 	}
 }

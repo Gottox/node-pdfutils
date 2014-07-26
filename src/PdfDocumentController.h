@@ -28,6 +28,7 @@ private:
 	 * @param args arguments from Javascript. Currently not used
 	 */
 	PdfDocumentController() : PdfController() {};
+	~PdfDocumentController();
 
 	PdfDocument *_document;
 
