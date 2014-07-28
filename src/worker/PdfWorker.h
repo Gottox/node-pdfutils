@@ -19,6 +19,9 @@
 #endif
 
 
+/**
+ * @brief Base class for defining background processes
+ */
 template <class T>
 class PdfWorker : public NanAsyncWorker {
 private:
@@ -27,6 +30,12 @@ private:
 	uv_mutex_t mutex;
 	std::list<void *> intermediate;
 
+	/**
+	 * @brief handles intermediate events
+	 *
+	 * receives an uv_async_t handle from the background process.
+	 * runs on main thread
+	 */
 	static void handleIntermediate(uv_async_t *handle UV_ASYNC_STATUS) {
 		PdfWorker *self = (PdfWorker *)handle->data;
 		void *data;
@@ -45,6 +54,12 @@ private:
 		}
 	}
 
+	/**
+	 * @brief deletes async handle
+	 *
+	 * the deconstructor trys to close the async handle asynchronously. When
+	 * closing is done, this method is called.
+	 */
 	static void deleteAsync(uv_handle_t* handle) {
 		// handle points to the same location as this->async. but at this point
 		// the object is already freed, so we only dereference the handle here.
@@ -64,6 +79,14 @@ public:
 		}
 	}
 
+	~PdfWorker() {
+		if(this->callback == NULL)
+			return;
+		uv_close((uv_handle_t*)this->async, deleteAsync);
+		uv_mutex_destroy(&this->mutex);
+		this->async = NULL;
+	}
+
 	T *controller() {
 		return _controller;
 	}
@@ -72,15 +95,6 @@ public:
 		uv_mutex_lock(&this->mutex);
 		intermediate.push_back(data);
 		uv_mutex_unlock(&this->mutex);
-	}
-
-	virtual void WorkComplete() {
-		if(this->callback == NULL)
-			return;
-		uv_close((uv_handle_t*)this->async, deleteAsync);
-		uv_mutex_destroy(&this->mutex);
-		this->async = NULL;
-		NanAsyncWorker::WorkComplete();
 	}
 
 	virtual void HandleIntermediate(void *data) {}
