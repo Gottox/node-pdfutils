@@ -160,6 +160,7 @@ NAN_METHOD(PdfDocumentController::New) {
 	PdfDocumentController *controller = new PdfDocumentController();
 	controller->Wrap(args.This());
 	controller->setDocument(new PdfDocument());
+	controller->MakeWeak();
 	NanReturnValue(args.This());
 }
 
