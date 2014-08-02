@@ -67,7 +67,7 @@ describe('pdfutils', function() {
 		});
 	});
 
-/*	it("should save PDFs", function() {
+	/*it("should save PDFs", function() {
 		var pdf = pdfutils(__dirname + "/pdfs/UNEXISTENT.pdf");
 		var file = "/tmp/pdfutils" + Math.random() + ".pdf";
 
@@ -77,7 +77,7 @@ describe('pdfutils', function() {
 		testDocumentStructure(pdf2);
 
 		fs.unlinkSync(file);
-	});*/
-
+	});
+	*/
 });
 

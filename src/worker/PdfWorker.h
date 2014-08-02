@@ -12,11 +12,6 @@
 #include <uv.h>
 #include <list>
 #include "../PdfController.h"
-#if (NODE_MODULE_VERSION > 0x000B)
-#	define UV_ASYNC_STATUS
-#else
-#	define UV_ASYNC_STATUS , int status
-#endif
 
 
 /**
@@ -36,7 +31,7 @@ private:
 	 * receives an uv_async_t handle from the background process.
 	 * runs on main thread
 	 */
-	static void handleIntermediate(uv_async_t *handle UV_ASYNC_STATUS) {
+	static void handleIntermediate(uv_async_t *handle) {
 		PdfWorker *self = (PdfWorker *)handle->data;
 		void *data;
 
@@ -73,7 +68,7 @@ public:
 		if(callback) {
 			uv_loop_t *loop = uv_default_loop();
 			this->async = new uv_async_t;
-			uv_async_init(loop, this->async, handleIntermediate);
+			uv_async_init(loop, this->async, reinterpret_cast<uv_async_cb>(handleIntermediate));
 			this->async->data = this;
 			uv_mutex_init(&mutex);
 		}
