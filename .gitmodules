@@ -1,0 +1,3 @@
+[submodule "3rd/pdfium"]
+	path = 3rd/pdfium
+	url = https://pdfium.googlesource.com/pdfium

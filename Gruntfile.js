@@ -4,10 +4,14 @@
  *
  * Distributed under terms of the MIT license.
  */
+var fs = require("fs");
 var REPORTER="spec";
 var SRC = [ "lib/**/*.js", "index.js" ];
 
 module.exports = function(grunt) {
+	if(fs.existsSync("/usr/bin/ccache")) {
+		process.env.CXX = "/usr/bin/ccache g++";
+	}
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 		gyp: {
