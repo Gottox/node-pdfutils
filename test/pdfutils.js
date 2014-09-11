@@ -53,14 +53,15 @@ describe('pdfutils', function() {
 
 	it("should throw on nonexistent file on synchronous load", function() {
 		try {
-			var pdf = pdfutils(__dirname + "/pdfs/UNEXISTENT.pdf");
+			var pdf = pdfutils(__dirname + "/pdfs/NOFILE.pdf");
 			expect().fail("does not throw")
-		} catch(e) {
+		} catch(err) {
+			expect(err).to.be.an(Error);
 		}
 	});
 
 	it("should callback error on nonexistent file on asynchronous load", function(done) {
-		var pdf = pdfutils(__dirname + "/pdfs/UNEXISTENT.pdf", function(err, pdf) {
+		var pdf = pdfutils(__dirname + "/pdfs/NOFILE.pdf", function(err, pdf) {
 			expect(err).to.be.an(Error);
 			expect(pdf).to.be(null);
 			done();
@@ -68,7 +69,7 @@ describe('pdfutils', function() {
 	});
 
 	/*it("should save PDFs", function() {
-		var pdf = pdfutils(__dirname + "/pdfs/UNEXISTENT.pdf");
+		var pdf = pdfutils(__dirname + "/pdfs/NOFILE.pdf");
 		var file = "/tmp/pdfutils" + Math.random() + ".pdf";
 
 		pdf.asPdf().toFile(file);
