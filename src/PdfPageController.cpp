@@ -13,35 +13,35 @@
 
 void PdfPageController::Init(v8::Handle<v8::Object> exports) {
 	// Public
-	v8::Local<v8::FunctionTemplate> pub = NanNew<v8::FunctionTemplate>(New);
-	pub->SetClassName(NanNew<v8::String>("PdfPage"));
+	v8::Local<v8::FunctionTemplate> pub = Nan::New<v8::FunctionTemplate>(New);
+	pub->SetClassName(Nan::New<v8::String>("PdfPage").ToLocalChecked());
 	pub->InstanceTemplate()->SetInternalFieldCount(1);
 
 	// Private
-	v8::Local<v8::Object> prv = NanNew<v8::Object>();
-	prv->Set(NanNew<v8::String>("as"),
-				NanNew<v8::FunctionTemplate>(PdfPageController::As)->GetFunction());
+	v8::Local<v8::Object> prv = Nan::New<v8::Object>();
+	prv->Set(Nan::New<v8::String>("as").ToLocalChecked(),
+				Nan::New<v8::FunctionTemplate>(PdfPageController::As)->GetFunction());
 
-	exports->Set(NanNew<v8::String>("PdfPage"), pub->GetFunction());
-	exports->Set(NanNew<v8::String>("_page"), prv);
+	exports->Set(Nan::New<v8::String>("PdfPage").ToLocalChecked(), pub->GetFunction());
+	exports->Set(Nan::New<v8::String>("_page").ToLocalChecked(), prv);
 }
 
 NAN_METHOD(PdfPageController::New) {
-	NanScope();
+	Nan::HandleScope scope;
 	PdfPageController *controller = new PdfPageController();
-	controller->Wrap(args.This());
+	controller->Wrap(info.This());
 	controller->setPage(new PdfPage());
-	NanReturnValue(args.This());
+	info.GetReturnValue().Set(info.This());
 }
 
 NAN_METHOD(PdfPageController::As) {
-	NanScope();
-	NanReturnUndefined();
+	Nan::HandleScope scope;
+	info.GetReturnValue().Set(Nan::Undefined());
 }
 
 void PdfPageController::toJs() {
 	PdfPage *page = this->page();
-	v8::Local<v8::Object> obj = NanObjectWrapHandle(this);
+	v8::Local<v8::Object> obj = this->handle();
 	this->set(obj, "label", page->label());
 	this->set(obj, "width", page->width());
 	this->set(obj, "height", page->height());
@@ -49,12 +49,10 @@ void PdfPageController::toJs() {
 
 void PdfPageController::fromJs() {
 	PdfPage *page = this->page();
-	size_t count;
-	v8::Local<v8::Object> obj = NanObjectWrapHandle(this);
-	page->setLabel(NanCString(obj->Get(NanNew<v8::String>("label")), &count));
-	page->setWidth(obj->Get(NanNew<v8::String>("width"))->NumberValue());
-	page->setHeight(obj->Get(NanNew<v8::String>("height"))->NumberValue());
-
+	v8::Local<v8::Object> obj = this->handle();
+	page->setLabel(*Nan::Utf8String(obj->Get(Nan::New<v8::String>("label").ToLocalChecked())));
+	page->setWidth(obj->Get(Nan::New<v8::String>("width").ToLocalChecked())->NumberValue());
+	page->setHeight(obj->Get(Nan::New<v8::String>("height").ToLocalChecked())->NumberValue());
 }
 
 PdfPage *PdfPageController::page() {

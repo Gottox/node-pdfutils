@@ -14,7 +14,7 @@ class PdfPageController;
 class PdfExportPageWorker : public PdfWorker<PdfPageController> {
 	friend class PdfPageController;
 public:
-	PdfExportPageWorker(PdfPageController *controller, NanCallback *callback)
+	PdfExportPageWorker(PdfPageController *controller, Nan::Callback *callback)
 		: PdfWorker(controller, callback) {}
 
 	void Execute();

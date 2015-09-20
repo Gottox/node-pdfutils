@@ -18,7 +18,7 @@
  * @brief Base class for defining background processes
  */
 template <class T>
-class PdfWorker : public NanAsyncWorker {
+class PdfWorker : public Nan::AsyncWorker {
 private:
 	T *_controller;
 	uv_async_t *async;
@@ -62,7 +62,7 @@ private:
 	}
 
 public:
-	PdfWorker(T *controller, NanCallback *callback) : NanAsyncWorker(callback) {
+	PdfWorker(T *controller, Nan::Callback *callback) : Nan::AsyncWorker(callback) {
 		_controller = controller;
 
 		if(callback) {

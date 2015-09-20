@@ -20,7 +20,7 @@ PdfExportPageWorker::HandleIntermediate(void *data) {
 
 void
 PdfExportPageWorker::HandleOKCallback () {
-	NanScope();
+	Nan::HandleScope scope;
 	v8::Local<v8::Value> argv[] = { };
 	controller()->toJs();
 	if(callback)

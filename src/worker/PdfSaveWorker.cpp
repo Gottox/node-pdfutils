@@ -20,7 +20,7 @@ PdfSaveWorker::HandleIntermediate(void *data) {
 
 void
 PdfSaveWorker::HandleOKCallback () {
-	NanScope();
+	Nan::HandleScope scope;
 	v8::Local<v8::Value> argv[] = { };
 	controller()->toJs();
 	if(callback)

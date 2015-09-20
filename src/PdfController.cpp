@@ -22,19 +22,19 @@ void PdfController::setEngine(PdfEngine *engine) {
 
 void PdfController::set(v8::Handle<v8::Object> obj, const char *key, const char* value) {
 	if(value == NULL)
-		obj->Set(NanNew<v8::String>(key), NanNull());
+		obj->Set(Nan::New<v8::String>(key).ToLocalChecked(), Nan::Null());
 	else
-		obj->Set(NanNew<v8::String>(key), NanNew<v8::String>(value));
+		obj->Set(Nan::New<v8::String>(key).ToLocalChecked(), Nan::New<v8::String>(value).ToLocalChecked());
 }
 
 void PdfController::set(v8::Handle<v8::Object> obj, const char *key, const int value) {
-	obj->Set(NanNew<v8::String>(key), NanNew<v8::Integer>(value));
+	obj->Set(Nan::New<v8::String>(key).ToLocalChecked(), Nan::New<v8::Integer>(value));
 }
 
 void PdfController::set(v8::Handle<v8::Object> obj, const char *key, const double value) {
-	obj->Set(NanNew<v8::String>(key), NanNew<v8::Number>(value));
+	obj->Set(Nan::New<v8::String>(key).ToLocalChecked(), Nan::New<v8::Number>(value));
 }
 
 void PdfController::set(v8::Handle<v8::Object> obj, const char *key, const bool value) {
-	obj->Set(NanNew<v8::String>(key), NanNew<v8::Boolean>(value));
+	obj->Set(Nan::New<v8::String>(key).ToLocalChecked(), Nan::New<v8::Boolean>(value));
 }

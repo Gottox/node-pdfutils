@@ -17,10 +17,10 @@ PdfEngineFactory::PdfEngineFactory(v8::Handle<v8::Object> &exports,
 	v8::Local<v8::Object> jsobj = tpl->NewInstance();
 	this->init = pdfInit;
 	this->Wrap(jsobj);
-	jsobj->Set(NanNew<v8::String>("license"), NanNew<v8::String>(license));
-	jsobj->Set(NanNew<v8::String>("name"), NanNew<v8::String>(name));
+	jsobj->Set(Nan::New<v8::String>("license").ToLocalChecked(), Nan::New<v8::String>(license).ToLocalChecked());
+	jsobj->Set(Nan::New<v8::String>("name").ToLocalChecked(), Nan::New<v8::String>(name).ToLocalChecked());
 
-	exports->Set(NanNew<v8::String>("engine"), jsobj);
+	exports->Set(Nan::New<v8::String>("engine").ToLocalChecked(), jsobj);
 }
 
 PdfEngine *PdfEngineFactory::newInstance() {
